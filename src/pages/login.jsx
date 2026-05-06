@@ -266,7 +266,7 @@ iconRow: {
   },
   checkBox : {
     color:"#fe9267",
-    marginTop:15,
+    //marginTop:15,
      transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }]
     
   },

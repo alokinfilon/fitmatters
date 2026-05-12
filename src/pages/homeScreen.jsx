@@ -13,12 +13,14 @@ const CIRCLE_SIZE = 100;
 
 const { width } = Dimensions.get('window');
 const COLUMN_WIDTH = (width - 40) / 2;
-const buttons = [1, 2, 3, 4, 5, 6];
-const OutfitFeed = () => {
+
+const OutfitFeed = ({ navigation }) => {
   const [data, setData] = useState([]);
  
 
   useEffect(() => {
+    console.log("Hello");
+    
     fetch('https://fakestoreapi.com/products')
       .then((response) => response.json())
       .then((json) => {
@@ -26,11 +28,19 @@ const OutfitFeed = () => {
       
       })
       .catch((error) => console.error(error));
+      
   }, []);
 
 
+  const openProductDisplay = (item) => {
+    navigation.navigate('ProductDisplay', { product: item });
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.85}
+      onPress={() => openProductDisplay(item)}>
       <View style={styles.imageContainer}>
         <Image 
           source={{ uri: item.image }} 
@@ -40,14 +50,14 @@ const OutfitFeed = () => {
         
       </View>
       
-
-
-
-    </View>
+    </TouchableOpacity>
  );
 
   const renderItem1 = ({ item }) => (
-    <View style={styles.itemContainer}>
+    <TouchableOpacity
+      style={styles.itemContainer}
+      activeOpacity={0.85}
+      onPress={() => openProductDisplay(item)}>
       <View style={styles.circleWrapper}>
         <Image 
           source={{ uri: item.image }} 
@@ -56,7 +66,7 @@ const OutfitFeed = () => {
         />
       </View>
       <Text numberOfLines={1} style={styles.label}></Text>
-    </View>
+    </TouchableOpacity>
   );
 
   
@@ -133,9 +143,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212',
   },
   
-  header: {
-    padding: 20,
-  },
   title: {
     color: '#fff',
     fontSize: 22,
@@ -158,10 +165,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
   },
   Circlecard: {
     width: COLUMN_WIDTH/1.5,
@@ -214,7 +217,6 @@ const styles = StyleSheet.create({
     borderRadius: CIRCLE_SIZE / 2, 
     overflow: 'hidden', 
     borderWidth: 4,
-    borderColor: '#eee',
     backgroundColor: '#f9f9f9',
     borderColor:"#ffc2c2"
   },

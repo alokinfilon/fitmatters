@@ -71,7 +71,7 @@ const AppLayout = () => {
           <View style={styles.postMainBody}>
             
           <Image 
-          source={require('./src/assets/images/dress1.png')} 
+          source={require('../assets/images/dress1.png')} 
           style={styles.imageView} 
         />
         
@@ -163,7 +163,7 @@ const AppLayout = () => {
           <View style={styles.postMainBody}>
             
           <Image 
-          source={require('./src/assets/images/dress3.png')} 
+          source={require('../assets/images/dress3.png')} 
           style={styles.imageView} 
         />
         
@@ -250,11 +250,11 @@ const styles = StyleSheet.create({
   buttonRow: { flexDirection: 'row', backgroundColor:"#272727", margin:15, borderRadius:10, paddingVertical:8, paddingRight:10 },
   button: {
     flex: 1, backgroundColor: '#272727', paddingVertical: 12,
-    borderRadius: 8, alignItems: 'center', borderRadius:8, 
+    borderRadius: 8, alignItems: 'center',
   },
   button1: {
     flex: 1, backgroundColor: '#272727', paddingVertical: 12,
-    borderRadius: 8, alignItems: 'center', borderRadius:8, borderColor:"#e77a37", borderWidth:2
+    borderRadius: 8, alignItems: 'center', borderColor:"#e77a37", borderWidth:2
   },
   buttonText: { color: '#fff', fontWeight: '900' },
 
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   postHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
   username: { fontWeight: '900', fontSize: 16, color:"#fff" },
-  postRightLabel: { color: 'gray', fontSize: 12, color:"#dddddd" },
+  postRightLabel: { fontSize: 12, color:"#dddddd" },
   postMainBody: {
     backgroundColor: '#000000', borderRadius: 8,
     justifyContent: 'center', alignItems: 'center',

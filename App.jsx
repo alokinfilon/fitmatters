@@ -1,302 +1,317 @@
-import React,  { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView,  Modal } from 'react-native';
+import React from 'react';
+import {
+  Home,
+  MoreHorizontal,
+  Search,
+  ShoppingBag,
+  UsersRound,
+  ImagePlus,
+} from 'lucide-react-native';
 
-const ShareInvitePage = ({ navigation }) => {
-  const [activeModal, setActiveModal] = useState(null);
-  const ProductModal = ({ Visible, onClose }) => {
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import LoginPage from './src/pages/login';
+import OutfitFeed from './src/pages/homeScreen';
+import ProductDisplayPage from './src/pages/ProductDisplayPage';
+import CommunityFeedPage from './src/pages/communityFeedPage';
+import CartPage from './src/pages/cartPage';
+import ShareInvitePage from './src/pages/sharepage';
+
+const Stack = createNativeStackNavigator();
+
+
+
+const bottomNavItems = [
+  {
+    label: 'Home',
+    route: 'Home',
+    Icon: Home,
+  },
+
+  {
+    label: 'Explore',
+    route: 'Explore',
+    Icon: Search,
+  },
+
+  {
+    label: 'Community Space',
+    route: 'Community',
+    Icon: ImagePlus,
+  },
+
+  {
+    label: 'Cart',
+    route: 'Cart',
+    Icon: ShoppingBag,
+  },
+
+  {
+    label: 'More',
+    route: 'More',
+    Icon: MoreHorizontal,
+  },
+];
+
+
+const PlaceholderScreen = ({ title }) => {
+
   return (
-    
-        <Modal
-        animationType="fade"
-        transparent={true}
-        visible={activeModal}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-             <Text style={styles.heading}>Send Invite via Email</Text>
-           <TouchableOpacity style={styles.box1}
-        onPress={() => setModalVisible(true)}
-        >
-          
-          <View style={styles.box2}>
-          <Text style={styles.boxText1}>Friend's Name (optional)</Text>
-          </View>
-        
-        </TouchableOpacity>
-
-
-        <TouchableOpacity style={styles.box1} >
-          
-          <View style={styles.box2}>
-          <Text style={styles.boxText1}>Email Address (required)</Text>
-          </View>
-          
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.box3}>
-          
-          <View >
-          <Text style={styles.boxText1}>Personal Message</Text>
-          </View>
-           <TouchableOpacity style={styles.box1} >
-          
-          
-          
-        </TouchableOpacity>
-
-        </TouchableOpacity>
-
-        <Text style = {styles.subHeading}>Hey! I've been using Out.Fit.Find to get curated outfit looks that match my vibe. Use my code OFFERIEND50 and get 50 off your first month!</Text>
-            
-          
-            <TouchableOpacity 
-              style={styles.closeButton} 
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity>
-          </View></View>
-      </Modal>
-
+    <View style={styles.placeholderWrapper}>
+      <Text style={styles.placeholderText}>
+        {title}
+      </Text>
+    </View>
   );
 };
+
+
+
+const ScreenContainer = ({
+  children,
+  navigation,
+  activeRoute,
+}) => {
+
+
   return (
-    <SafeAreaView style={styles.container}>
-    
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation?.goBack()} style={styles.backButton}>
-         
-        </TouchableOpacity>
+    <View style={styles.appShell}>
+
+      <View style={styles.screenArea}>
+        {children}
       </View>
 
-     
-      <View style={styles.content}>
-        <Text style={styles.heading}>Share your Invite</Text>
-        <Text style={styles.subHeading}>Earn rewards When your friend joins using your code.</Text>
+      <View style={styles.bottomNavigation}>
 
-       
-        <TouchableOpacity style={styles.box1}
-        onPress={() => setActiveModal('product')}
-        >
-          
-          <View style={styles.box}>
-          <Text style={styles.boxText}>Invite via Email</Text>
-          </View>
-           <Text style={styles.subHeading1}>Opens emails input modal</Text>
-        </TouchableOpacity>
+        {bottomNavItems.map((item, index) => {
 
+          const isActive = activeRoute === item.route;
+          const IconComp = item.Icon;
 
-        <TouchableOpacity style={styles.box1} 
-        onPress={() => setActiveModal('bookmark')}
-        >
-          
-          <View style={styles.box}>
-          <Text style={styles.boxText}>Share Link</Text>
-          </View>
-           <Text style={styles.subHeading1}>Copies referral link + opens share sheet (WhatsApp, Messages, etc.)</Text>
-        </TouchableOpacity>
+          return (
+            <TouchableOpacity
+              key={index}
+              activeOpacity={0.75}
+              style={styles.bottomItem}
+              onPress={() => {
 
-        <TouchableOpacity style={styles.box1} 
-        onPress={() => setActiveModal('notification')}
-        >
-          
-          <View style={styles.box}>
-          <Text style={styles.boxText}>Invite via WhatsApp / SMS</Text>
-          </View>
-           <TouchableOpacity style={styles.box1} >
-          
-          
-          
-        </TouchableOpacity>
-
-        </TouchableOpacity>
-
-        <Modal
-        animationType="fade"
-        transparent={true}
-        visible={activeModal}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-             <Text style={styles.heading}>Send Invite via Email</Text>
-           <TouchableOpacity style={styles.box1}
-        onPress={() => setModalVisible(true)}
-        >
-          
-          <View style={styles.box2}>
-          <Text style={styles.boxText1}>Friend's Name (optional)</Text>
-          </View>
-        
-        </TouchableOpacity>
-
-
-        <TouchableOpacity style={styles.box1} >
-          
-          <View style={styles.box2}>
-          <Text style={styles.boxText1}>Email Address (required)</Text>
-          </View>
-          
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.box3}>
-          
-          <View >
-          <Text style={styles.boxText1}>Personal Message</Text>
-          </View>
-           <TouchableOpacity style={styles.box1} >
-          
-          
-          
-        </TouchableOpacity>
-
-        </TouchableOpacity>
-
-        <Text style = {styles.subHeading}>Hey! I've been using Out.Fit.Find to get curated outfit looks that match my vibe. Use my code OFFERIEND50 and get 50 off your first month!</Text>
-            
-          
-            <TouchableOpacity 
-              style={styles.closeButton} 
-              onPress={() => setModalVisible(false)}
+                
+                if (activeRoute !== item.route) {
+                  navigation.navigate(item.route);
+                }
+              }}
             >
-              <Text style={styles.buttonText}>Close</Text>
+
+              <IconComp
+                size={22}
+                strokeWidth={1.8}
+                color={isActive ? '#ffffff' : '#b8b8b8'}
+              />
+
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.bottomItemLabel,
+                  isActive && styles.activeBottomItemLabel,
+                ]}
+              >
+                {item.label}
+              </Text>
+
             </TouchableOpacity>
-          </View></View>
-      </Modal>
+          );
+        })}
 
       </View>
-      {/* Modal Logic */}
-{activeModal === 'product' && (
-  <ProductModal Visible={true} onClose={() => setActiveModal(null)} />
-)}
 
-{activeModal === 'bookmark' && (
-  <BookmarkModal Visible={true} onClose={() => setActiveModal(null)} />
-)}
-
-{activeModal === 'notification' && (
-  <NotificationModal Visible={true} onClose={() => setActiveModal(null)} />
-)}
-
-    </SafeAreaView>
-    
+    </View>
   );
 };
+
+
+const withBottomNavigation = (Component, currentRoute) => {
+
+  return function WrappedScreen(props) {
+
+    return (
+      <ScreenContainer
+        navigation={props.navigation}
+        activeRoute={currentRoute}
+      >
+        <Component {...props} />
+      </ScreenContainer>
+    );
+  };
+};
+
+
+
+const ExploreScreen = () => {
+  return <PlaceholderScreen title="Explore" />;
+};
+
+
+const HomeScreenWithNav = withBottomNavigation(
+  OutfitFeed,
+  'Home'
+);
+
+const ProductDisplayWithNav = withBottomNavigation(
+  ProductDisplayPage,
+  'Home'
+);
+
+const ExploreScreenWithNav = withBottomNavigation(
+  ExploreScreen,
+  'Explore'
+);
+
+const CommunityScreenWithNav = withBottomNavigation(
+  CommunityFeedPage,
+  'Community'
+);
+
+const CartScreenWithNav = withBottomNavigation(
+  CartPage,
+  'Cart'
+);
+
+const MoreScreenWithNav = withBottomNavigation(
+  ShareInvitePage,
+  'More'
+);
+
+
+export default function App() {
+
+
+  return (
+    <NavigationContainer>
+
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+
+        <Stack.Screen
+          name="Login"
+          component={LoginPage}
+        />
+
+        <Stack.Screen
+          name="Home"
+          component={HomeScreenWithNav}
+        />
+
+        <Stack.Screen
+          name="ProductDisplay"
+          component={ProductDisplayWithNav}
+        />
+
+        <Stack.Screen
+          name="Explore"
+          component={ExploreScreenWithNav}
+        />
+
+        <Stack.Screen
+          name="Community"
+          component={CommunityScreenWithNav}
+        />
+
+        <Stack.Screen
+          name="Cart"
+          component={CartScreenWithNav}
+        />
+
+        <Stack.Screen
+          name="More"
+          component={MoreScreenWithNav}
+        />
+
+      </Stack.Navigator>
+
+    </NavigationContainer>
+  );
+}
+
 
 const styles = StyleSheet.create({
-  container: {
+
+  appShell: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#121212',
   },
-  header: {
-    height: 60,
+
+  screenArea: {
+    flex: 1,
+  },
+
+  bottomNavigation: {
+
+    height: 70,
+
+    paddingTop: 8,
+    paddingBottom: 8,
+
+   
+    paddingHorizontal: 5,
+
+    backgroundColor: '#151515',
+
+    flexDirection: 'row',
+
+    alignItems: 'center',
+    justifyContent: 'space-around',
+
+    borderTopWidth: 1,
+    borderTopColor: '#242424',
+  },
+
+  bottomItem: {
+    flex: 1,
+
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
+
+    gap: 4,
   },
-  backButton: {
-    padding: 8,
+
+  bottomItemLabel: {
+    color: '#b8b8b8',
+
+    fontSize: 11,
+    fontWeight: '500',
   },
-  content: {
-    paddingHorizontal: 20,
-    marginTop: 20,
+
+  activeBottomItemLabel: {
+    color: '#ffffff',
   },
-  heading: {
+
+  placeholderWrapper: {
+    flex: 1,
+
+    backgroundColor: '#121212',
+
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  placeholderText: {
+    color: '#ffffff',
+
     fontSize: 24,
     fontWeight: '900',
-    color: '#ffffff',
-    marginBottom: 8,
-  },
-  subHeading: {
-    fontSize: 14,
-    color: '#ffffff',
-    marginBottom: 40,
-    fontWeight: '900',
-  },
-  subHeading1: {
-    fontSize: 14,
-    color: '#ffffff',
-    marginBottom: 20,
-    fontWeight: '900',
-    marginLeft:25
-  },
-  box: {
-    
-    
-    
-  borderRadius: 12,
-  padding:10,
-    
-    backgroundColor: '#2d2c2c',
-  },
-  box1: {
-    borderRadius: 12,
-    
-    marginBottom: 8,
-    backgroundColor: '#2d2c2c',
-    marginTop:10
-  },
-  box2: {
-    borderRadius: 12,
-    
-    justifyContent:"center",
-    marginBottom: 8,
-    backgroundColor: '#2d2c2c',
-    marginTop:10,
-    width:280,
-    height:60,
-    
-  },
-  box3: {
-    borderRadius: 12,
-    
-    justifyContent:"center",
-    marginBottom: 8,
-    backgroundColor: '#2d2c2c',
-    marginTop:10,
-    width:280,
-    height:80,
-    
-  },
-  boxText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
-    marginLeft: 15,
-    fontWeight: '900',
-  },
-  boxText1: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
-    marginLeft: 15,
-    fontWeight: '900',
-    marginTop:-15
   },
 
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    
-    backgroundColor: '#1e1e1e',
-    padding: 20,
-    borderRadius: 30,
-    alignItems: 'center',
-    width:318,
-    height:520,
-    marginTop:120
-
-    
-  },
-  buttonText :{
-    color:"#fff"
-  }
 });
 
-export default ShareInvitePage;

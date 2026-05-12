@@ -1,21 +1,64 @@
 import React from 'react';
-import { ScrollView, Image, Text, View, StyleSheet, TouchableOpacity, Dimensions, } from 'react-native';
+import { ScrollView, Image, Text, View, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import { faLessThan } from '@fortawesome/free-solid-svg-icons/faLessThan';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import CheckBox from '@react-native-community/checkbox';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient'
 const { width } = Dimensions.get('window');
 const COLUMN_WIDTH = (width - 50) ;
-export default function App() {
+const CIRCLE_SIZE = 100;
+
+
+export default function ProductDisplayPage({ route, navigation }) {
    const [toggleCheckBox, setToggleCheckBox] = useState(false);
+   const [activeInfoTab, setActiveInfoTab] = useState('shipping');
+
+
+   const [data, setData] = useState([]);
+    
+   
+     useEffect(() => {
+       console.log("Hello");
+       
+       fetch('https://fakestoreapi.com/products')
+         .then((response) => response.json())
+         .then((json) => {
+           setData(json);
+         
+         })
+         .catch((error) => console.error(error));
+         
+     }, []);
+
+    const renderItem1 = ({ item }) => (
+        <TouchableOpacity
+          style={styles.itemContainer}
+          activeOpacity={0.85}
+          onPress={() => openProductDisplay(item)}>
+          <View style={styles.circleWrapper}>
+            <Image 
+              source={{ uri: item.image }} 
+              style={styles.image} 
+              resizeMode="cover"
+            />
+          </View>
+          <Text numberOfLines={1} style={styles.label}></Text>
+        </TouchableOpacity>
+      );
+     
+   
+   const product = route?.params?.product;
+   const productImageSource = product?.image
+    ? { uri: product.image }
+    : require('../assets/images/dress.png');
   return (
     <ScrollView style={styles.container}>
     <View style={styles.container}>
 
       <View style={styles.alignRow}>
      <View style={styles.header}>
-  <TouchableOpacity style={styles.button}>
+  <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
     <FontAwesomeIcon icon={faLessThan} color="#ffffff" size={18} />
  
     <Text style={styles.text}>Back</Text>
@@ -23,19 +66,19 @@ export default function App() {
 </View>
   </View>
   <View style={styles.header1}>
-    <Text style = {styles.headerText}>streetwear Set - urban Chill</Text>
+    <Text style = {styles.headerText}>{product?.title || 'streetwear Set - urban Chill'}</Text>
      <Text style = {styles.headerText1}>Outfit curated from 3 brands.</Text>
   </View>
   <View style={styles.cardView}>
     <View style={styles.card}>
       <Image 
-          source={require('./src/assets/images/dress.png')} 
+          source={productImageSource} 
           style={styles.image} 
         />
     </View>
     <View style = {styles.priceView}>
       <Text style = {styles.priceText}>
-        ₹3,499 (Excluding extras)
+        {product?.price ? `$${product.price}` : '₹3,499'} (Excluding extras)
       </Text>
     </View>
    <View style = {styles.checkboxView}>
@@ -59,13 +102,13 @@ export default function App() {
     <Text style = {styles.text}>Brands </Text>
     <View style={styles.nikeView}>
       <Image 
-          source={require('./src/assets/images/nike.png')} 
+          source={require('../assets/images/nike.png')} 
           style={styles.image} 
         />
     </View>
      <View style={styles.hmView}>
       <Image 
-          source={require('./src/assets/images/h&m.png')} 
+          source={require('../assets/images/h&m.png')} 
           style={styles.image} 
         />
     </View>
@@ -85,7 +128,7 @@ export default function App() {
     
      <View style={styles.hmView}>
       <Image 
-          source={require('./src/assets/images/h&m.png')} 
+          source={require('../assets/images/h&m.png')} 
           style={styles.image} 
         />
        </View>
@@ -99,7 +142,7 @@ export default function App() {
     
      <View style={styles.sizeView}>
       <Image 
-          source={require('./src/assets/images/size.png')} 
+          source={require('../assets/images/size.png')} 
           style={styles.image} 
         />
        </View>
@@ -144,7 +187,7 @@ export default function App() {
     
      <View style={styles.hmView}>
       <Image 
-          source={require('./src/assets/images/h&m.png')} 
+          source={require('../assets/images/h&m.png')} 
           style={styles.image} 
         />
        </View>
@@ -158,7 +201,7 @@ export default function App() {
     
      <View style={styles.sizeView}>
       <Image 
-          source={require('./src/assets/images/size.png')} 
+          source={require('../assets/images/size.png')} 
           style={styles.image} 
         />
        </View>
@@ -203,7 +246,7 @@ export default function App() {
     
      <View style={styles.nikeView}>
       <Image 
-          source={require('./src/assets/images/nike.png')} 
+          source={require('../assets/images/nike.png')} 
           style={styles.image} 
         />
     </View>
@@ -217,7 +260,7 @@ export default function App() {
     
      <View style={styles.sizeView}>
       <Image 
-          source={require('./src/assets/images/size.png')} 
+          source={require('../assets/images/size.png')} 
           style={styles.image} 
         />
        </View>
@@ -290,19 +333,19 @@ export default function App() {
       </LinearGradient>
     </TouchableOpacity>
      </View>
-     <View style={styles.discrptionView}>
+     <View style={[styles.discrptionView, activeInfoTab === 'shipping' ? null : styles.hiddenInfoSection]}>
 <View style={styles.alignRow}>
-<TouchableOpacity>
+<TouchableOpacity onPress={() => setActiveInfoTab('shipping')}>
   <View style={styles.selectedView}>
   <Text style={styles.text8}>Shipping Info</Text>
  </View>
 </TouchableOpacity>
-<TouchableOpacity>
+<TouchableOpacity onPress={() => setActiveInfoTab('howItWorks')}>
   <Text style={styles.text8} >How It Works</Text>
  
 </TouchableOpacity>
 
-<TouchableOpacity>
+<TouchableOpacity onPress={() => setActiveInfoTab('productInfo')}>
   <Text style={styles.text8} >Product Info</Text>
  
 </TouchableOpacity>
@@ -319,19 +362,19 @@ export default function App() {
 <Text style= {styles.text9} >Delivery Charge</Text>
 <Text style= {styles.text10} >free Shipping for orders above ₹1,999.</Text>
      </View>
-     <View style={styles.discrptionView}>
+     <View style={[styles.discrptionView, activeInfoTab === 'howItWorks' ? null : styles.hiddenInfoSection]}>
 <View style={styles.alignRow}>
-<TouchableOpacity>
+<TouchableOpacity onPress={() => setActiveInfoTab('shipping')}>
   <View >
   <Text style={styles.text8}>Shipping Info</Text>
  </View>
 </TouchableOpacity>
-<TouchableOpacity style={styles.selectedView}>
+<TouchableOpacity style={styles.selectedView} onPress={() => setActiveInfoTab('howItWorks')}>
   <Text style={styles.text8} >How It Works</Text>
  
 </TouchableOpacity>
 
-<TouchableOpacity>
+<TouchableOpacity onPress={() => setActiveInfoTab('productInfo')}>
   <Text style={styles.text8} >Product Info</Text>
  
 </TouchableOpacity>
@@ -350,19 +393,19 @@ export default function App() {
 <Text style= {styles.text9} >Refund Available (12 hrs)</Text>
 <Text style= {styles.text10} >Cancel or refund within the first 12 hours.</Text>
      </View>
-     <View style={styles.discrptionView}>
+     <View style={[styles.discrptionView, activeInfoTab === 'productInfo' ? null : styles.hiddenInfoSection]}>
 <View style={styles.alignRow}>
-<TouchableOpacity>
+<TouchableOpacity onPress={() => setActiveInfoTab('shipping')}>
   <View >
   <Text style={styles.text8}>Shipping Info</Text>
  </View>
 </TouchableOpacity>
-<TouchableOpacity>
+<TouchableOpacity onPress={() => setActiveInfoTab('howItWorks')}>
   <Text style={styles.text8} >How It Works</Text>
  
 </TouchableOpacity>
 
-<TouchableOpacity style={styles.selectedView}>
+<TouchableOpacity style={styles.selectedView} onPress={() => setActiveInfoTab('productInfo')}>
   <Text style={styles.text8} >Product Info</Text>
  
 </TouchableOpacity>
@@ -394,17 +437,31 @@ export default function App() {
      </View>
      <View style= {styles.recommandView}>
       
-      <View style = {styles.imageView}>
-        <Text>hello world </Text>
-         <Text>hello world </Text>
-          <Text>hello world </Text>
-      </View>
+      
+           
       
      </View>
+    
      
     </View>
+     <View style={{ width:"90%", height:160, backgroundColor:"#5c5c5c", justifyContent:"center", alignItems:"center", marginBottom:10, marginLeft:20, marginTop:-20   }}>
+
+         <View style={styles.container}>
+            <FlatList
+              data={data}
+              renderItem={renderItem1}
+              keyExtractor={(item) => item.id.toString()}
+              horizontal 
+             
+             
+            />
+          </View>
+            
+      </View>
+    
     
     </ScrollView>
+    
   );
 }
 
@@ -413,9 +470,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
+  itemContainer: {
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
   text: {
     fontSize: 16,
-    fontWeight: 'bold',
     color:"#fff",
     fontWeight:900,
     marginLeft:8
@@ -435,6 +495,33 @@ const styles = StyleSheet.create({
   alignItems: 'center', 
   marginLeft:8
 },
+ imageContainer: {
+    flex: 1,
+  },
+  circleWrapper: {
+    width: 100,
+    height: 160, 
+          
+    overflow: 'hidden', 
+    borderWidth: 4,
+    backgroundColor: '#f9f9f9',
+    borderColor: "#000000",
+    borderRadius:15,
+    
+},
+
+  Circlecard: {
+    width: COLUMN_WIDTH/1.5,
+    height: 160, 
+    marginBottom: 15,
+    borderRadius: 80,
+    overflow: 'hidden',
+    backgroundColor: '#F5EBE0', 
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
 
 header1:{
  marginTop:10,
@@ -470,7 +557,6 @@ card:{
     overflow: 'hidden',
     backgroundColor: '#F5EBE0',
      borderColor: '#000',
-     overflow:"hidden"
 
 },
  image: {
@@ -618,7 +704,6 @@ iconRow3: {
       },
       text5: {
     fontSize: 14,
-    fontWeight: 'bold',
     color:"#fff",
     fontWeight:900,
    
@@ -670,6 +755,9 @@ discrptionView : {
   padding:15,
   
 },
+hiddenInfoSection: {
+  display: 'none',
+},
  text8:{
         color: "#fffdfd",
       fontSize:15,
@@ -680,7 +768,6 @@ discrptionView : {
         paddingVertical:5,
         paddingHorizontal:5,
         borderWidth:2,
-        borderColor:"#ffff",
         borderRadius:10,
         borderColor:"#fea26d",
         backgroundColor:"#2e2e2e"

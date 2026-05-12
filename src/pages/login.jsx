@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View , TextInput, ScrollView, Button,TouchableOpacity  } from 'react-native';
+import { StyleSheet, Text, View , TextInput, ScrollView, TouchableOpacity  } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons/faCircleCheck';
 import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark';
@@ -7,8 +7,8 @@ import {faCircleQuestion } from '@fortawesome/free-solid-svg-icons/faCircleQuest
 import { useState } from 'react';
 import CheckBox from '@react-native-community/checkbox';
 import LinearGradient from 'react-native-linear-gradient'
-export default function LoginPage  ()  {
-   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+export default function LoginPage  ({ navigation })  {
+const [toggleCheckBox, setToggleCheckBox] = useState(false);
   return (
     <ScrollView style={styles.Container}>
     <View style={styles.mainContainer} >
@@ -97,7 +97,7 @@ export default function LoginPage  ()  {
      </View>
 
      <View style={styles.button}>
-      <TouchableOpacity onPress={() => console.log('Pressed!')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
      
       <LinearGradient 
         colors={['#f0a374', '#e77a37', '#f0a374']} 
@@ -266,7 +266,7 @@ iconRow: {
   },
   checkBox : {
     color:"#fe9267",
-    //marginTop:15,
+   
      transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }]
     
   },

@@ -4,7 +4,6 @@ import {
   MoreHorizontal,
   Search,
   ShoppingBag,
-  UsersRound,
   ImagePlus,
 } from 'lucide-react-native';
 
@@ -14,16 +13,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import LoginPage from './src/pages/login';
-import OutfitFeed from './src/pages/homeScreen';
-import ProductDisplayPage from './src/pages/ProductDisplayPage';
-import CommunityFeedPage from './src/pages/communityFeedPage';
-import CartPage from './src/pages/cartPage';
-import ShareInvitePage from './src/pages/sharepage';
+import LoginPage from './src/pages/login.jsx';
+import OutfitFeed from './src/pages/homeScreen.jsx';
+import ProductDisplayPage from './src/pages/ProductDisplayPage.jsx';
+import CommunityFeedPage from './src/pages/communityFeedPage.jsx';
+import CartPage from './src/pages/cartPage.jsx';
+import ShareInvitePage from './src/pages/sharepage.jsx';
 
 const Stack = createNativeStackNavigator();
 
@@ -89,7 +89,7 @@ const ScreenContainer = ({
         {children}
       </View>
 
-      <View style={styles.bottomNavigation}>
+      <SafeAreaView edges={['bottom']} style={styles.bottomNavigation}>
 
         {bottomNavItems.map((item, index) => {
 
@@ -113,7 +113,7 @@ const ScreenContainer = ({
               <IconComp
                 size={22}
                 strokeWidth={1.8}
-                color={isActive ? '#ffffff' : '#b8b8b8'}
+                color={isActive ? '#ff8f68' : '#b8b8b8'}
               />
 
               <Text
@@ -130,7 +130,7 @@ const ScreenContainer = ({
           );
         })}
 
-      </View>
+      </SafeAreaView>
 
     </View>
   );
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
 
   bottomNavigation: {
 
-    height: 70,
+    minHeight: 64,
 
     paddingTop: 8,
     paddingBottom: 8,
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   },
 
   activeBottomItemLabel: {
-    color: '#ffffff',
+    color: '#ff8f68',
   },
 
   placeholderWrapper: {
@@ -314,4 +314,3 @@ const styles = StyleSheet.create({
   },
 
 });
-

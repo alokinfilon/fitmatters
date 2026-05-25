@@ -7,14 +7,22 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native';
 import { Check, Link2, X } from 'lucide-react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import LinearGradient from 'react-native-linear-gradient'
 
 const ShareInvitePage = ({ navigation }) => {
   const [activeModal, setActiveModal] = useState(null);
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+      
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation?.goBack()} style={styles.backButton}>
           <Text style={styles.backText}>Back</Text>
@@ -25,24 +33,21 @@ const ShareInvitePage = ({ navigation }) => {
         <Text style={styles.heading}>Share your Invite</Text>
         <Text style={styles.subHeading}>Earn rewards When your friend joins using your code.</Text>
 
-        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('email')}>
-          <View style={styles.box}>
-            <Text style={styles.boxText}>Invite via Email</Text>
-          </View>
+        {/* Option 1: Email */}
+        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('email')} activeOpacity={0.75}>
+          <Text style={styles.boxText}>Invite via Email</Text>
           <Text style={styles.subHeading1}>Opens email invite modal</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('link')}>
-          <View style={styles.box}>
-            <Text style={styles.boxText}>Share Link</Text>
-          </View>
+        {/* Option 2: Link Share */}
+        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('link')} activeOpacity={0.75}>
+          <Text style={styles.boxText}>Share Link</Text>
           <Text style={styles.subHeading1}>Copies referral link + opens share sheet</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('success')}>
-          <View style={styles.box}>
-            <Text style={styles.boxText}>Invite via WhatsApp / SMS</Text>
-          </View>
+        {/* Option 3: WhatsApp / SMS */}
+        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('success')} activeOpacity={0.75}>
+          <Text style={styles.boxText}>Invite via WhatsApp / SMS</Text>
           <Text style={styles.subHeading1}>Send your invite through messages</Text>
         </TouchableOpacity>
       </View>
@@ -51,7 +56,8 @@ const ShareInvitePage = ({ navigation }) => {
         animationType="fade"
         transparent={true}
         visible={activeModal !== null}
-        onRequestClose={() => setActiveModal(null)}>
+        onRequestClose={() => setActiveModal(null)}
+      >
         <View style={styles.modalOverlay}>
           {activeModal === 'email' && (
             <View style={[styles.modalCard, styles.emailCard]}>
@@ -70,6 +76,8 @@ const ShareInvitePage = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Email Address (required)"
                 placeholderTextColor="#ffffff"
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
               <TextInput
                 style={[styles.input, styles.messageInput]}
@@ -83,9 +91,16 @@ const ShareInvitePage = ({ navigation }) => {
                 Use my code OFFERIEND50 and get Rs 50 off your first month!
               </Text>
 
-              <TouchableOpacity style={styles.primaryButton} onPress={() => setActiveModal('success')}>
-                <Text style={styles.primaryButtonText}>Send Invite</Text>
-              </TouchableOpacity>
+              
+               <LinearGradient 
+                      colors={['#f0a374', '#e77a37', '#f0a374']} 
+                      style={styles.primaryButton}
+                      start={{ x: 0, y: 0 }} 
+                      end={{ x: 1, y: 0 }} 
+                      
+                    >
+                     <Text style={styles.primaryButtonText}>Send Invite</Text>
+                    </LinearGradient>
             </View>
           )}
 
@@ -96,16 +111,22 @@ const ShareInvitePage = ({ navigation }) => {
               </TouchableOpacity>
 
               <View style={styles.centerIcon}>
-                <Check color="#ffffff" size={82} />
+                <Check color="#ffffff" size={64} />
               </View>
 
               <Text style={styles.successText}>
                 Invite sent successfully! You'll earn Rs 50 once your friend subscribes.
               </Text>
 
-              <TouchableOpacity style={styles.primaryButton} onPress={() => setActiveModal(null)}>
-                <Text style={styles.primaryButtonText}>My Referrals</Text>
-              </TouchableOpacity>
+              <LinearGradient 
+                      colors={['#f0a374', '#e77a37', '#f0a374']} 
+                      style={styles.primaryButton}
+                      start={{ x: 0, y: 0 }} 
+                      end={{ x: 1, y: 0 }} 
+                      
+                    >
+                     <Text style={styles.primaryButtonText}>My Referrals</Text>
+                    </LinearGradient>
             </View>
           )}
 
@@ -116,15 +137,21 @@ const ShareInvitePage = ({ navigation }) => {
               </TouchableOpacity>
 
               <View style={styles.centerIcon}>
-                <Link2 color="#ffffff" size={82} />
+                <Link2 color="#ffffff" size={64} />
               </View>
 
               <Text style={styles.modalTitle}>Share via Link</Text>
               <Text style={styles.linkText}>https://outfitfind.in/invite/OFFFRIEND50</Text>
 
-              <TouchableOpacity style={styles.primaryButton} onPress={() => setActiveModal(null)}>
-                <Text style={styles.primaryButtonText}>Copy</Text>
-              </TouchableOpacity>
+               <LinearGradient 
+                      colors={['#f0a374', '#e77a37', '#f0a374']} 
+                      style={styles.primaryButton}
+                      start={{ x: 0, y: 0 }} 
+                      end={{ x: 1, y: 0 }} 
+                      
+                    >
+                     <Text style={styles.primaryButtonText}>Copy</Text>
+                    </LinearGradient>
             </View>
           )}
         </View>
@@ -139,12 +166,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   header: {
-    height: 60,
+    height: hp('7%'),
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: wp('4%'),
   },
   backButton: {
-    padding: 8,
+    padding: wp('2%'),
     alignSelf: 'flex-start',
   },
   backText: {
@@ -152,51 +179,45 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   content: {
-    paddingHorizontal: 20,
-    marginTop: 20,
+    paddingHorizontal: wp('5%'),
+    marginTop: hp('2%'),
   },
   heading: {
-    fontSize: 24,
+    fontSize: wp('7%'),
     fontWeight: '900',
     color: '#ffffff',
-    marginBottom: 8,
+    marginBottom: hp('1%'),
   },
   subHeading: {
-    fontSize: 14,
+    fontSize: wp('3.8%'),
     color: '#ffffff',
-    marginBottom: 40,
+    marginBottom: hp('4%'),
     fontWeight: '900',
   },
   subHeading1: {
-    fontSize: 14,
+    fontSize: wp('3.8%'),
     color: '#ffffff',
-    marginBottom: 20,
-    fontWeight: '900',
-    marginLeft: 25,
-  },
-  box: {
-    borderRadius: 12,
-    padding: 10,
-    backgroundColor: '#2d2c2c',
+    fontWeight: '500',
+    marginTop: hp('0.5%'),
   },
   box1: {
     borderRadius: 12,
-    marginBottom: 8,
-    backgroundColor: '#2d2c2c',
-    marginTop: 10,
+    padding: wp('6%'),
+    backgroundColor: '#292929',
+    marginTop: hp('1.5%'),
+    width: '100%',
   },
   boxText: {
-    fontSize: 16,
+    fontSize: wp('5%'),
     color: '#ffffff',
-    marginLeft: 15,
     fontWeight: '900',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.72)',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: wp('5%'),
   },
   modalCard: {
     width: '100%',
@@ -207,86 +228,90 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f5d68f',
     borderWidth: 1,
     borderRadius: 18,
-    padding: 22,
+    padding: wp('5%'),
   },
   emailCard: {
-    minHeight: 455,
+    minHeight: hp('52%'),
   },
   statusCard: {
-    minHeight: 272,
+    minHeight: hp('32%'),
     justifyContent: 'center',
+    alignItems: 'center',
   },
   closeIcon: {
     position: 'absolute',
-    top: 14,
-    right: 12,
+    top: hp('1.8%'),
+    right: wp('4%'),
     zIndex: 1,
-    padding: 4,
+    padding: wp('1%'),
   },
   centerIcon: {
     alignItems: 'center',
     width: '100%',
+    marginBottom: hp('2%'),
   },
   modalTitle: {
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: wp('5%'),
     fontWeight: '900',
-    marginBottom: 22,
+    marginBottom: hp('2%'),
+    textAlign: 'center',
   },
   input: {
-    height: 56,
+    height: hp('6%'),
     borderRadius: 10,
     borderColor: '#3c3c3f',
     borderWidth: 1,
     backgroundColor: '#28292b',
     color: '#ffffff',
-    paddingHorizontal: 18,
-    fontSize: 14,
-    fontWeight: '800',
-    marginBottom: 12,
+    paddingHorizontal: wp('4%'),
+    fontSize: wp('3.8%'),
+    fontWeight: '900',
+    marginBottom: hp('1.5%'),
   },
   messageInput: {
-    height: 86,
-    paddingTop: 16,
+    height: hp('10%'),
+    paddingTop: hp('1.5%'),
     textAlignVertical: 'top',
   },
   inviteCopy: {
     color: '#ffffff',
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: wp('3.8%'),
+    lineHeight: wp('5%'),
     fontWeight: '800',
-    marginTop: 4,
-    marginBottom: 20,
+    marginTop: hp('0.5%'),
+    marginBottom: hp('2.5%'),
   },
   primaryButton: {
-    height: 48,
+    height: hp('6%'),
     borderRadius: 8,
     backgroundColor: '#ff7d63',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
+    marginTop: hp('1%'),
   },
   primaryButtonText: {
     color: '#ffffff',
-    fontSize: 15,
+    fontSize: wp('3.8%'),
     fontWeight: '900',
   },
   successText: {
     color: '#ffffff',
-    fontSize: 14,
-    lineHeight: 21,
+    fontSize: wp('3.8%'),
+    lineHeight: wp('5.2%'),
     fontWeight: '900',
     textAlign: 'center',
-    marginTop: 26,
-    marginBottom: 28,
+    marginBottom: hp('3%'),
   },
   linkText: {
     color: '#ffffff',
-    fontSize: 13,
-    lineHeight: 20,
-    marginBottom: 28,
+    fontSize: wp('3.8%'),
+    lineHeight: wp('5%'),
+    marginBottom: hp('3%'),
+    textAlign: 'center',
+    fontWeight: '700',
   },
+});
 
-
-  
-})
 export default ShareInvitePage;

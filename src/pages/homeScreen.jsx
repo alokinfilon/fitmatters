@@ -1,152 +1,205 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  FlatList, 
-  Image, 
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
   Dimensions,
-  TouchableOpacity, 
-  ScrollView
+  TouchableOpacity,
 } from 'react-native';
-const CIRCLE_SIZE = 100;
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const { width } = Dimensions.get('window');
-const COLUMN_WIDTH = (width - 40) / 2;
-
+const COLUMN_WIDTH = (width - 45) / 2; 
+const CIRCLE_SIZE = wp('22%'); 
 const OutfitFeed = ({ navigation }) => {
   const [data, setData] = useState([]);
- 
 
   useEffect(() => {
-    console.log("Hello");
-    
     fetch('https://fakestoreapi.com/products')
-      .then((response) => response.json())
-      .then((json) => {
-        setData(json);
-      
-      })
-      .catch((error) => console.error(error));
-      
+      .then(response => response.json())
+      .then(json => setData(json))
+      .catch(error => console.error(error));
   }, []);
 
-
-  const openProductDisplay = (item) => {
-    navigation.navigate('ProductDisplay', { product: item });
+  const openProductDisplay = item => {
+    navigation.push('ProductDisplay', { product: item });
   };
 
-  const renderItem = ({ item }) => (
+  
+  const renderHeader = () => (
+    <View style={styles.headerContainer}>
+     
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.button1}>
+          <Text style={styles.buttonText}>🥾 Everyday Fit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button1}>
+          <Text style={styles.buttonText}>👔 Work Fit</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>❄️ Winter Vacation</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>💃 Date Night Fit</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>⛱️ Summer Vacation</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button1}>
+          <Text style={styles.buttonText}>✨ Night out Fit</Text>
+        </TouchableOpacity>
+      </View>
+
+     
+      <View style={styles.divider} />
+
+    
+      <FlatList
+        data={data}
+        renderItem={renderCircleItem}
+        keyExtractor={item => `circle-${item.id}`}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalListPadding}
+      />
+    </View>
+  );
+
+
+  const renderGridItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
       activeOpacity={0.85}
-      onPress={() => openProductDisplay(item)}>
+      onPress={() => openProductDisplay(item)}
+    >
       <View style={styles.imageContainer}>
-        <Image 
-          source={{ uri: item.image }} 
-          style={styles.image} 
+        <Image
+          source={{ uri: item.image }}
+          style={styles.image}
           resizeMode="contain"
         />
-        
       </View>
-      
-    </TouchableOpacity>
- );
-
-  const renderItem1 = ({ item }) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      activeOpacity={0.85}
-      onPress={() => openProductDisplay(item)}>
-      <View style={styles.circleWrapper}>
-        <Image 
-          source={{ uri: item.image }} 
-          style={styles.image} 
-          resizeMode="cover"
-        />
-      </View>
-      <Text numberOfLines={1} style={styles.label}></Text>
     </TouchableOpacity>
   );
 
   
+  const renderCircleItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.circleItemContainer}
+      activeOpacity={0.85}
+      onPress={() => openProductDisplay(item)}
+    >
+      <View style={styles.circleWrapper}>
+        <Image
+          source={{ uri: item.image }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      </View>
+     
+    </TouchableOpacity>
+  );
 
   return (
-    <ScrollView style={styles.container}>
-    <View style={styles.container}>
-      <View style = {styles.header}>
-        <View style={{ flexDirection: 'row', justifyContent:"flex-start", gap: 10,  marginLeft:-70,marginBottom:10 }}>
-   <TouchableOpacity style = {styles.button1}>
-    <Text style={styles.text1}>Everyday Fit</Text>
-  </TouchableOpacity>
-
-  <TouchableOpacity style = {styles.button1}>
-    <Text style = {styles.text1}>Work Fit</Text>
-  </TouchableOpacity>
-</View>
-<View style={{ flexDirection: 'row', justifyContent:"flex-start", gap: 10, marginLeft:-70, marginBottom:10  }}>
-   <TouchableOpacity style = {styles.button}>
-    <Text style={styles.text1}>Winter Vacation Fit</Text>
-  </TouchableOpacity>
-
-  <TouchableOpacity style = {styles.button}>
-    <Text style = {styles.text1}>Data Night Fit</Text>
-  </TouchableOpacity>
-</View>
-<View style={{ flexDirection: 'row', justifyContent:"flex-start", gap: 15, marginLeft:-70, marginBottom:10  }}>
-   <TouchableOpacity style = {styles.button}>
-    <Text style={styles.text1}>Summer Vacation Fit</Text>
-  </TouchableOpacity>
-
-  <TouchableOpacity style = {styles.button1}>
-    <Text style = {styles.text1}>Night out Fit</Text>
-  </TouchableOpacity>
-</View>
-
-
- 
-
-        
-      </View>
-
-      <View style={{ width:"90%", height:1, backgroundColor:"#5c5c5c", justifyContent:"center", alignItems:"center", marginBottom:10, marginLeft:20  }}></View>
-      <View style={styles.container}>
+     <SafeAreaProvider>
+<SafeAreaView style={styles.mainContainer} edges={['top', 'left', 'right']}>
+  
       <FlatList
         data={data}
-        renderItem={renderItem1}
-        keyExtractor={(item) => item.id.toString()}
-        horizontal 
-       
-       
-      />
-    </View>
-      
-
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        renderItem={renderGridItem}
+        keyExtractor={item => `grid-${item.id}`}
         numColumns={2}
         columnWrapperStyle={styles.row}
+        ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.listPadding}
+        showsVerticalScrollIndicator={false}
       />
-    </View>
-    </ScrollView>
+   </SafeAreaView>
+
+     </SafeAreaProvider>
   );
 };
 
 export default OutfitFeed;
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
     backgroundColor: '#121212',
   },
-  
-  title: {
+  headerContainer: {
+    paddingVertical: hp('2%'),
+    backgroundColor: '#121212',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: wp('4%'),
+    marginBottom: hp('1.5%'),
+    gap: wp('2%'),
+  },
+  button: {
+    flex: 1,
+    paddingVertical: hp('1.5%'),
+    backgroundColor: '#4f4f4f',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  button1: {
+    flex: 1,
+    paddingVertical: hp('1.5%'),
+    backgroundColor: '#545454',
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#ffa5a5',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: wp('3.5%'),
+    fontWeight: '700',
+    color: '#ffffff',
+  },
+  divider: {
+    width: '92%',
+    height: 1,
+    backgroundColor: '#5c5c5c',
+    alignSelf: 'center',
+    marginVertical: hp('2%'),
+  },
+  horizontalListPadding: {
+    paddingHorizontal: wp('3%'),
+    paddingBottom: hp('2%'),
+  },
+  circleItemContainer: {
+    alignItems: 'center',
+    marginHorizontal: wp('2%'),
+  },
+  circleWrapper: {
+    width: CIRCLE_SIZE,
+    height: CIRCLE_SIZE,
+    borderRadius: CIRCLE_SIZE / 2,
+    overflow: 'hidden',
+    borderWidth: 3,
+    backgroundColor: '#f9f9f9',
+    borderColor: '#ffc2c2',
+  },
+  label: {
+    marginTop: hp('0.8%'),
+    fontSize: wp('3%'),
+    width: CIRCLE_SIZE,
+    textAlign: 'center',
     color: '#fff',
-    fontSize: 22,
-    fontWeight: 'bold',
   },
   listPadding: {
     paddingHorizontal: 15,
@@ -157,82 +210,18 @@ const styles = StyleSheet.create({
   },
   card: {
     width: COLUMN_WIDTH,
-    height: 250, 
+    height: hp('28%'), 
     marginBottom: 15,
     borderRadius: 15,
     overflow: 'hidden',
-    backgroundColor: '#F5EBE0', 
+    backgroundColor: '#F5EBE0',
   },
   imageContainer: {
     flex: 1,
-  },
-  Circlecard: {
-    width: COLUMN_WIDTH/1.5,
-    height: 160, 
-    marginBottom: 15,
-    borderRadius: 80,
-    overflow: 'hidden',
-    backgroundColor: '#F5EBE0', 
-  },
-  header :{
-    paddingVertical:20,
-    paddingHorizontal:80,
-    backgroundColor:"#121212",
-    borderBottomColor:"#ffffff"
-  },
-  button:{
-    paddingVertical:10,
-    paddingHorizontal:20,
-    backgroundColor:"#4f4f4f",
-    borderRadius:10, 
-    borderWidth:2,
-    
-  
-  },
-  button1:{
-    paddingVertical:10,
-    paddingHorizontal:20,
-    backgroundColor:"#545454",
-    borderRadius:10, 
-    borderWidth:2,
-    borderColor:"#ffa5a5",
-   
-  
-  },
-  text1:{
-    fontSize:14,
-    color:"#ffff"
-
-  },
-  listContent: {
-    paddingHorizontal: 10,
-  },
-  itemContainer: {
-    alignItems: 'center',
-    marginHorizontal: 10,
-  },
-  circleWrapper: {
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
-    borderRadius: CIRCLE_SIZE / 2, 
-    overflow: 'hidden', 
-    borderWidth: 4,
-    backgroundColor: '#f9f9f9',
-    borderColor:"#ffc2c2"
+    padding: 10,
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  label: {
-    marginTop: 8,
-    fontSize: 12,
-    width: CIRCLE_SIZE,
-    textAlign: 'center',
-    color: '#333',
-  },
-    
-  
-  
- 
 });

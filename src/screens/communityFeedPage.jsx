@@ -10,7 +10,7 @@ import {
   Dimensions,
   FlatList,
   StatusBar,
-    ActivityIndicator,
+  ActivityIndicator,
 } from 'react-native';
 import { ShoppingBag } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -25,7 +25,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
 
 import LinearGradient from 'react-native-linear-gradient';
 import { Images, BookmarkPlus } from 'lucide-react-native';
@@ -43,7 +42,7 @@ const CommunityFeedPage = () => {
       .catch(error => console.error(error));
   }, []);
 
-  const openProductDisplay = (item) => {
+  const openProductDisplay = item => {
     if (navigation) {
       navigation.push('ProductDisplay', { product: item });
     }
@@ -55,7 +54,9 @@ const CommunityFeedPage = () => {
       <View style={styles.postHeader}>
         <View style={styles.profileSection}>
           <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' }}
+            source={{
+              uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+            }}
             style={styles.profileImage}
           />
           <View>
@@ -65,9 +66,8 @@ const CommunityFeedPage = () => {
         <Text style={styles.postRightLabel}>3 days ago</Text>
       </View>
 
-     
-      <TouchableOpacity 
-        activeOpacity={0.9} 
+      <TouchableOpacity
+        activeOpacity={0.9}
         onPress={() => openProductDisplay(item)}
         style={styles.postMainBody}
       >
@@ -78,20 +78,18 @@ const CommunityFeedPage = () => {
         />
       </TouchableOpacity>
 
-      
       <View style={styles.detailsArea}>
         <View style={styles.descriptionLayoutRow}>
           <Text style={styles.description}>
             Crisp whites, clean cuts, and coffee in hand
           </Text>
           <TouchableOpacity style={styles.cartFloatingIconContainer}>
-           <ShoppingBag color="#fff" />
+            <ShoppingBag color="#fff" />
           </TouchableOpacity>
         </View>
         <Text style={styles.tagsText}>#CollageCasual #OOTD #CasualChic</Text>
       </View>
 
-    
       <View style={styles.leftInteraction}>
         <View style={styles.interactionGroup}>
           <TouchableOpacity style={styles.interactionButton}>
@@ -105,18 +103,19 @@ const CommunityFeedPage = () => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.interactionButton}>
-            <FontAwesomeIcon icon={faArrowUpFromBracket} color="#ffffff" size={26} />
+            <FontAwesomeIcon
+              icon={faArrowUpFromBracket}
+              color="#ffffff"
+              size={26}
+            />
             <Text style={styles.numberText}>213</Text>
           </TouchableOpacity>
           <TouchableOpacity>
-          <BookmarkPlus size={26} color="#ffffff" />
-        </TouchableOpacity>
+            <BookmarkPlus size={26} color="#ffffff" />
+          </TouchableOpacity>
         </View>
-
-        
       </View>
 
-    
       <TextInput
         style={styles.commentBox}
         placeholder="your comments..."
@@ -124,7 +123,6 @@ const CommunityFeedPage = () => {
         multiline
       />
 
-    
       <View style={styles.footerRow}>
         <TouchableOpacity>
           <FontAwesomeIcon icon={faFaceSmile} color="#ffffff" size={26} />
@@ -170,14 +168,11 @@ const CommunityFeedPage = () => {
         </View>
       </View>
 
-      
       <View style={styles.buttonRow}>
-       
-
         <TouchableOpacity style={styles.buttonInactive}>
           <Text style={styles.buttonTextMuted}>🔥 Trending</Text>
         </TouchableOpacity>
-         <TouchableOpacity style={styles.buttonActive}>
+        <TouchableOpacity style={styles.buttonActive}>
           <LinearGradient
             colors={['#707070', '#1d1d1d']}
             style={styles.gradientTab}
@@ -191,23 +186,20 @@ const CommunityFeedPage = () => {
     </View>
   );
 
-  
- 
-  const [nextCursor, setNextCursor] = useState(5); 
-  const [isListLoading, setIsListLoading] = useState(false); 
-  const [hasMoreData, setHasMoreData] = useState(true); 
+  const [nextCursor, setNextCursor] = useState(5);
+  const [isListLoading, setIsListLoading] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
 
   const fetchNextCursorPage = () => {
     if (isListLoading || !hasMoreData) return;
 
     setIsListLoading(true);
 
-   
     fetch(`https://fakestoreapi.com{nextCursor + 5}`)
       .then(response => response.json())
       .then(json => {
         if (json.length === data.length) {
-          setHasMoreData(false); 
+          setHasMoreData(false);
         } else {
           setData(json);
           setNextCursor(prevCursor => prevCursor + 5);
@@ -232,7 +224,7 @@ const CommunityFeedPage = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-    
+
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -261,8 +253,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: wp('4%'), 
-    paddingVertical: hp('1.8%'), 
+    paddingHorizontal: wp('4%'),
+    paddingVertical: hp('1.8%'),
   },
   headerText: {
     fontSize: wp('6%'),
@@ -275,9 +267,9 @@ const styles = StyleSheet.create({
   },
   smallBox: {
     width: wp('12.5%'),
-    height: wp('12.5%'), 
+    height: wp('12.5%'),
     backgroundColor: '#363636',
-    marginLeft: wp('2.5%'), 
+    marginLeft: wp('2.5%'),
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
@@ -287,11 +279,11 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     backgroundColor: '#353535',
-    marginHorizontal: wp('4%'), 
+    marginHorizontal: wp('4%'),
     marginTop: hp('0.8%'),
     borderRadius: 14,
-    padding: wp('1%'), 
-    gap: wp('1.5%'), 
+    padding: wp('1%'),
+    gap: wp('1.5%'),
   },
   buttonActive: {
     flex: 1,
@@ -307,7 +299,7 @@ const styles = StyleSheet.create({
   },
   buttonInactive: {
     flex: 1,
-    paddingVertical: hp('1.2%'), 
+    paddingVertical: hp('1.2%'),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
@@ -315,22 +307,22 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#ffffff',
     fontWeight: '900',
-    fontSize: wp('4%'), 
+    fontSize: wp('4%'),
   },
   buttonTextMuted: {
     color: '#ffffff',
     fontWeight: '900',
-    fontSize: wp('4%'), 
+    fontSize: wp('4%'),
   },
   listPadding: {
-    paddingBottom: hp('4%'), 
+    paddingBottom: hp('4%'),
   },
   postCard: {
     backgroundColor: '#363636',
     marginHorizontal: wp('4%'),
     borderRadius: 18,
-    padding: wp('4%'), 
-    marginTop: hp('2%'), 
+    padding: wp('4%'),
+    marginTop: hp('2%'),
     borderWidth: 1,
     borderColor: '#161616',
   },
@@ -338,7 +330,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: hp('1.5%'), 
+    marginBottom: hp('1.5%'),
   },
   profileSection: {
     flexDirection: 'row',
@@ -346,20 +338,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profileImage: {
-    width: wp('9.5%'), 
+    width: wp('9.5%'),
     height: wp('9.5%'),
-    borderRadius: wp('4.75%'), 
-    marginRight: wp('2.5%'), 
+    borderRadius: wp('4.75%'),
+    marginRight: wp('2.5%'),
     borderWidth: 1,
     borderColor: '#f06449',
   },
   username: {
     fontWeight: '900',
-    fontSize: wp('3.8%'), 
+    fontSize: wp('3.8%'),
     color: '#ffffff',
   },
   postRightLabel: {
-    fontSize: wp('3%'), 
+    fontSize: wp('3%'),
     color: '#ffffff',
   },
   postMainBody: {
@@ -369,71 +361,71 @@ const styles = StyleSheet.create({
   },
   imageView: {
     width: '100%',
-    aspectRatio: 1 / 0.95, 
+    aspectRatio: 1 / 0.95,
   },
   detailsArea: {
-    marginTop: hp('1.5%'), 
-    marginBottom: hp('1.5%'), 
+    marginTop: hp('1.5%'),
+    marginBottom: hp('1.5%'),
   },
   descriptionLayoutRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: wp('3%'), 
+    gap: wp('3%'),
   },
   description: {
-    fontSize: wp('4.5%'), 
+    fontSize: wp('4.5%'),
     color: '#ffffff',
     fontWeight: '900',
-    lineHeight: wp('5%'), 
+    lineHeight: wp('5%'),
     flex: 1,
     padding: wp('2.5%'),
   },
   cartFloatingIconContainer: {
-    padding: wp('2.5%'), 
+    padding: wp('2.5%'),
     backgroundColor: '#363636',
   },
   cartIcon: {
-    width: wp('6.5%'), 
-    height: wp('6.5%'), 
+    width: wp('6.5%'),
+    height: wp('6.5%'),
   },
   tagsText: {
     color: '#ffffff',
     marginTop: hp('0.8%'),
     fontWeight: '500',
-    fontSize: wp('3.8%'), 
-    marginLeft: wp('1.5%'), 
+    fontSize: wp('3.8%'),
+    marginLeft: wp('1.5%'),
   },
   leftInteraction: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: hp('0.3%'), 
-    paddingTop: hp('1.5%'), 
+    paddingVertical: hp('0.3%'),
+    paddingTop: hp('1.5%'),
   },
   interactionGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp('9%'), 
+    gap: wp('9%'),
   },
   interactionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp('1.5%'), 
+    gap: wp('1.5%'),
   },
   numberText: {
     color: '#ffffff',
-    fontSize: wp('3.2%'), 
+    fontSize: wp('3.2%'),
     fontWeight: '600',
   },
   commentBox: {
     backgroundColor: '#3d3d3d',
     borderRadius: 10,
-    paddingHorizontal: wp('3%'), 
+    paddingHorizontal: wp('3%'),
     paddingTop: hp('1.2%'),
-    paddingBottom: hp('1.2%'), 
-    minHeight: hp('10%'), 
-    marginTop: hp('1.8%'), 
+    paddingBottom: hp('1.2%'),
+    minHeight: hp('10%'),
+    marginTop: hp('1.8%'),
     color: '#ffffff',
     fontSize: wp('3.8%'),
     borderWidth: 1,
@@ -444,16 +436,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: hp('1.5%'), 
+    marginTop: hp('1.5%'),
   },
   footerButtonsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp('2%'), 
+    gap: wp('2%'),
   },
   buttonbox1: {
-    paddingVertical: hp('1.5%'), 
-    paddingHorizontal: wp('6%'), 
+    paddingVertical: hp('1.5%'),
+    paddingHorizontal: wp('6%'),
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
@@ -464,11 +456,11 @@ const styles = StyleSheet.create({
   cancelTxt: {
     color: '#ffffff',
     fontWeight: '900',
-    fontSize: wp('4%'), 
+    fontSize: wp('4%'),
   },
   buttonbox: {
-    paddingVertical: hp('1.5%'), 
-    paddingHorizontal: wp('6.5%'), 
+    paddingVertical: hp('1.5%'),
+    paddingHorizontal: wp('6.5%'),
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
@@ -479,7 +471,5 @@ const styles = StyleSheet.create({
     fontSize: wp('4%'),
   },
 });
-
-
 
 export default CommunityFeedPage;

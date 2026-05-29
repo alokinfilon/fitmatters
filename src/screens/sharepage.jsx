@@ -14,7 +14,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import LinearGradient from 'react-native-linear-gradient'
+import LinearGradient from 'react-native-linear-gradient';
 
 const ShareInvitePage = ({ navigation }) => {
   const [activeModal, setActiveModal] = useState(null);
@@ -22,33 +22,54 @@ const ShareInvitePage = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation?.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation?.goBack()}
+          style={styles.backButton}
+        >
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
         <Text style={styles.heading}>Share your Invite</Text>
-        <Text style={styles.subHeading}>Earn rewards When your friend joins using your code.</Text>
+        <Text style={styles.subHeading}>
+          Earn rewards When your friend joins using your code.
+        </Text>
 
         {/* Option 1: Email */}
-        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('email')} activeOpacity={0.75}>
+        <TouchableOpacity
+          style={styles.box1}
+          onPress={() => setActiveModal('email')}
+          activeOpacity={0.75}
+        >
           <Text style={styles.boxText}>Invite via Email</Text>
           <Text style={styles.subHeading1}>Opens email invite modal</Text>
         </TouchableOpacity>
 
         {/* Option 2: Link Share */}
-        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('link')} activeOpacity={0.75}>
+        <TouchableOpacity
+          style={styles.box1}
+          onPress={() => setActiveModal('link')}
+          activeOpacity={0.75}
+        >
           <Text style={styles.boxText}>Share Link</Text>
-          <Text style={styles.subHeading1}>Copies referral link + opens share sheet</Text>
+          <Text style={styles.subHeading1}>
+            Copies referral link + opens share sheet
+          </Text>
         </TouchableOpacity>
 
         {/* Option 3: WhatsApp / SMS */}
-        <TouchableOpacity style={styles.box1} onPress={() => setActiveModal('success')} activeOpacity={0.75}>
+        <TouchableOpacity
+          style={styles.box1}
+          onPress={() => setActiveModal('success')}
+          activeOpacity={0.75}
+        >
           <Text style={styles.boxText}>Invite via WhatsApp / SMS</Text>
-          <Text style={styles.subHeading1}>Send your invite through messages</Text>
+          <Text style={styles.subHeading1}>
+            Send your invite through messages
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -61,7 +82,10 @@ const ShareInvitePage = ({ navigation }) => {
         <View style={styles.modalOverlay}>
           {activeModal === 'email' && (
             <View style={[styles.modalCard, styles.emailCard]}>
-              <TouchableOpacity style={styles.closeIcon} onPress={() => setActiveModal(null)}>
+              <TouchableOpacity
+                style={styles.closeIcon}
+                onPress={() => setActiveModal(null)}
+              >
                 <X color="#ffffff" size={22} />
               </TouchableOpacity>
 
@@ -87,26 +111,28 @@ const ShareInvitePage = ({ navigation }) => {
               />
 
               <Text style={styles.inviteCopy}>
-                Hey! I've been using Out.Fit.Find to get curated outfit looks that match my vibe.
-                Use my code OFFERIEND50 and get Rs 50 off your first month!
+                Hey! I've been using Out.Fit.Find to get curated outfit looks
+                that match my vibe. Use my code OFFERIEND50 and get Rs 50 off
+                your first month!
               </Text>
 
-              
-               <LinearGradient 
-                      colors={['#f0a374', '#e77a37', '#f0a374']} 
-                      style={styles.primaryButton}
-                      start={{ x: 0, y: 0 }} 
-                      end={{ x: 1, y: 0 }} 
-                      
-                    >
-                     <Text style={styles.primaryButtonText}>Send Invite</Text>
-                    </LinearGradient>
+              <LinearGradient
+                colors={['#f0a374', '#e77a37', '#f0a374']}
+                style={styles.primaryButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.primaryButtonText}>Send Invite</Text>
+              </LinearGradient>
             </View>
           )}
 
           {activeModal === 'success' && (
             <View style={[styles.modalCard, styles.statusCard]}>
-              <TouchableOpacity style={styles.closeIcon} onPress={() => setActiveModal(null)}>
+              <TouchableOpacity
+                style={styles.closeIcon}
+                onPress={() => setActiveModal(null)}
+              >
                 <X color="#ffffff" size={22} />
               </TouchableOpacity>
 
@@ -115,24 +141,27 @@ const ShareInvitePage = ({ navigation }) => {
               </View>
 
               <Text style={styles.successText}>
-                Invite sent successfully! You'll earn Rs 50 once your friend subscribes.
+                Invite sent successfully! You'll earn Rs 50 once your friend
+                subscribes.
               </Text>
 
-              <LinearGradient 
-                      colors={['#f0a374', '#e77a37', '#f0a374']} 
-                      style={styles.primaryButton}
-                      start={{ x: 0, y: 0 }} 
-                      end={{ x: 1, y: 0 }} 
-                      
-                    >
-                     <Text style={styles.primaryButtonText}>My Referrals</Text>
-                    </LinearGradient>
+              <LinearGradient
+                colors={['#f0a374', '#e77a37', '#f0a374']}
+                style={styles.primaryButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.primaryButtonText}>My Referrals</Text>
+              </LinearGradient>
             </View>
           )}
 
           {activeModal === 'link' && (
             <View style={[styles.modalCard, styles.statusCard]}>
-              <TouchableOpacity style={styles.closeIcon} onPress={() => setActiveModal(null)}>
+              <TouchableOpacity
+                style={styles.closeIcon}
+                onPress={() => setActiveModal(null)}
+              >
                 <X color="#ffffff" size={22} />
               </TouchableOpacity>
 
@@ -141,17 +170,18 @@ const ShareInvitePage = ({ navigation }) => {
               </View>
 
               <Text style={styles.modalTitle}>Share via Link</Text>
-              <Text style={styles.linkText}>https://outfitfind.in/invite/OFFFRIEND50</Text>
+              <Text style={styles.linkText}>
+                https://outfitfind.in/invite/OFFFRIEND50
+              </Text>
 
-               <LinearGradient 
-                      colors={['#f0a374', '#e77a37', '#f0a374']} 
-                      style={styles.primaryButton}
-                      start={{ x: 0, y: 0 }} 
-                      end={{ x: 1, y: 0 }} 
-                      
-                    >
-                     <Text style={styles.primaryButtonText}>Copy</Text>
-                    </LinearGradient>
+              <LinearGradient
+                colors={['#f0a374', '#e77a37', '#f0a374']}
+                style={styles.primaryButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.primaryButtonText}>Copy</Text>
+              </LinearGradient>
             </View>
           )}
         </View>

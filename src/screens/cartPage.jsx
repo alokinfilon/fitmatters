@@ -99,7 +99,6 @@ const HelloWorldApp = ({ navigation }) => {
                 </View>
               </View>
             </TouchableOpacity>
-            
           </View>
           <View style={[styles.discrptionView]}>
             <View style={styles.alignRow1}>
@@ -127,7 +126,9 @@ const HelloWorldApp = ({ navigation }) => {
 
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Category:</Text>
-              <Text style={styles.summaryValue}>Topwear (1) | Footwear (1)</Text>
+              <Text style={styles.summaryValue}>
+                Topwear (1) | Footwear (1)
+              </Text>
             </View>
 
             <View style={styles.summaryRow}>
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
     padding: wp('4%'),
   },
   policyLink: {
-    fontWeight: '900', 
+    fontWeight: '900',
     textDecorationLine: 'underline',
   },
   policyText: {
@@ -313,33 +314,33 @@ const styles = StyleSheet.create({
     marginLeft: wp('1.2%'),
     fontWeight: '900',
   },
-    productSummaryBox: {
+  productSummaryBox: {
     backgroundColor: '#000000',
-    marginHorizontal: wp('4%'),   
-    marginTop: hp('2%'),          
+    marginHorizontal: wp('4%'),
+    marginTop: hp('2%'),
     borderRadius: 16,
-    padding: wp('4%'),            
-   
-    gap: hp('1.2%'),               
+    padding: wp('4%'),
+
+    gap: hp('1.2%'),
   },
   summaryRow: {
     flexDirection: 'row',
-   gap: wp('2%'),
+    gap: wp('2%'),
     alignItems: 'center',
   },
   summaryTitle: {
     color: '#ffffff',
-    fontSize: wp('4.5%'),      
+    fontSize: wp('4.5%'),
     fontWeight: '900',
   },
   summaryLabel: {
     color: '#e9e9e9',
-    fontSize: wp('4%'),          
+    fontSize: wp('4%'),
     fontWeight: '500',
   },
   summaryValue: {
     color: '#ffffff',
-    fontSize: wp('4%'),         
+    fontSize: wp('4%'),
     fontWeight: '900',
   },
   orderLine: {
@@ -362,7 +363,7 @@ const styles = StyleSheet.create({
   timelineIcon: {
     width: wp('8.5%'),
     height: wp('8.5%'),
-    borderRadius: wp('4.25%'), 
+    borderRadius: wp('4.25%'),
     backgroundColor: '#383a3c',
     borderColor: '#777b7f',
     borderWidth: 1,
@@ -416,7 +417,7 @@ const styles = StyleSheet.create({
     marginBottom: hp('1%'),
     fontWeight: '900',
     marginLeft: wp('5%'),
-    fontWeight:"900"
+    fontWeight: '900',
   },
   subHeading2: {
     fontSize: wp('3.8%'),
@@ -427,7 +428,7 @@ const styles = StyleSheet.create({
   },
   buttonbox1: {
     paddingVertical: hp('2.2%'),
-    width: '85%', 
+    width: '85%',
     alignSelf: 'center',
     borderRadius: 20,
     alignItems: 'center',

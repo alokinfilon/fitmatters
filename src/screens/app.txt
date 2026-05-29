@@ -18,12 +18,12 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import LoginPage from './src/screens/login';
-import OutfitFeed from './src/screens/homeScreen';
-import ProductDisplayPage from './src/screens/ProductDisplayPage';
-import CommunityFeedPage from './src/screens/communityFeedPage';
-import CartPage from './src/screens/cartPage';
-import ShareInvitePage from './src/screens/sharepage';
+import LoginPage from './src/pages/login';
+import OutfitFeed from './src/pages/homeScreen';
+import ProductDisplayPage from './src/pages/ProductDisplayPage';
+import CommunityFeedPage from './src/pages/communityFeedPage';
+import CartPage from './src/pages/cartPage';
+import ShareInvitePage from './src/pages/sharepage';
 
 const Stack = createNativeStackNavigator();
 

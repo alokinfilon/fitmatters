@@ -20,13 +20,14 @@ import {
   Apple 
 } from 'lucide-react-native';
 import { Tokens } from '../theme/theme'; 
+import { EyeIcon } from 'lucide-react-native'; 
 
 export default function SignUpScreen({ navigation }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(true);
 
-  const iconSize = Tokens.scaleAsset(18);
+  const iconSize = Tokens.scaleAsset(24);
   const feedbackIconSize = Tokens.scaleAsset(14);
   const socialIconSize = Tokens.scaleAsset(20);
 
@@ -45,7 +46,7 @@ export default function SignUpScreen({ navigation }) {
         >
           <View style={styles.mainContainer}>
             
-            <View style={styles.headerFrame}>
+            <View style={styles.header}>
               <Text style={styles.titleText}>Create Your Account</Text>
               <Text style={styles.subtitleText}>
                 Join Out.Fit.Find to discover curated looks tailored to your style and budget.
@@ -54,7 +55,7 @@ export default function SignUpScreen({ navigation }) {
 
             <View style={styles.inputFieldsContainer}>
               
-              <View style={styles.inputOuterWrapper}>
+              <View style={styles.inputOuterView}>
                 <LinearGradient
                   colors={['#333637', '#242426']}
                   start={{ x: 0.01, y: 0.5 }}
@@ -71,8 +72,8 @@ export default function SignUpScreen({ navigation }) {
                 </LinearGradient>
               </View>
 
-              <View style={styles.frame510}>
-                <View style={styles.inputOuterWrapper}>
+              <View style={styles.passwordView}>
+                <View style={styles.inputOuterView}>
                   <LinearGradient
                     colors={['#333637', '#242426']}
                     start={{ x: 0.01, y: 0.5 }}
@@ -100,10 +101,10 @@ export default function SignUpScreen({ navigation }) {
                   </LinearGradient>
                 </View>
 
-                <View style={styles.frame169}>
+                <View style={styles.strengthView}>
                   <View style={styles.strengthTextRow}>
-                    <Text style={styles.passwordStrengthLabel}>Password Strength</Text>
-                    <Text style={styles.strongValueLabel}>Strong</Text>
+                    <Text style={styles.passwordStrengthText}>Password Strength</Text>
+                    <Text style={styles.strongValueText}>Strong</Text>
                   </View>
 
                   <View style={styles.navigationMeterRow}>
@@ -113,9 +114,9 @@ export default function SignUpScreen({ navigation }) {
                     <View style={[styles.meterBar, { backgroundColor: '#E5E5E5' }]} />
                   </View>
 
-                  <View style={styles.passwordRequirementContainer}>
-                    <Text style={styles.requirementHeader}>Password must include</Text>
-                    <View style={styles.frame165}>
+                  <View style={styles.requirementView}>
+                    <Text style={styles.requirementText}>Password must include</Text>
+                    <View style={styles.indicationView}>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
                           <Check size={feedbackIconSize} color="#2BBA52" strokeWidth={3} />
@@ -144,14 +145,14 @@ export default function SignUpScreen({ navigation }) {
                   </View>
                 </View>
 
-                <View style={styles.infoBarContainerOuter}>
+                <View style={styles.infoBarView}>
                   <LinearGradient
                     colors={['#242525', '#1A1C1D']}
                     start={{ x: 0.02, y: 0.5 }}
                     end={{ x: 0.98, y: 0.5 }}
-                    style={styles.infoBarContainerInner}
+                    style={styles.infoBarInnerView}
                   >
-                    <Info size={iconSize} color="#E5E5E5" style={styles.infoIconSpacing} />
+                    <Info size={34} color="#E5E5E5" style={styles.infoIconSpacing} />
                     <Text style={styles.infoBarText}>
                       Don’t use spaces, your name, email, or previously used passwords.
                     </Text>
@@ -159,8 +160,8 @@ export default function SignUpScreen({ navigation }) {
                 </View>
               </View>
 
-              <View style={styles.frame410}>
-                <View style={styles.inputOuterWrapper}>
+              <View style={styles.inputView}>
+                <View style={styles.inputOuterView}>
                   <LinearGradient
                     colors={['#333637', '#242426']}
                     start={{ x: 0.01, y: 0.5 }}
@@ -202,10 +203,11 @@ export default function SignUpScreen({ navigation }) {
                 {termsAccepted ? (
                   <LinearGradient
                     colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                    start={{ x: 0.01, y: 0.5 }}
-                    end={{ x: 0.99, y: 0.5 }}
+                   start={{ x: 0.1 , y: 0.5 }}
+                    end={{ x: 0.7, y: 0.5 }}
                     style={styles.checkmarkBoxActive}
                   >
+                    
                     <Check size={feedbackIconSize} color="#FFFFFF" strokeWidth={3} />
                   </LinearGradient>
                 ) : (
@@ -215,21 +217,21 @@ export default function SignUpScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.frame8Buttons}>
+            <View style={styles.continueButtonView}>
               <TouchableOpacity activeOpacity={0.85} style={styles.primaryButtonWrapper}
               onPress={() => navigation.replace('Home')}
               >
                 <LinearGradient
                   colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                  start={{ x: 0.01, y: 0.5 }}
-                  end={{ x: 0.99, y: 0.5 }}
+                  start={{ x: 0.1, y: 0.5 }}
+                  end={{ x: 0.9, y: 0.6 }}
                   style={styles.primaryButton}
                 >
                   <Text style={styles.primaryButtonText}>Continue</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
-              <View style={styles.frame10Socials}>
+              <View style={styles.socialsView}>
                 <Text style={styles.orSignUpWithText}>— or sign up with —</Text>
 
                 <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
@@ -243,7 +245,7 @@ export default function SignUpScreen({ navigation }) {
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.frame6Footer}>
+              <View style={styles.footerView}>
                 <Text style={styles.footerText}>
                   Already have an account? <Text style={styles.loginLink}>Log In</Text>
                 </Text>
@@ -275,7 +277,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     alignItems: 'center',
   },
-  headerFrame: {
+  header: {
     width: '100%',
     marginBottom: Tokens.gaps.separator,
     gap: Tokens.gaps.large,
@@ -297,7 +299,7 @@ const styles = StyleSheet.create({
     gap: Tokens.gaps.xlarge,
     marginBottom: Tokens.gaps.section,
   },
-  inputOuterWrapper: {
+  inputOuterView: {
     width: '100%',
     height: Tokens.components.inputHeight,
     borderRadius: Tokens.components.radiusInput,
@@ -318,8 +320,9 @@ const styles = StyleSheet.create({
     color: '#E5E5E5',
     padding: 0,
     height: '100%',
+    
   },
-  frame510: {
+  passwordView: {
     width: '100%',
     gap: Tokens.gaps.large,
   },
@@ -330,7 +333,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: Tokens.gaps.small,
   },
-  frame169: {
+  strengthView: {
     width: '100%',
     gap: Tokens.gaps.small,
   },
@@ -341,13 +344,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 24,
   },
-  passwordStrengthLabel: {
+  passwordStrengthText: {
     fontFamily: Tokens.typography.families.semiBold,
     fontSize: Tokens.typography.sizes.body,
     lineHeight: Tokens.typography.lineHeights.body,
     color: '#FFFFFF',
   },
-  strongValueLabel: {
+  strongValueText: {
     fontFamily: Tokens.typography.families.medium,
     fontSize: Tokens.typography.sizes.small,
     lineHeight: Tokens.typography.lineHeights.small,
@@ -365,18 +368,18 @@ const styles = StyleSheet.create({
     height: Tokens.components.barMetricHeight,
     borderRadius: Tokens.components.radiusBar,
   },
-  passwordRequirementContainer: {
+  requirementView: {
     width: '100%',
     gap: Tokens.gaps.medium,
     marginTop: Tokens.gaps.small,
   },
-  requirementHeader: {
+  requirementText: {
     fontFamily: Tokens.typography.families.semiBold,
     fontSize: Tokens.typography.sizes.small,
     lineHeight: Tokens.typography.lineHeights.small,
     color: '#E5E5E5',
   },
-  frame165: {
+  indicationView: {
     width: '100%',
     gap: Tokens.gaps.small,
   },
@@ -398,13 +401,13 @@ const styles = StyleSheet.create({
     lineHeight: Tokens.typography.lineHeights.small,
     color: '#E5E5E5',
   }, 
-  infoBarContainerOuter: {
+  infoBarView: {
     width: '100%',
     minHeight: Tokens.components.infoMinHeight,
     borderRadius: Tokens.components.radiusInput,
     overflow: 'hidden',
   },
-  infoBarContainerInner: {
+  infoBarInnerView: {
     flex: 1,
     borderWidth: 0.5,
     borderColor: '#323537',
@@ -423,7 +426,7 @@ const styles = StyleSheet.create({
     lineHeight: Tokens.typography.lineHeights.small,
     color: '#E5E5E5',
   },
-  frame410: {
+  inputView: {
     width: '100%',
     gap: Tokens.gaps.small,
   },
@@ -475,7 +478,7 @@ const styles = StyleSheet.create({
     lineHeight: Tokens.typography.lineHeights.body,
     color: '#E5E5E5',
   },
-  frame8Buttons: {
+ continueButtonView: {
     width: '100%',
     gap: Tokens.gaps.large,
     alignItems: 'center',
@@ -503,7 +506,7 @@ const styles = StyleSheet.create({
     lineHeight: Tokens.typography.lineHeights.title,
     color: '#FFFFFF',
   },
-  frame10Socials: {
+  socialsView: {
     width: '100%',
     gap: Tokens.gaps.large,
     alignItems: 'center',
@@ -535,7 +538,7 @@ const styles = StyleSheet.create({
     lineHeight: Tokens.typography.lineHeights.title,
     color: '#FFFFFF',
   },
-  frame6Footer: {
+  footerView: {
     width: '100%',
     height: 24,
     justifyContent: 'center',
@@ -553,5 +556,12 @@ const styles = StyleSheet.create({
     fontFamily: Tokens.typography.families.semiBold,
     textDecorationLine: 'underline',
     color: '#FFFFFF',
+  },
+   checkmarkCircleWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#2BBA52',          
+    backgroundColor: '#2BBA521A',    
   },
 });

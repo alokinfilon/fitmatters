@@ -1,475 +1,690 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
   StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  TextInput,
-  Image,
-  Dimensions,
+  Text,
+  View,
   FlatList,
-  StatusBar,
+  Image,
+  TouchableOpacity,
   ActivityIndicator,
+  StatusBar,
+  TextInput,
+   KeyboardAvoidingView, 
+    Keyboard, 
+      TouchableWithoutFeedback, 
 } from 'react-native';
-import { ShoppingBag } from 'lucide-react-native';
-import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBell } from '@fortawesome/free-regular-svg-icons/faBell';
-import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
-import { faHeart } from '@fortawesome/free-regular-svg-icons/faHeart';
-import { faComment } from '@fortawesome/free-regular-svg-icons/faComment';
-import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons/faArrowUpFromBracket';
-import { faFaceSmile } from '@fortawesome/free-regular-svg-icons/faFaceSmile';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { Images, BookmarkPlus } from 'lucide-react-native';
+import { Shadow } from 'react-native-shadow-2';
+import { 
+  Home as HomeIcon, 
+  Search, 
+  Image as CommunityIcon, 
+  ShoppingBag, 
+  MoreHorizontal,
+  Bell,
+  Layers,
+  Plus,
+  Heart,
+  MessageSquare,
+  Share2,
+  Bookmark,
+  Smile
+} from 'lucide-react-native';
+import { Tokens } from '../theme/theme'; 
 
-const { width } = Dimensions.get('window');
+const MASTER_LIMIT = 100;
 
-const CommunityFeedPage = () => {
-  const navigation = useNavigation();
-  const [data, setData] = useState([]);
+const CommunitySpace = ({ navigation }) => {
+  const [posts, setPosts] = useState([]);
+  const [activeTab, setActiveTab] = useState('Recent'); 
+  const [loading, setLoading] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  
+  const [activePostCommentId, setActivePostCommentId] = useState(null);
 
   useEffect(() => {
-    fetch('https://fakestoreapi.com/products')
-      .then(response => response.json())
-      .then(json => setData(json))
-      .catch(error => console.error(error));
+    fetchCommunityPosts();
   }, []);
 
-  const openProductDisplay = item => {
-    if (navigation) {
-      navigation.push('ProductDisplay', { product: item });
+  const fetchCommunityPosts = () => {
+    setLoading(true);
+    fetch(`https://dummyjson.com/products`)
+      .then(response => response.json())
+      .then(json => {
+        if (json && json.products) {
+          const formattedPosts = json.products.slice(0, 15).map((product, index) => ({
+            id: `post-${product.id}`,
+            username: index % 2 === 0 ? 'Brooklyn Simmons' : 'Brooklyn Simmons',
+            userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80',
+            timeAgo: `${index + 2} days ago`,
+            postImage: product.images?.[0] || product.thumbnail,
+            title: product.title === "Essence Mascara Lash Princess" ? "Crisp whites, clean cuts, and coffee in hand ☕" : product.description,
+            tags: ['#CollegeCasual', '#OOTD', '#CasualChic'],
+            likes: 213 + index,
+            commentsCount: 12 + index,
+            shares: 21 + index,
+          }));
+          setPosts(formattedPosts);
+        }
+      })
+      .catch(error => console.error("Social data pull fail:", error))
+      .finally(() => setLoading(false));
+  };
+
+  // const openProductDisplay = item => {
+  //   if (navigation && navigation.push) {
+  //     navigation.push('ProductDisplay', { product: item });
+  //   }
+  // };
+
+  const handleToggleComment = (postId) => {
+    if (activePostCommentId === postId) {
+      setActivePostCommentId(null); 
+    } else {
+      setActivePostCommentId(postId); 
+      setCommentText('');
     }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.postCard}>
-      {/* Feed User Card Header Row */}
-      <View style={styles.postHeader}>
-        <View style={styles.profileSection}>
-          <Image
-            source={{
-              uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-            }}
-            style={styles.profileImage}
-          />
-          <View>
-            <Text style={styles.username}>Brooklyn Simmons</Text>
-          </View>
+  const renderPostCard = ({ item }) => (
+    <LinearGradient
+      colors={['#242525', '#1A1C1D']}
+      start={{ x: 0.02, y: 0.5 }}
+      end={{ x: 0.98, y: 0.5 }}
+      style={styles.postCardOuterFrame}
+    >
+     
+      <View style={styles.postHeaderRow}>
+        <View style={styles.postHeaderUserGroup}>
+          <Image source={{ uri: item.userAvatar }} style={styles.userAvatarProfilePic} />
+          <Text numberOfLines={1} style={styles.userNameText}>{item.username}</Text>
         </View>
-        <Text style={styles.postRightLabel}>3 days ago</Text>
+        <Text style={styles.timeStampText}>{item.timeAgo}</Text>
       </View>
 
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => openProductDisplay(item)}
-        style={styles.postMainBody}
-      >
-        <Image
-          source={{ uri: item.image }}
-          style={styles.imageView}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-
-      <View style={styles.detailsArea}>
-        <View style={styles.descriptionLayoutRow}>
-          <Text style={styles.description}>
-            Crisp whites, clean cuts, and coffee in hand
-          </Text>
-          <TouchableOpacity style={styles.cartFloatingIconContainer}>
-            <ShoppingBag color="#fff" />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.tagsText}>#CollageCasual #OOTD #CasualChic</Text>
-      </View>
-
-      <View style={styles.leftInteraction}>
-        <View style={styles.interactionGroup}>
-          <TouchableOpacity style={styles.interactionButton}>
-            <FontAwesomeIcon icon={faHeart} color="#ffffff" size={26} />
-            <Text style={styles.numberText}>213</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.interactionButton}>
-            <FontAwesomeIcon icon={faComment} color="#ffffff" size={26} />
-            <Text style={styles.numberText}>12</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.interactionButton}>
-            <FontAwesomeIcon
-              icon={faArrowUpFromBracket}
-              color="#ffffff"
-              size={26}
-            />
-            <Text style={styles.numberText}>213</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <BookmarkPlus size={26} color="#ffffff" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <TextInput
-        style={styles.commentBox}
-        placeholder="your comments..."
-        placeholderTextColor="#cecece"
-        multiline
-      />
-
-      <View style={styles.footerRow}>
-        <TouchableOpacity>
-          <FontAwesomeIcon icon={faFaceSmile} color="#ffffff" size={26} />
-        </TouchableOpacity>
-
-        <View style={styles.footerButtonsContainer}>
-          <TouchableOpacity style={[styles.buttonbox1, styles.cancelBtn]}>
-            <Text style={styles.cancelTxt}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity activeOpacity={0.8}>
-            <LinearGradient
-              colors={['#fea26d', '#ff785d']}
-              style={styles.buttonbox}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-            >
-              <Text style={styles.submitTxt}>Post</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-
-  const HeaderComponent = () => (
-    <View style={styles.headerControlWrapper}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Community</Text>
-
-        <View style={styles.iconGroup}>
-          <TouchableOpacity style={styles.smallBox}>
-            <FontAwesomeIcon icon={faBell} color="#ffffff" size={26} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.smallBox}>
-            <Images size={26} color="#ffffff" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.smallBox}>
-            <FontAwesomeIcon icon={faPlus} color="#ffffff" size={26} />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.buttonInactive}>
-          <Text style={styles.buttonTextMuted}>🔥 Trending</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonActive}>
+     
+      <View style={styles.imageDisplayContainer}>
+        <Image source={{ uri: item.postImage }} style={styles.mainPostMediaImage} resizeMode="cover" />
+        
+        <View style={styles.mediaCarouselIndicatorTrack}>
+          <View style={styles.indicatorDotInactive} />
           <LinearGradient
-            colors={['#707070', '#1d1d1d']}
-            style={styles.gradientTab}
+            colors={['#FEF9BD', '#FA83F2']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
-          >
-            <Text style={styles.buttonText}>Recent 🆕</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            style={styles.indicatorDotActive}
+          />
+          <View style={styles.indicatorDotInactive} />
+          <View style={styles.indicatorDotInactive} />
+        </View>
       </View>
-    </View>
+
+      <View style={styles.postContentContainerDescriptionBlock}>
+        <View style={styles.descriptionHeaderTitleWrapperRow}>
+          <Text style={styles.mainDescriptionTitleText} numberOfLines={2}>
+            {item.title}
+          </Text>
+          <TouchableOpacity  activeOpacity={0.7} style={styles.bagActionButton}>
+            <ShoppingBag size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.tagListContainerRow}>
+          {item.tags.map((tag, i) => (
+            <Text key={i} numberOfLines={1} style={styles.hashTagTextItem}>{tag}</Text>
+          ))}
+        </View>
+
+        <View style={styles.metricsActionBarGroupRow}>
+          
+          <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
+            <Heart size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+            <Text style={styles.metricLabelValueStringText}>{item.likes}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.individualMetricTabItem} 
+            activeOpacity={0.7}
+            onPress={() => handleToggleComment(item.id)}
+          >
+            <MessageSquare 
+              size={Tokens.scaleAsset(24)} 
+              color={activePostCommentId === item.id ? "#818181" : "#CCCCCC"} 
+            />
+            <Text style={[
+              styles.metricLabelValueStringText, 
+              activePostCommentId === item.id ? { color: '#818181' } : { color: '#CCCCC' }
+            ]}>
+              {item.commentsCount}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
+            <Share2 size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+            <Text style={styles.metricLabelValueStringText}>{item.shares}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.saveActionRightAlignedAnchorButton} activeOpacity={0.7}>
+            <Bookmark size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+          </TouchableOpacity>
+
+        </View>
+      </View>
+
+      {activePostCommentId === item.id && (
+        <View style={styles.commentInputFormTerminalAreaBoxContainer}>
+          <View style={styles.commentTextInputContainerRowWrapperBoxField}>
+            <TextInput
+              style={styles.commentTextInputNativeComponentField}
+              placeholder="Your Comment"
+              placeholderTextColor="#B3B3B3"
+              value={commentText}
+              onChangeText={setCommentText}
+              autoFocus={true}
+            />
+          </View>
+
+          <View style={styles.commentActionTriggersPanelRowLayout}>
+            <TouchableOpacity activeOpacity={0.7} style={styles.smileyIconTouchTarget}>
+              <Smile size={Tokens.scaleAsset(22)} color="#E5E5E5" />
+            </TouchableOpacity>
+
+            <View style={styles.commentFormActionButtonsSplitWrapperRowBox}>
+              <TouchableOpacity 
+                style={styles.cancelCommentButton} 
+                activeOpacity={0.7}
+                onPress={() => setActivePostCommentId(null)}
+              >
+                <Text style={styles.cancelButtonTextStringLabel}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={0.85} onPress={() => setActivePostCommentId(null)}>
+                <LinearGradient
+                  colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.postSubmitCommentButtonGradientContainerBox}
+                >
+                  <Text style={styles.postSubmitCommentButtonTextLabel}>Post</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
+    </LinearGradient>
   );
 
-  const [nextCursor, setNextCursor] = useState(5);
-  const [isListLoading, setIsListLoading] = useState(false);
-  const [hasMoreData, setHasMoreData] = useState(true);
-
-  const fetchNextCursorPage = () => {
-    if (isListLoading || !hasMoreData) return;
-
-    setIsListLoading(true);
-
-    fetch(`https://fakestoreapi.com{nextCursor + 5}`)
-      .then(response => response.json())
-      .then(json => {
-        if (json.length === data.length) {
-          setHasMoreData(false);
-        } else {
-          setData(json);
-          setNextCursor(prevCursor => prevCursor + 5);
-        }
-        setIsListLoading(false);
-      })
-      .catch(error => {
-        console.error(error);
-        setIsListLoading(false);
-      });
-  };
-
-  const renderFooterLoader = () => {
-    if (!isListLoading) return null;
-    return (
-      <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-        <ActivityIndicator size="small" color="#fea26d" />
-      </View>
-    );
-  };
-
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+    <SafeAreaProvider>
+      <LinearGradient
+        colors={['#0F0F0F', '#0D0D0D']}
+        start={{ x: 0.44, y: 0 }}
+        end={{ x: 0.54, y: 0.98 }}
+        style={styles.screenContainer}
+      >
+        <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
+        <SafeAreaView style={styles.mainContainer} edges={['top', 'left', 'right']}>
+          
+          <View style={styles.topNavigationHeaderModuleOuterContainer}>
+            <Text style={styles.screenHeaderTitleMainText}>Community</Text>
+            
+            <View style={styles.headerSquareActionButtonsGridWrapperRow}>
+               <LinearGradient
+              colors={['#333637', '#242426']}
+              start={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.squareHeaderActionButtonItem}
+            > 
+              <TouchableOpacity  activeOpacity={0.75}>
+                <Bell size={Tokens.scaleAsset(24)} color="#E5E5E5" />
+              </TouchableOpacity>
+              </LinearGradient>
 
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => `community-post-${item.id}`}
-        ListHeaderComponent={HeaderComponent}
-        contentContainerStyle={styles.listPadding}
-        showsVerticalScrollIndicator={false}
-        onEndReached={fetchNextCursorPage}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooterLoader}
-      />
-    </SafeAreaView>
+               <LinearGradient
+              colors={['#333637', '#242426']}
+              start={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.squareHeaderActionButtonItem}
+            > 
+              <TouchableOpacity  activeOpacity={0.75}>
+                <Layers size={Tokens.scaleAsset(24)} color="#E5E5E5" />
+              </TouchableOpacity>
+              </LinearGradient>
+
+               <LinearGradient
+              colors={['#333637', '#242426']}
+              start={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.squareHeaderActionButtonItem}
+            > 
+              <TouchableOpacity  activeOpacity={0.75}>
+                <Plus size={Tokens.scaleAsset(24)} color="#E5E5E5" />
+              </TouchableOpacity>
+              </LinearGradient>
+            </View>
+          </View>
+
+          <View style={styles.tabsPanelOuterWrapperContainerSectionBox}>
+            <LinearGradient
+              colors={['#333637', '#242426']}
+              start={{ x: 0.01, y: 0.5 }}
+              end={{ x: 0.99, y: 0.5 }}
+              style={styles.tabsPanelInnerGradientWrapperBackgroundTrackBox}
+            >
+              <TouchableOpacity 
+                style={styles.individualTabButtonAnchorWrapper}
+                onPress={() => setActiveTab('Trending')}
+                activeOpacity={0.85}
+              >
+                {activeTab === 'Trending' ? (
+                  <LinearGradient
+  colors={['rgba(251, 181, 158, 1)', 'rgba(248, 135, 108, 1)', 'rgba(241, 102, 70, 1)', 'rgba(249, 143, 122, 1)']}
+  start={{ x: 0, y: 0.5 }}
+  end={{ x: 1, y: 0.5 }}
+  style={styles.borderGradientContainer}
+>
+  <View style={styles.solidMaskShield}>
+    <LinearGradient
+      colors={['rgba(253, 219, 189, 0.15)', 'rgba(247, 125, 97, 0.12)', 'rgba(251, 180, 157, 0.12)']}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 0.5 }}
+      style={styles.activeTabHighlightOverlayGradientBoxMask}
+    >
+      <Text numberOfLines={1} style={styles.tabTextLabelActive}>Trending 🔥</Text>
+    </LinearGradient>
+  </View>
+</LinearGradient>
+                ) : (
+                  <View style={styles.inactiveTabOverlayContainerContentBox}>
+                    <Text numberOfLines={1} style={styles.tabTextLabelInactive}>Trending 🔥</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.individualTabButtonAnchorWrapper}
+                onPress={() => setActiveTab('Recent')}
+                activeOpacity={0.85}
+              >
+                {activeTab === 'Recent' ? (
+                  <LinearGradient
+  colors={['rgba(251, 181, 158, 1)', 'rgba(248, 135, 108, 1)', 'rgba(241, 102, 70, 1)', 'rgba(249, 143, 122, 1)']}
+  start={{ x: 0, y: 0.5 }}
+  end={{ x: 1, y: 0.5 }}
+  style={styles.borderGradientContainer}
+>
+  <View style={styles.solidMaskShield}>
+    <LinearGradient
+      colors={['rgba(253, 219, 189, 0.15)', 'rgba(247, 125, 97, 0.12)', 'rgba(251, 180, 157, 0.12)']}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 0.5 }}
+      style={styles.activeTabHighlightOverlayGradientBoxMask}
+    >
+      <Text numberOfLines={1} style={styles.tabTextLabelActive}>Recent 🆕</Text>
+    </LinearGradient>
+  </View>
+</LinearGradient>
+                ) : (
+                  <View style={styles.inactiveTabOverlayContainerContentBox}>
+                    <Text numberOfLines={1} style={styles.tabTextLabelInactive}>Recent 🆕</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+            </LinearGradient>
+          </View>
+
+          {loading ? (
+            <View style={styles.centerSpinnerLoaderViewFrame}>
+              <ActivityIndicator size="large" color="#F8876C" />
+            </View>
+          ) : (
+            <FlatList
+              data={posts}
+              renderItem={renderPostCard}
+              keyExtractor={item => item.id}
+              contentContainerStyle={styles.socialFeedScrollContentContainerSpacingPadding}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
+
+        </SafeAreaView>
+
+       
+
+      </LinearGradient>
+    </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  screenContainer: {
     flex: 1,
     backgroundColor: '#000000',
   },
-  headerControlWrapper: {
-    backgroundColor: '#000000',
-    paddingBottom: hp('1%'),
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: wp('4%'),
-    paddingVertical: hp('1.8%'),
-  },
-  headerText: {
-    fontSize: wp('6%'),
-    fontWeight: '900',
-    color: '#ffffff',
-  },
-  iconGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  smallBox: {
-    width: wp('12.5%'),
-    height: wp('12.5%'),
-    backgroundColor: '#363636',
-    marginLeft: wp('2.5%'),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#222222',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    backgroundColor: '#353535',
-    marginHorizontal: wp('4%'),
-    marginTop: hp('0.8%'),
-    borderRadius: 14,
-    padding: wp('1%'),
-    gap: wp('1.5%'),
-  },
-  buttonActive: {
+  mainContainer: {
     flex: 1,
-    borderRadius: 10,
-    overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: '#ff9a7e',
-  },
-  gradientTab: {
-    paddingVertical: hp('1.2%'),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonInactive: {
-    flex: 1,
-    paddingVertical: hp('1.2%'),
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: '900',
-    fontSize: wp('4%'),
-  },
-  buttonTextMuted: {
-    color: '#ffffff',
-    fontWeight: '900',
-    fontSize: wp('4%'),
-  },
-  listPadding: {
-    paddingBottom: hp('4%'),
-  },
-  postCard: {
-    backgroundColor: '#363636',
-    marginHorizontal: wp('4%'),
-    borderRadius: 18,
-    padding: wp('4%'),
-    marginTop: hp('2%'),
-    borderWidth: 1,
-    borderColor: '#161616',
-  },
-  postHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: hp('1.5%'),
-  },
-  profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  profileImage: {
-    width: wp('9.5%'),
-    height: wp('9.5%'),
-    borderRadius: wp('4.75%'),
-    marginRight: wp('2.5%'),
-    borderWidth: 1,
-    borderColor: '#f06449',
-  },
-  username: {
-    fontWeight: '900',
-    fontSize: wp('3.8%'),
-    color: '#ffffff',
-  },
-  postRightLabel: {
-    fontSize: wp('3%'),
-    color: '#ffffff',
-  },
-  postMainBody: {
-    borderRadius: 14,
-    overflow: 'hidden',
-    backgroundColor: '#ffffff',
-  },
-  imageView: {
     width: '100%',
-    aspectRatio: 1 / 0.95,
   },
-  detailsArea: {
-    marginTop: hp('1.5%'),
-    marginBottom: hp('1.5%'),
+  centerSpinnerLoaderViewFrame: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  descriptionLayoutRow: {
+  socialFeedScrollContentContainerSpacingPadding: {
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
+    paddingTop: Tokens.gaps.large,
+    paddingBottom: 140, 
+  },
+
+  topNavigationHeaderModuleOuterContainer: {
+    width: '100%',
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
+    paddingTop: Tokens.gaps.large,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Tokens.gaps.large,
+  },
+  screenHeaderTitleMainText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 20,
+    lineHeight: 24,
+    color: '#FFFFFF',
+  },
+  headerSquareActionButtonsGridWrapperRow: {
+    flexDirection: 'row',
+    gap: Tokens.gaps.large,
+  },
+  squareHeaderActionButtonItem: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#323537',
+    //backgroundColor: '#242426',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  tabsPanelOuterWrapperContainerSectionBox: {
+    width: '100%',
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
+    marginBottom: Tokens.gaps.large,
+  },
+  tabsPanelInnerGradientWrapperBackgroundTrackBox: {
+    width: '100%',
+    height: 56,
+    borderRadius: 12,
+    borderWidth: 0.5,
+    borderColor: '#323537',
+    flexDirection: 'row',
+    padding: 8,
+    alignItems: 'center',
+    gap: Tokens.gaps.large,
+  },
+    individualTabButtonAnchorWrapper: {
+    flex: 1,
+    height: 40,
+  },
+borderGradientContainer: {
+    flex: 1,
+    padding: 1,             
+    borderRadius: 9,         
+    overflow: 'hidden',
+  },
+  solidMaskShield: {
+    flex: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#1A1A1A', 
+  },
+  activeTabHighlightOverlayGradientBoxMask: {
+    flex: 1,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  tabTextLabelActive: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  inactiveTabOverlayContainerContentBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  tabTextLabelActive: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
+  tabTextLabelInactive: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 14,
+    color: '#B3B3B3',
+  },
+
+  postCardOuterFrame: {
+    width: '100%',
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: '#323537',
+    padding: 16,
+    marginBottom: Tokens.gaps.xlarge,
+  },
+  postHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: Tokens.gaps.large,
+  },
+  postHeaderUserGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.small,
+    flex: 1,
+  },
+  userAvatarProfilePic: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#C4C4C4',
+  },
+  userNameText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    color: '#FFFFFF',
+    flex: 1,
+  },
+  timeStampText: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: 12,
+    color: '#B3B3B3',
+  },
+  imageDisplayContainer: {
+    width: '100%',
+    height: 389,
+    borderRadius: 16,
+    backgroundColor: '#ffffff',
+    overflow: 'hidden',
+    position: 'relative',
+    marginBottom: Tokens.gaps.large,
+  },
+  mainPostMediaImage: {
+    width: '100%',
+    height: '100%',
+  },
+  mediaCarouselIndicatorTrack: {
+    position: 'absolute',
+    bottom: 12,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.small,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  indicatorDotInactive: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 1.25,
+    borderColor: '#CCCCCC',
+  },
+  indicatorDotActive: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+
+  
+  postContentContainerDescriptionBlock: {
+    width: '100%',
+    gap: Tokens.gaps.large,
+    marginBottom: Tokens.gaps.large,
+  },
+  descriptionHeaderTitleWrapperRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: wp('3%'),
+    width: '100%',
+    gap: Tokens.gaps.small,
   },
-  description: {
-    fontSize: wp('4.5%'),
-    color: '#ffffff',
-    fontWeight: '900',
-    lineHeight: wp('5%'),
+  mainDescriptionTitleText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 18,
+    lineHeight: 28,
+    color: '#E5E5E5',
     flex: 1,
-    padding: wp('2.5%'),
   },
-  cartFloatingIconContainer: {
-    padding: wp('2.5%'),
-    backgroundColor: '#363636',
+  bagActionButton: {
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop:5
   },
-  cartIcon: {
-    width: wp('6.5%'),
-    height: wp('6.5%'),
+  tagListContainerRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Tokens.gaps.small,
+    width: '100%',
   },
-  tagsText: {
-    color: '#ffffff',
-    marginTop: hp('0.8%'),
-    fontWeight: '500',
-    fontSize: wp('3.8%'),
-    marginLeft: wp('1.5%'),
+  hashTagTextItem: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 12,
+    color: '#B3B3B3',
   },
-  leftInteraction: {
+  metricsActionBarGroupRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    paddingTop: 4,
+    justifyContent:"space-evenly"
+  },
+  individualMetricTabItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.small,
+    marginRight: Tokens.gaps.xlarge,
+  },
+  metricLabelValueStringText: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: 14,
+    color: '#CCCCCC',
+  },
+  saveActionRightAlignedAnchorButton: {
+   
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  commentInputFormTerminalAreaBoxContainer: {
+    width: '100%',
+    gap: Tokens.gaps.large,
+    paddingTop: 8,
+  },
+  commentTextInputContainerRowWrapperBoxField: {
+    width: '100%',
+    height: 72,
+    borderRadius: 12,
+    borderWidth: 0.5,
+    borderColor: '#818181',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  commentTextInputNativeComponentField: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: 14,
+    color: '#B3B3B3',
+    padding: 0,
+    width: '100%',
+    height: '100%',
+    textAlignVertical: 'top',
+  },
+  commentActionTriggersPanelRowLayout: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: hp('0.3%'),
-    paddingTop: hp('1.5%'),
+    width: '100%',
   },
-  interactionGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp('9%'),
-  },
-  interactionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp('1.5%'),
-  },
-  numberText: {
-    color: '#ffffff',
-    fontSize: wp('3.2%'),
-    fontWeight: '600',
-  },
-  commentBox: {
-    backgroundColor: '#3d3d3d',
-    borderRadius: 10,
-    paddingHorizontal: wp('3%'),
-    paddingTop: hp('1.2%'),
-    paddingBottom: hp('1.2%'),
-    minHeight: hp('10%'),
-    marginTop: hp('1.8%'),
-    color: '#ffffff',
-    fontSize: wp('3.8%'),
-    borderWidth: 1,
-    borderColor: '#9d9d9d',
-    fontWeight: '900',
-  },
-  footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: hp('1.5%'),
-  },
-  footerButtonsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp('2%'),
-  },
-  buttonbox1: {
-    paddingVertical: hp('1.5%'),
-    paddingHorizontal: wp('6%'),
-    borderRadius: 8,
-    alignItems: 'center',
+  smileyIconTouchTarget: {
+    width: 24,
+    height: 24,
     justifyContent: 'center',
-  },
-  cancelBtn: {
-    backgroundColor: '#292929',
-  },
-  cancelTxt: {
-    color: '#ffffff',
-    fontWeight: '900',
-    fontSize: wp('4%'),
-  },
-  buttonbox: {
-    paddingVertical: hp('1.5%'),
-    paddingHorizontal: wp('6.5%'),
-    borderRadius: 8,
     alignItems: 'center',
+  },
+  commentFormActionButtonsSplitWrapperRowBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.large,
+  },
+  cancelCommentButton: {
+    width: 80,
+    height: 48,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  submitTxt: {
-    color: '#ffffff',
-    fontWeight: '900',
-    fontSize: wp('4%'),
+  cancelButtonTextStringLabel: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    color: '#CCCCCC',
   },
+  postSubmitCommentButtonGradientContainerBox: {
+    width: 100,
+    height: 48,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postSubmitCommentButtonTextLabel: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    color: '#FFFFFF',
+  },
+
+  lineDivider: {
+    width: '100%',
+    height: 0,
+    borderTopWidth: 1,
+    borderColor: '#323537',
+    marginVertical: Tokens.gaps.large,
+  },
+
 });
 
-export default CommunityFeedPage;
+export default CommunitySpace;

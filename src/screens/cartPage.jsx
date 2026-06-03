@@ -1,461 +1,595 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
+  Dimensions,
 } from 'react-native';
-import { faLessThan } from '@fortawesome/free-solid-svg-icons/faLessThan';
-import { useState } from 'react';
-import { Check, ChevronLeft } from 'lucide-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import LinearGradient from 'react-native-linear-gradient';
+import { Shadow } from 'react-native-shadow-2';
 import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import { Loader } from 'lucide-react-native';
+  ArrowLeft,
+  Check,
+  Loader,
+  Home as HomeIcon, 
+  Search, 
+  Image as CommunityIcon, 
+  ShoppingBag, 
+  MoreHorizontal
+} from 'lucide-react-native';
+import { Tokens } from '../theme/theme'; // Central Tokens file configuration reference
 
-const HelloWorldApp = ({ navigation }) => {
-  const [activeInfoTab, setActiveInfoTab] = useState('shipping');
+const { width } = Dimensions.get('window');
 
-  const orderSteps = [
+const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
+const DYNAMIC_TAB_WIDTH = (width - TOTAL_PADDINGS - (Tokens.gaps.large * 2)) / 3;
+
+export default function TrackOrders({ navigation }) {
+  const [activeItemTab, setActiveItemTab] = useState('Top bottom'); // Top bottom, Footwear, Extra
+
+  const handleGoBack = () => {
+    if (navigation && navigation.goBack) {
+      navigation.goBack();
+    }
+  };
+
+  // Step Timeline Data Source Array for clean layout scaling
+  const timelineSteps = [
     {
+      id: 1,
       title: 'Order Placed',
-      detail:
-        'Your order has been received and is being processed by [Brand Name].',
-      note: 'You can cancel your order until it is shipped.',
-      complete: true,
+      description: 'Your order has been received and is being processed by [Brand Name].',
+      footnote: 'You can cancel your order until it is shipped.',
+      status: 'completed',
     },
     {
+      id: 2,
       title: 'Confirmed by [Brand Name].',
-      detail:
-        "We've received confirmation from [Brand Name]. Your items are being prepared for shipment.",
-      note: 'Still eligible for cancellation until shipped.',
+      description: 'We’ve received confirmation from [Brand Name]. Your items are being prepared for shipment.',
+      footnote: 'Still eligible for cancellation until shipped.',
+      status: 'active',
     },
     {
+      id: 3,
       title: 'Shipped by [Brand Name].',
-      detail: 'Our outfit has been shipped. Tracking ID: [Tracking #].',
-      note: 'Order can no longer be cancelled after this point.',
-      blocked: true,
+      description: 'Our outfit has been shipped. Tracking ID: #ORD245679.',
+      footnote: '❌ Order can no longer be cancelled after this point.',
+      status: 'pending',
     },
     {
+      id: 4,
       title: 'Out for delivery.',
-      detail:
-        'Your package is on its way. Please keep your phone available for delivery updates.',
-      note: 'Not available after this point.',
-      blocked: true,
+      description: 'Your package is on its way. Please keep your phone available for delivery updates.',
+      footnote: '❌ Not available after this point.',
+      status: 'pending',
     },
     {
+      id: 5,
       title: 'Delivered',
-      detail:
-        'Your order has been delivered successfully. Enjoy your new look!',
+      description: 'Your order has been delivered successfully. Enjoy your new look!',
+      footnote: '',
+      status: 'pending',
     },
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.alignRow}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.pop()}
-              >
-                <FontAwesomeIcon icon={faLessThan} color="#ffffff" size={18} />
-
-                <Text style={styles.text}>Back</Text>
+    <SafeAreaProvider>
+      <LinearGradient
+        colors={['#0F0F0F', '#0D0D0D']}
+        start={{ x: 0.44, y: 0 }}
+        end={{ x: 0.54, y: 0.98 }}
+        style={styles.screenContainer}
+      >
+        <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
+        <SafeAreaView style={styles.mainContainer} edges={['top', 'left', 'right']}>
+          
+          {/* Back Header Target Navigation Row */}
+          <View style={styles.backHeaderRow}>
+            <TouchableOpacity style={styles.backButtonTouchTarget} onPress={handleGoBack} activeOpacity={0.7}>
+              <ArrowLeft size={Tokens.scaleAsset(20)} color="#E5E5E5" />
+              <Text style={styles.backButtonTextLabel}>Back</Text>
               </TouchableOpacity>
             </View>
-          </View>
-          <View style={styles.content}>
-            <Text style={styles.heading}>Track Your Orders </Text>
-            <Text style={styles.subHeading}>
-              Track deliveries, check order details, and manage returns.
-            </Text>
-            <TouchableOpacity style={styles.box1}>
-              <View style={styles.box}>
-                <View style={styles.alignRow}>
-                  <Text style={styles.boxText}>Order ID:</Text>
-                  <Text style={styles.boxText1}>#ORD254689</Text>
+
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContentContainer}>
+            
+            {/* Main Header Labels Area Terminal */}
+            <View style={styles.headerMetaBlockFrame}>
+              <Text style={styles.screenTitleMainHeading}>Track Your Orders</Text>
+              <Text style={styles.screenSubtitleLabelDescription}>Track deliveries, check order details, and manage returns.</Text>
                 </View>
-                <View style={styles.alignRow}>
-                  <Text style={styles.boxText}>Order Date:</Text>
-                  <Text style={styles.boxText1}>Oct 25, 2025</Text>
+
+            {/* Core Summary Card Info Terminal Area Box (Frame 526) */}
+            <LinearGradient
+              colors={['#242525', '#1A1C1D']}
+              start={{ x: 0.02, y: 0.5 }}
+              end={{ x: 0.98, y: 0.5 }}
+              style={styles.summaryCardOuterFrameBox}
+            >
+              <View style={styles.summaryInnerDataFieldRow}>
+                <Text style={styles.summaryFieldLabelString}>Order ID: <Text style={styles.summaryFieldValueBoldString}>#ORD245679</Text></Text>
                 </View>
-                <View style={styles.alignRow}>
-                  <Text style={styles.boxText}>Estimated Delivery:</Text>
-                  <Text style={styles.boxText1}>Oct 30 -Nov 2,2025</Text>
+              <View style={styles.summaryInnerDataFieldRow}>
+                <Text style={styles.summaryFieldLabelString}>Order Date: <Text style={styles.summaryFieldValueBoldString}>Oct 25, 2025</Text></Text>
                 </View>
-                <View style={styles.alignRow}>
-                  <Text style={styles.boxText}>Deliverying to:</Text>
-                  <Text style={styles.boxText1}>Ria Jain, 12/4 Green Road</Text>
+              <View style={styles.summaryInnerDataFieldRow}>
+                <Text style={styles.summaryFieldLabelString}>Estimated Delivery: <Text style={styles.summaryFieldValueBoldString}>Oct 30 – Nov 2, 2025</Text></Text>
                 </View>
-                <View style={styles.alignRow}>
-                  <Text style={styles.boxText}>Tracking ID:</Text>
-                  <Text style={styles.boxText1}>#ORD254689</Text>
-                </View>
+              <View style={styles.summaryInnerDataFieldRow}>
+                <Text style={styles.summaryFieldLabelString}>Delivering to: <Text style={styles.summaryFieldValueBoldString}>Ria Jain, 12/4 Green Road, Delhi</Text></Text>
               </View>
-            </TouchableOpacity>
+              <View style={styles.summaryInnerDataFieldRow}>
+                <Text style={styles.summaryFieldLabelString}>Tracking ID: <Text style={styles.summaryFieldValueBoldString}>#ORD245679</Text></Text>
           </View>
-          <View style={[styles.discrptionView]}>
-            <View style={styles.alignRow1}>
+            </LinearGradient>
+
+            {/* Item Switch Category Tab Toggle Strip Layout Component Box Area (Frame 530) */}
+            <View style={styles.navigationTabsStripRowWrapperContainerBox}>
+              {['Top bottom', 'Footwear', 'Extra'].map((tab) => {
+                const isTabActive = activeItemTab === tab;
+                return (
               <TouchableOpacity
-                style={styles.selectedView}
-                onPress={() => setActiveInfoTab('shipping')}
+  key={tab}
+  onPress={() => setActiveItemTab(tab)}
+  activeOpacity={0.85}
+  // Keep the dynamic width on the touchable wrapper
+  style={{ width: DYNAMIC_TAB_WIDTH }} 
+>
+  {isTabActive ? (
+    <LinearGradient
+      colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      // PASS THE DYNAMIC WIDTH HERE AS WELL 👇
+      style={[styles.borderGradientContainer, { width: DYNAMIC_TAB_WIDTH }]}
+    >
+      <View style={styles.activeSolidBackgroundMaskShield}>
+      <LinearGradient
+        colors={['rgba(253, 219, 189, 0.15)', 'rgba(247, 125, 97, 0.12)', 'rgba(251, 180, 157, 0.12)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.activeTabOverlayGradientHighlightBoxMask}
               >
-                <View>
-                  <Text style={styles.text8}>Top Bottom</Text>
+        <Text numberOfLines={1} style={styles.categoryTabLabelTextStringActive}>
+          {tab}
+        </Text>
+      </LinearGradient>
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setActiveInfoTab('howItWorks')}>
-                <Text style={styles.text8}>Footwear</Text>
+    </LinearGradient>
+  ) : (
+    <View style={styles.inactiveCategoryTabOverlayContainerContentBox}>
+      <Text numberOfLines={1} style={styles.categoryTabLabelTextStringInactive}>
+        {tab}
+      </Text>
+    </View>
+  )}
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setActiveInfoTab('productInfo')}>
-                <Text style={styles.text8}>Extra</Text>
-              </TouchableOpacity>
+
+                );
+              })}
             </View>
+
+            <View style={styles.lineDividerHorizontalRuleElement} />
+
+            {/* Selected Active Product Informational Sheet Meta Row Block */}
+            <View style={styles.productMetaOverviewClusterContainer}>
+              <Text style={styles.productNameMainLabelHeading}>Product Name</Text>
+              <Text style={styles.productCategorySubInfoLabelText}>Category: <Text style={styles.whiteEmphasisValueText}>Topwear (1) | Footwear (1)</Text></Text>
+              <Text style={styles.productCategorySubInfoLabelText}>Items: <Text style={styles.whiteEmphasisValueText}>2</Text></Text>
+              <Text style={styles.productCategorySubInfoLabelText}>Status: <Text style={styles.whiteEmphasisValueText}>Preparing for shipment</Text></Text>
+              <Text style={styles.productCategorySubInfoLabelText}>Estimated Delivery: <Text style={styles.whiteEmphasisValueText}>Oct 30 – Nov 2, 2025</Text></Text>
+            </View>
+
+            {/* Vertical Multi-Stage Step Timeline Tracker Engine Section (Discount Card Map Blueprint) */}
+            <View style={styles.verticalTimelineEngineOuterWrapperBlockSectionContainer}>
+              
+              {/* Dynamic Absolute Background Track Bar Connector Axis Paths Layer */}
+              <View style={styles.timelineAbsoluteTrackLineBackgroundBackdropPath} />
+              <View style={styles.timelineAbsoluteTrackLineActiveProgressIndicatorPath} />
+
+              {/* Loop rendering every timeline node component card wrapper item */}
+              {timelineSteps.map((step, idx) => {
+                return (
+                  <View key={step.id} style={[styles.timelineStepRowLayoutBlockNode, idx === timelineSteps.length - 1 && { marginBottom: 0 }]}>
+                    
+                    {/* Status Circle Indicator Module Assembly */}
+                    <View style={styles.statusCircleIndicatorWrapperOuterNode}>
+                      {step.status === 'completed' && (
+                        <View style={styles.timelineStatusCircleCompletedFill}>
+                          <Check size={Tokens.scaleAsset(20)} color="#FFFFFF" strokeWidth={3} />
+            </View>
+                      )}
+                      {step.status === 'active' && (
+                        <View style={styles.timelineStatusCircleActiveFill}>
+                          <Loader size={Tokens.scaleAsset(20)} color="#FFFFFF" strokeWidth={2.5} />
           </View>
-          <View style={styles.productSummaryBox}>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryTitle}>Product Name</Text>
-            </View>
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Category:</Text>
-              <Text style={styles.summaryValue}>
-                Topwear (1) | Footwear (1)
-              </Text>
-            </View>
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Items:</Text>
-              <Text style={styles.summaryValue}>2</Text>
-            </View>
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Status:</Text>
-              <Text style={styles.summaryValue}>Preparing for shipment</Text>
-            </View>
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Estimated Delivery:</Text>
-              <Text style={styles.summaryValue}>Oct 30 - Nov 2, 2025</Text>
-            </View>
-          </View>
-
-          <View style={styles.timeline}>
-            {orderSteps.map((step, index) => (
-              <View key={step.title} style={styles.timelineRow}>
-                <View style={styles.timelineIconColumn}>
-                  <View
-                    style={[
-                      styles.timelineIcon,
-                      step.complete && styles.timelineIconComplete,
-                    ]}
-                  >
-                    {step.complete ? (
-                      <Check color="#ffffff" size={20} strokeWidth={3} />
-                    ) : (
-                      <Loader color="#ffff" />
+                      )}
+                      {step.status === 'pending' && (
+                        <LinearGradient
+                          colors={['#333637', '#242426']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.timelineStatusCirclePendingFill}
+                        >
+                          <Loader size={Tokens.scaleAsset(20)} color="#ffffff" strokeWidth={2} />
+                        </LinearGradient>
                     )}
                   </View>
-                  {index < orderSteps.length - 1 && (
-                    <View style={styles.timelineLine} />
+
+                    {/* Step Content Card Text Blocks */}
+                    <View style={styles.timelineStepRightContentTextFieldCardWrapperBox}>
+                      <Text style={[styles.timelineStepCardHeadingTitleLabelText, step.status === 'active' && { color: '#fefefe' }]}>
+                        {step.title}
+                      </Text>
+                      <Text style={styles.timelineStepCardDescriptionContentParagraphStringText}>
+                        {step.description}
+                      </Text>
+                      {step.footnote !== '' && (
+                        <Text style={styles.timelineStepCardFootnoteContextStatusLabelText}>
+                          {step.footnote}
+                        </Text>
                   )}
                 </View>
 
-                <View style={styles.timelineContent}>
-                  <Text style={styles.stepTitle}>{step.title}</Text>
-                  <Text style={styles.stepDetail}>{step.detail}</Text>
-                  {step.note ? (
-                    <Text
-                      style={[
-                        styles.stepNote,
-                        step.blocked && styles.blockedNote,
-                      ]}
-                    >
-                      {step.blocked ? '❌  ' : ''}
-                      {step.note}
-                    </Text>
-                  ) : null}
-                </View>
-              </View>
-            ))}
           </View>
-          <Text style={styles.heading1}>Redund & Return Policy </Text>
-          <View style={styles.alignRow}>
-            <Text style={styles.subHeading1}>
-              Out.Fit.Find acts as a facilitattor between you and our partner
-              brands. Refunds and returns are handled according to the brand's
-              individual policy.
-              <Text style={[styles.policyLink, styles.subHeading2]}>
-                View Brand's Refund Policy
-              </Text>{' '}
-            </Text>
-          </View>
-          <TouchableOpacity onPress={() => console.log('Pressed!')}>
-            <View style={styles.buttonbox1}>
-              <Text style={styles.text6}>Cancel Order</Text>
+                );
+              })}
+
             </View>
-          </TouchableOpacity>
-          <Text style={styles.heading2}>Until Shipped</Text>
-          <Text style={styles.heading3}>
-            Refund and returns are processed directly by the brand. TimeLines
-            may vary depending on the partner's policy
+
+            {/* REFACTORED REFUND & RETURN SYSTEM: Written directly on background canvas to match image_a91021.jpg */}
+            <View style={styles.refundPolicyFlatAreaBlockSectionContainer}>
+              <Text style={styles.refundPolicySectionHeadingMainTitleText}>Refund & Return Policy</Text>
+              
+              <Text style={styles.refundPolicyContextParagraphDescriptionText}>
+                Out.Fit.Find acts as a facilitator between you and our partner brands. Refunds and returns are handled according to the brand’s individual policy.{' '}
+                <Text style={styles.underlineActionLinkStringTextLink}>View Brand’s Refund Policy</Text>
+              </Text>
+
+              
+              <TouchableOpacity>
+              <LinearGradient
+                                colors={['#333637', '#242426']}
+                                start={{ x: 0.1, y: 0.5 }}
+                                end={{ x: 0.9, y: 0.6 }}
+                                style={styles.cancelOrderCtaWorkflowActionButtonTouchTarget}
+                                
+                              >
+                                
+                                 <Text style={styles.cancelOrderButtonStringTextLabel}>Cancel Order</Text>
+                              </LinearGradient></TouchableOpacity>
+              
+              <Text style={styles.untilShippedClockFootnoteLabelHintText}>⏰ Until Shipped</Text>
+
+              {/* Bold Dynamic Policy Warning block aligned cleanly over footer space */}
+              <Text style={styles.globalNetworkPolicyStatementDisclosureParagraphText}>
+                Refunds and returns are processed directly by the brand. Timelines may vary depending on the partner’s policy.
           </Text>
         </View>
+
       </ScrollView>
     </SafeAreaView>
+
+      
+
+      </LinearGradient>
+    </SafeAreaProvider>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
     backgroundColor: '#000000',
   },
-  discrptionView: {
-    backgroundColor: '#000000',
-    padding: wp('4%'),
+  mainContainer: {
+    flex: 1,
+    width: '100%',
   },
-  policyLink: {
-    fontWeight: '900',
-    textDecorationLine: 'underline',
+  scrollContentContainer: {
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
+    paddingTop: Tokens.gaps.medium,
+    paddingBottom: 140, 
   },
-  policyText: {
-    color: '#ffffff',
-    fontSize: wp('3.6%'),
-    lineHeight: wp('5.8%'),
-  },
-  selectedView: {
-    paddingVertical: hp('0.8%'),
-    paddingHorizontal: wp('1.5%'),
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: '#fea26d',
-    backgroundColor: '#2e2e2e',
-  },
-  text8: {
-    color: '#fffdfd',
-    fontSize: wp('4%'),
-    fontWeight: '900',
-  },
-  text: {
-    fontSize: wp('4.2%'),
-    color: '#fff',
-    fontWeight: '900',
-    marginLeft: wp('2%'),
-  },
-  header: {
-    marginTop: hp('1.2%'),
-  },
-  alignRow: {
+  
+  // Header Back Button Row Track Layout
+  backHeaderRow: {
+    width: '100%',
+    height: 40,
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: wp('2.5%'),
+    marginVertical: Tokens.gaps.small,
   },
-  alignRow1: {
+  backButtonTouchTarget: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp('7.5%'),
-    marginLeft: wp('7.5%'),
+    gap: Tokens.gaps.small,
+    height: '100%',
   },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: wp('2%'),
+  backButtonTextLabel: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#E5E5E5',
   },
-  content: {
-    paddingHorizontal: wp('5%'),
-    marginTop: hp('2.5%'),
-  },
-  heading: {
-    fontSize: wp('6%'),
-    fontWeight: '900',
-    color: '#ffffff',
-    marginBottom: hp('1%'),
-  },
-  subHeading: {
-    fontSize: wp('3.8%'),
-    color: '#ffffff',
-    marginBottom: hp('2%'),
-    fontWeight: '900',
-  },
-  subHeading1: {
-    fontSize: wp('3.6%'),
-    color: '#ffffff',
-    marginBottom: hp('2.5%'),
-    fontWeight: '600',
-    marginLeft: wp('5%'),
-  },
-  box: {
-    borderRadius: 12,
-    padding: wp('2.5%'),
-    backgroundColor: '#2d2c2c',
-  },
-  box1: {
-    borderRadius: 12,
-    marginBottom: hp('1%'),
-    backgroundColor: '#2d2c2c',
-    marginTop: hp('1.2%'),
-  },
-  boxText: {
-    fontSize: wp('3.8%'),
-    color: '#ffffff',
-    fontWeight: '800',
-  },
-  boxText1: {
-    fontSize: wp('3.9%'),
-    color: '#ffffff',
-    marginLeft: wp('1.2%'),
-    fontWeight: '900',
-  },
-  productSummaryBox: {
-    backgroundColor: '#000000',
-    marginHorizontal: wp('4%'),
-    marginTop: hp('2%'),
-    borderRadius: 16,
-    padding: wp('4%'),
 
-    gap: hp('1.2%'),
+  // Titles Section Layout Cluster
+  headerMetaBlockFrame: {
+    width: '100%',
+    gap: Tokens.gaps.small,
+    marginBottom: Tokens.gaps.xlarge,
   },
-  summaryRow: {
+  screenTitleMainHeading: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: Tokens.typography.sizes.title,
+    lineHeight: Tokens.typography.lineHeights.title,
+    color: '#FFFFFF',
+  },
+  screenSubtitleLabelDescription: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: Tokens.typography.sizes.body,
+    lineHeight: Tokens.typography.lineHeights.body,
+    color: '#E5E5E5',
+  },
+
+  summaryCardOuterFrameBox: {
+    width: '100%',
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: '#323537',
+    padding: 24,
+    gap: Tokens.gaps.medium,
+    marginBottom: Tokens.gaps.xlarge,
+  },
+  summaryInnerDataFieldRow: {
+    width: '100%',
     flexDirection: 'row',
-    gap: wp('2%'),
     alignItems: 'center',
   },
-  summaryTitle: {
-    color: '#ffffff',
-    fontSize: wp('4.5%'),
-    fontWeight: '900',
+  summaryFieldLabelString: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: 14,
+    lineHeight: 24,
+    color: '#E5E5E5',
   },
-  summaryLabel: {
-    color: '#e9e9e9',
-    fontSize: wp('4%'),
-    fontWeight: '500',
+  summaryFieldValueBoldString: {
+    fontFamily: Tokens.typography.families.semiBold,
+    color: '#FFFFFF',
+    fontSize: 14,
   },
-  summaryValue: {
-    color: '#ffffff',
-    fontSize: wp('4%'),
-    fontWeight: '900',
+
+  // Interactive Switch Tabs Layout System Mappings (Frame 530 Panel Track)
+  navigationTabsStripRowWrapperContainerBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+    height: 36,
+    marginBottom: Tokens.gaps.large,
   },
-  orderLine: {
-    color: '#ffffff',
-    fontSize: wp('3.6%'),
-    fontWeight: '800',
-    lineHeight: wp('5%'),
+  borderGradientContainer: {
+ flex: 1,                    // Fills the 36px high touchable wrapper
+    padding: 1,                 // Your crisp 1px wide border line
+    borderRadius: 9,            // Matures 1px larger than the inner 8px radius
+    overflow: 'hidden',  
   },
-  timeline: {
-    marginTop: hp('3.5%'),
+ activeSolidBackgroundMaskShield: {
+    flex: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+   
+    backgroundColor: '#242426', 
   },
-  timelineRow: {
+  activeTabOverlayGradientHighlightBoxMask: {
+    flex: 1,
+    height: 36,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+   
+  },
+  inactiveCategoryTabOverlayContainerContentBox: {
+    flex: 1,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryTabLabelTextStringActive: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 14,
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  categoryTabLabelTextStringInactive: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 14,
+    color: '#E5E5E5',
+    textAlign: 'center',
+  },
+  lineDividerHorizontalRuleElement: {
+    width: '100%',
+    height: 0,
+    borderTopWidth: 1,
+    borderColor: '#323537',
+    marginBottom: Tokens.gaps.xlarge,
+  },
+
+  // Selected Active Product Specs Overview Segment Panel Cluster Bounds
+  productMetaOverviewClusterContainer: {
+    width: '100%',
+    gap: Tokens.gaps.small,
+    marginBottom: Tokens.gaps.xlarge,
+  },
+  productNameMainLabelHeading: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  productCategorySubInfoLabelText: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: 14,
+    lineHeight: 24,
+    color: '#E5E5E5',
+  },
+  whiteEmphasisValueText: {
+    fontFamily: Tokens.typography.families.medium,
+    color: '#FFFFFF',
+  },
+
+  // Vertical Timeline Progress Tracker Layout Core Mappings (Discount Card Spec Architecture)
+  verticalTimelineEngineOuterWrapperBlockSectionContainer: {
+    width: '100%',
+    position: 'relative',
+    paddingLeft: 4,
+    marginBottom: Tokens.gaps.section,
+  },
+  
+  // Symmetrical Backdrop Tracking Line Paths Layer Axis Properties
+  timelineAbsoluteTrackLineBackgroundBackdropPath: {
+    position: 'absolute',
+    left: 20, // Centers circle dots perfectly
+    top: 24,
+    bottom: 24,
+    width: 6,
+    backgroundColor: '#323537',
+    borderRadius: 3,
+    zIndex: 1,
+  },
+  timelineAbsoluteTrackLineActiveProgressIndicatorPath: {
+    position: 'absolute',
+    left: 20,
+    top: 24,
+    height: 84, 
+    width: 6,
+    backgroundColor: '#79DE95',
+    borderRadius: 3,
+    zIndex: 2,
+  },
+  timelineStepRowLayoutBlockNode: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    width: '100%',
+    marginBottom: Tokens.gaps.xlarge,
+    zIndex: 3, 
   },
-  timelineIconColumn: {
-    width: wp('11%'),
-    alignItems: 'center',
-  },
-  timelineIcon: {
-    width: wp('8.5%'),
-    height: wp('8.5%'),
-    borderRadius: wp('4.25%'),
-    backgroundColor: '#383a3c',
-    borderColor: '#777b7f',
-    borderWidth: 1,
-    alignItems: 'center',
+  statusCircleIndicatorWrapperOuterNode: {
+    width: 40,
+    height: 40,
     justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
-  timelineIconComplete: {
-    backgroundColor: '#24c45a',
-    borderColor: '#24c45a',
-  },
-  pendingIcon: {
-    color: '#ffffff',
-    fontSize: wp('5.5%'),
-    lineHeight: wp('6%'),
-  },
-  timelineLine: {
-    width: 4,
-    flex: 1,
-    minHeight: hp('9.5%'),
-    backgroundColor: '#7b7d80',
-  },
-  timelineContent: {
-    flex: 1,
-    paddingBottom: hp('2.5%'),
-    paddingLeft: wp('2%'),
-  },
-  stepTitle: {
-    color: '#ffffff',
-    fontSize: wp('4%'),
-    fontWeight: '900',
-  },
-  stepDetail: {
-    color: '#ffffff',
-    fontSize: wp('3.8%'),
-    lineHeight: wp('5.2%'),
-    marginTop: hp('1.2%'),
-  },
-  stepNote: {
-    color: '#ffffff',
-    fontSize: wp('3.3%'),
-    lineHeight: wp('4.5%'),
-    marginTop: hp('1%'),
-    fontWeight: '700',
-  },
-  blockedNote: {
-    color: '#ffffff',
-  },
-  heading1: {
-    fontSize: wp('3.8%'),
-    color: '#ffffff',
-    marginBottom: hp('1%'),
-    fontWeight: '900',
-    marginLeft: wp('5%'),
-    fontWeight: '900',
-  },
-  subHeading2: {
-    fontSize: wp('3.8%'),
-    color: '#ffffff',
-    marginBottom: hp('2.5%'),
-    fontWeight: '900',
-    marginLeft: wp('5%'),
-  },
-  buttonbox1: {
-    paddingVertical: hp('2.2%'),
-    width: '85%',
-    alignSelf: 'center',
+  timelineStatusCircleCompletedFill: {
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    alignItems: 'center',
+    backgroundColor: '#2BBA52',
     justifyContent: 'center',
-    backgroundColor: '#1f1f1f',
-    marginVertical: hp('2%'),
+    alignItems: 'center',
   },
-  text6: {
-    fontSize: wp('4.8%'),
-    fontWeight: '900',
-    color: '#ffffff',
+  timelineStatusCircleActiveFill: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#323537',
+    borderWidth: 1,
+    borderColor: '#818181',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  heading2: {
-    fontSize: wp('3.6%'),
-    color: '#ffffff',
-    marginBottom: hp('3.5%'),
-    fontWeight: '900',
-    marginLeft: wp('8%'),
-    marginTop: hp('2.5%'),
+  timelineStatusCirclePendingFill: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#818181',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  heading3: {
-    fontSize: wp('3.6%'),
-    color: '#ffffff',
-    marginBottom: hp('1.2%'),
-    fontWeight: '900',
-    marginLeft: wp('8%'),
+  
+  // Step Content Context Strings Mappings
+  timelineStepRightContentTextFieldCardWrapperBox: {
+    flex: 1,
+    gap: 6,
+    paddingTop: 4,
   },
-});
+  timelineStepCardHeadingTitleLabelText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#FFFFFF',
+  },
+  timelineStepCardDescriptionContentParagraphStringText: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: 14,
+    lineHeight: 22,
+    color: '#E5E5E5',
+  },
+  timelineStepCardFootnoteContextStatusLabelText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 12,
+    color: '#B3B3B3',
+    marginTop: 2,
+  },
 
-export default HelloWorldApp;
+  refundPolicyFlatAreaBlockSectionContainer: {
+    width: '100%',
+    gap: Tokens.gaps.large,
+    paddingVertical: 4,
+    marginBottom: Tokens.gaps.xlarge,
+  },
+  refundPolicySectionHeadingMainTitleText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14, // Enlarged and set directly over flat text flow
+    color: '#FFFFFF',
+  },
+  refundPolicyContextParagraphDescriptionText: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: 14,
+    lineHeight: 24,
+    color: '#E5E5E5',
+  },
+  underlineActionLinkStringTextLink: {
+    fontFamily: Tokens.typography.families.medium,
+    textDecorationLine: 'underline',
+    color: '#E5E5E5', 
+  },
+  cancelOrderCtaWorkflowActionButtonTouchTarget: {
+    width: '100%',
+    height: Tokens.components.buttonHeight,
+    borderRadius: Tokens.components.radiusButton,
+    backgroundColor: '#161618', // Matte dark solid block fill
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  cancelOrderButtonStringTextLabel: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+  untilShippedClockFootnoteLabelHintText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 14,
+    color: '#E5E5E5',
+    alignSelf: 'flex-start', // Shifted left-aligned to align directly with the cancel button
+    marginTop: 2,
+    marginBottom: Tokens.gaps.medium,
+  },
+  globalNetworkPolicyStatementDisclosureParagraphText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14, 
+    lineHeight: 26,
+    color: '#FFFFFF', 
+    textAlign: 'left', 
+    marginTop: Tokens.gaps.large,
+  },
+
+ 
+});

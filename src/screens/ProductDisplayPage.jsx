@@ -1,817 +1,924 @@
 import React from 'react';
 import {
-  ScrollView,
-  Image,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
+  Image,
+  ScrollView,
   TouchableOpacity,
+  StatusBar,
   Dimensions,
-  FlatList,
 } from 'react-native';
-import { faLessThan } from '@fortawesome/free-solid-svg-icons/faLessThan';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import CheckBox from '@react-native-community/checkbox';
-import { useState, useEffect } from 'react';
-import { RulerDimensionLine } from 'lucide-react-native';
+import MaskedView from '@react-native-masked-view/masked-view';
 
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
+import { Shadow } from 'react-native-shadow-2';
+import { 
+  ArrowLeft,
+  Ruler,
+  Minus,
+  Plus,
+  PlusCircle,
+  Home as HomeIcon, 
+  Search, 
+  Image as CommunityIcon, 
+  ShoppingBag, 
+  MoreHorizontal,
+  RulerDimensionLine 
+} from 'lucide-react-native';
+import { Tokens } from '../theme/theme'; 
+
 const { width } = Dimensions.get('window');
-const COLUMN_WIDTH = width - 50;
-const CIRCLE_SIZE = 100;
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-export default function ProductDisplayPage({ route, navigation }) {
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  const [activeInfoTab, setActiveInfoTab] = useState('shipping');
+const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
 
-  const [data, setData] = useState([]);
+const SINGLE_ROW_CHIP_WIDTH = (width - TOTAL_PADDINGS - (Tokens.gaps.small * 5)) / 7; 
+const RECOMMENDATION_CARD_WIDTH = (width - TOTAL_PADDINGS - (Tokens.gaps.small * 2)) / 3;
 
-  useEffect(() => {
-    console.log('Hello');
+export default function ProductDetails({ navigation }) {
+  const [activeTab, setActiveTab] = useState('Shipping Info'); 
+  const [wholeLookChecked, setWholeLookChecked] = useState(true);
 
-    fetch('https://fakestoreapi.com/products')
-      .then(response => response.json())
-      .then(json => {
-        setData(json);
-      })
-      .catch(error => console.error(error));
-  }, []);
+  const [topSize, setTopSize] = useState('M');
+  const [topQty, setTopQty] = useState(1);
+  
+  const [bottomSize, setBottomSize] = useState('M');
+  const [bottomQty, setBottomQty] = useState(1);
+  
+  const [footwearSize, setFootwearSize] = useState('M');
+  const [footwearQty, setFootwearQty] = useState(1);
 
-  const renderItem1 = ({ item }) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      activeOpacity={0.85}
-      onPress={() => openProductDisplay(item)}
-    >
-      <View style={styles.circleWrapper}>
-        <Image
-          source={{ uri: item.image }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-      </View>
-      <Text numberOfLines={1} style={styles.label}></Text>
-    </TouchableOpacity>
-  );
+  const mainProductImage = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80';
+  const recImage1 = 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=200&q=80';
+  const recImage2 = 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=200&q=80';
+  const recImage3 = 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=200&q=80';
 
-  const product = route?.params?.product;
-  const productImageSource = product?.image
-    ? { uri: product.image }
-    : require('../assets/images/dress.png');
-  return (
-     <SafeAreaProvider>
-    <ScrollView style={styles.container}>
-      <View style={styles.container}>
-        <View style={styles.alignRow}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() =>navigation.pop()}
-            >
-              <FontAwesomeIcon icon={faLessThan} color="#ffffff" size={18} />
+  const handleGoBack = () => {
+    if (navigation && navigation.goBack) {
+      navigation.goBack();
+    }
+  };
 
-              <Text style={styles.text}>Back</Text>
-            </TouchableOpacity>
-          </View>
+  const renderItemVariantPicker = (title, brandLogoText, description, currentSize, setSize, currentQty, setQty) => {
+    return (
+      <View style={styles.ClothingBox}>
+        <View style={styles.clothingHeaderView}>
+          <Text style={styles.clothTitleText}>{title}</Text>
+          <Text style={styles.variantBrandLogoPlaceholderText}>{brandLogoText}</Text>
         </View>
-        <View style={styles.header1}>
-          <Text style={styles.headerText}>
-            {product?.title || 'streetwear Set - urban Chill'}
-          </Text>
-          <Text style={styles.headerText1}>Outfit curated from 3 brands.</Text>
-        </View>
-        <View style={styles.cardView}>
-          <View style={styles.card}>
-            <Image source={productImageSource} style={styles.image} />
-          </View>
-          <View style={styles.priceView}>
-            <Text style={styles.priceText}>
-              {product?.price ? `₹${product.price}` : '₹3,499'} (Excluding
-              extras)
-            </Text>
-          </View>
-          <View style={styles.checkboxView}>
-            <View style={styles.iconRow}>
-              <CheckBox
-                disabled={false}
-                value={toggleCheckBox}
-                onValueChange={newValue => setToggleCheckBox(newValue)}
-                style={styles.checkBox}
-                tintColors={{ true: '#fe9267', false: '#ffffff' }}
-              />
-              <Text style={styles.text4}>
-                Buy the Whole look(Including extras).{' '}
-              </Text>
-            </View>
-            <View style={styles.allPriceView}>
-              <Text style={styles.text1}>₹5,499 (all items combined) </Text>
-              <Text style={styles.text2}>
-                curated look for causual weekends includes top, denim, and
-                Sneakers.{' '}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.iconRow1}>
-            <Text style={styles.text}>Brands </Text>
-            <View style={styles.nikeView}>
-              <Image
-                source={require('../assets/images/nike.png')}
-                style={styles.image}
-              />
-            </View>
-            <View style={styles.hmView}>
-              <Image
-                source={require('../assets/images/h&m.png')}
-                style={styles.image}
-              />
-            </View>
-          </View>
-        </View>
-        <View
-          style={{
-            width: '90%',
-            height: 1,
-            backgroundColor: '#5c5c5c',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 10,
-            marginLeft: 20,
-          }}
-        ></View>
-        <View style={styles.selectionView}>
-          <Text style={styles.selectionText}>Size Selection</Text>
-        </View>
-        <View style={styles.iconRow2}>
-          <Text style={styles.text}>Top Wear </Text>
-
-          <View style={styles.hmView}>
-            <Image
-              source={require('../assets/images/h&m.png')}
-              style={styles.image}
-            />
-          </View>
-        </View>
-        <View>
-          <Text style={styles.text3}>100% cotton, soft-touch finish. </Text>
-        </View>
-        <View style={styles.iconRow3}>
-          <Text style={styles.text4}>Size</Text>
-
-          <RulerDimensionLine size={20} color="#fea26d" />
-        </View>
-        <View style={styles.sizeBoxView}>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XS</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>S</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>M</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>L</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XL</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XXL</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconRow3}>
-          <Text style={styles.quantityText}>quantity</Text>
-          <TouchableOpacity>
-            <Text style={styles.quantityText}>—</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>1</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quantityText}>
-            <Text style={styles.quantityText}>+</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconRow2}>
-          <Text style={styles.text}>Bottom Wear </Text>
-
-          <View style={styles.hmView}>
-            <Image
-              source={require('../assets/images/h&m.png')}
-              style={styles.image}
-            />
-          </View>
-        </View>
-        <View>
-          <Text style={styles.text3}>Slim fit, stretchable denim.</Text>
-        </View>
-        <View style={styles.iconRow3}>
-          <Text style={styles.text4}>Size</Text>
-
-          <RulerDimensionLine size={20} color="#fea26d" />
-        </View>
-        <View style={styles.sizeBoxView}>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XS</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>S</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>M</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>L</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XL</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XXL</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconRow3}>
-          <Text style={styles.quantityText}>quantity</Text>
-          <TouchableOpacity>
-            <Text style={styles.quantityText}>—</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>1</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quantityText}>
-            <Text style={styles.quantityText}>+</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconRow2}>
-          <Text style={styles.text}>Foot Wear </Text>
-
-          <View style={styles.nikeView}>
-            <Image
-              source={require('../assets/images/nike.png')}
-              style={styles.image}
-            />
-          </View>
-        </View>
-        <View>
-          <Text style={styles.text3}>Breathable sole, regular fit. </Text>
-        </View>
-        <View style={styles.iconRow3}>
-          <Text style={styles.text4}>Size</Text>
-
-          <RulerDimensionLine size={20} color="#fea26d" />
-        </View>
-        <View style={styles.sizeBoxView}>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XS</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>S</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>M</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>L</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XL</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>XXL</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconRow3}>
-          <Text style={styles.quantityText}>quantity</Text>
-          <TouchableOpacity>
-            <Text style={styles.quantityText}>—</Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={styles.boxsizeView}>
-              {' '}
-              <Text style={styles.text5}>1</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quantityText}>
-            <Text style={styles.quantityText}>+</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconRow3}>
-          <TouchableOpacity style={styles.quantityText}>
-            <Text style={styles.quantityText}>+</Text>
-          </TouchableOpacity>
-          <Text style={styles.text4}>Add Extras (belt, cap, scraf)</Text>
-        </View>
-        <View style={styles.button2}>
-          <TouchableOpacity onPress={() => console.log('Pressed!')}>
-            <View style={styles.buttonbox1}>
-              <Text style={styles.text6}>Add To CaRT </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.button2}>
-          <TouchableOpacity onPress={() => console.log('Pressed!')}>
-            <LinearGradient
-              colors={['#f0a374', '#e77a37', '#f0a374']}
-              style={styles.buttonbox}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-            >
-              <Text style={styles.text6}>Buy Now</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={[
-            styles.discrptionView,
-            activeInfoTab === 'shipping' ? null : styles.hiddenInfoSection,
-          ]}
-        >
-          <View style={styles.alignRow}>
-            <TouchableOpacity onPress={() => setActiveInfoTab('shipping')}>
-              <View style={styles.selectedView}>
-                <Text style={styles.text8}>Shipping Info</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setActiveInfoTab('howItWorks')}>
-              <Text style={styles.text8}>How It Works</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => setActiveInfoTab('productInfo')}>
-              <Text style={styles.text8}>Product Info</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.text9}>Delivery Time </Text>
-          <Text style={styles.text10}>
-            Delivery within 3-5 business days by partner.
-          </Text>
-          <Text style={styles.text9}>Delivery partner</Text>
-          <Text style={styles.text10}>
-            Shipped directly by H&M / Levis / nike.{' '}
-          </Text>
-          <Text style={styles.text9}>Tracking Info </Text>
-          <Text style={styles.text10}>
-            You'll recive tracking updates in your order History once placed.
-          </Text>
-          <Text style={styles.text9}>Delivery Charge</Text>
-          <Text style={styles.text10}>
-            free Shipping for orders above ₹1,999.
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.discrptionView,
-            activeInfoTab === 'howItWorks' ? null : styles.hiddenInfoSection,
-          ]}
-        >
-          <View style={styles.alignRow}>
-            <TouchableOpacity onPress={() => setActiveInfoTab('shipping')}>
-              <View>
-                <Text style={styles.text8}>Shipping Info</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.selectedView}
-              onPress={() => setActiveInfoTab('howItWorks')}
-            >
-              <Text style={styles.text8}>How It Works</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => setActiveInfoTab('productInfo')}>
-              <Text style={styles.text8}>Product Info</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.text9}>Select Your Look </Text>
-          <Text style={styles.text10}>
-            Choose full outfit or Specific Pieces.
-          </Text>
-          <Text style={styles.text9}>Checkout Securely</Text>
-          <Text style={styles.text10}>Pay via UPI, Card, or Wallet. </Text>
-          <Text style={styles.text9}>Order Confirmed </Text>
-          <Text style={styles.text10}>we sync order with brand partner</Text>
-          <Text style={styles.text9}>Shipped by Brand</Text>
-          <Text style={styles.text10}>Track updates inside the app.</Text>
-          <Text style={styles.text9}>Refund Available (12 hrs)</Text>
-          <Text style={styles.text10}>
-            Cancel or refund within the first 12 hours.
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.discrptionView,
-            activeInfoTab === 'productInfo' ? null : styles.hiddenInfoSection,
-          ]}
-        >
-          <View style={styles.alignRow}>
-            <TouchableOpacity onPress={() => setActiveInfoTab('shipping')}>
-              <View>
-                <Text style={styles.text8}>Shipping Info</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setActiveInfoTab('howItWorks')}>
-              <Text style={styles.text8}>How It Works</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.selectedView}
-              onPress={() => setActiveInfoTab('productInfo')}
-            >
-              <Text style={styles.text8}>Product Info</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.text9}>Material</Text>
-          <Text style={styles.text10}>
-            100% Cotton (T-shirt), Stretch Denim(Jeans), Mesh(Shoes)
-          </Text>
-          <Text style={styles.text9}>Fit Type</Text>
-          <Text style={styles.text10}>Regular Fit / Slim Fit / Relaxed. </Text>
-          <Text style={styles.text9}>Care INstructions </Text>
-          <Text style={styles.text10}>Machine Wash cold, tunmble dry low</Text>
-          <Text style={styles.text9}>Color Options</Text>
-          <Text style={styles.text10}>Black, Navy, olive.</Text>
-          <Text style={styles.text9}>Made In</Text>
-          <Text style={styles.text10}>Made in India / Imported.</Text>
-          <Text style={styles.text9}>Sustainability Note</Text>
-          <Text style={styles.text10}>Eco-certified fabric used.</Text>
-          <Text style={styles.text9}>Refund and Returns </Text>
-          <Text style={styles.text10}>
-            After 12 hours, returns are managed by the brand. Initiate returns
-            from your Order page.
-          </Text>
-        </View>
-         <View style={styles.policyOuterContainer}>
-          <Text style={styles.policyHeaderTitle}>Refund & Return Policy</Text>
-          <View style={styles.policyMessageContent}>
-            <Text style={styles.policyContentBody}>
-              After 12 hours, returns are managed by the brand. Initiate returns directly from your Order page.
-            </Text>
-            <TouchableOpacity><Text style={styles.policyLinkText}>View Brand's Refund Policy</Text></TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.recommandView}>
-          <Text style={styles.recommendText}>Recommend Products</Text>
-        </View>
-        <View style={styles.recommandView}></View>
-      </View>
-      <View
+        <Text style={styles.clothDescriptionText}>{description}</Text>
         
-      >
-        <View style={styles.container}>
-          <FlatList
-            data={data}
-            renderItem={renderItem1}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-          />
+        <View style={styles.sizeHeaderLabelRow}>
+          <Text style={styles.sizeSectionTitleText}>Size</Text>
+         <MaskedView
+  style={{ width: Tokens.scaleAsset(20), height: Tokens.scaleAsset(20) }}
+  maskElement={
+    <RulerDimensionLine size={Tokens.scaleAsset(20)} color="#000000" />
+  }
+>
+  <LinearGradient
+    colors={['#FBB59E', '#FDABAC', '#FDEABF']}
+    start={{ x: 0, y: 0.5 }}
+    end={{ x: 1, y: 0.5 }}
+    style={StyleSheet.absoluteFillObject} 
+  />
+</MaskedView>
+        </View>
+
+        
+        <View style={styles.sizeHorizontalRow}>
+          {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => {
+            const isSelected = currentSize === size;
+            return (
+              <LinearGradient
+                                 colors={['#333637', '#242426']}
+          start={{ x: 0.0105, y: 0.5 }}
+          end={{ x: 0.9866, y: 0.5 }}
+                                style={[
+                  styles.sizeBoxButton,  isSelected && styles.sizeBoxButton1
+                  
+                ]}
+                              >
+              <TouchableOpacity
+                key={size}
+                activeOpacity={0.85}
+                onPress={() => setSize(size)}
+                style={[
+                  
+                
+                ]}
+              >
+                <Text style={[
+                  styles.sizeItemText,
+                  isSelected && styles.sizeItemTextActive
+                ]}>
+                  {size}
+                </Text>
+              </TouchableOpacity>
+              </LinearGradient>
+            );
+          })}
+        </View>
+
+        
+        <View style={styles.quantityView}>
+          <Text style={styles.quantityText}>Quantity</Text>
+          <View style={styles.counterActionLayoutGroup}>
+            <TouchableOpacity 
+              style={styles.counterTouch} 
+              onPress={() => setQty(Math.max(1, currentQty - 1))}
+              activeOpacity={0.6}
+            >
+              <Text style={styles.stepperActionLineIcon}>—</Text>
+            </TouchableOpacity>
+             <LinearGradient
+                              colors={['#333637', '#242426']}
+                              start={{ x: 0.01, y: 0.5 }}
+                              end={{ x: 0.99, y: 0.5 }}
+                               style={styles.counterBox}
+                            >
+            
+              <Text style={styles.counterValueText}>{currentQty}</Text>
+          
+            </LinearGradient>
+            <TouchableOpacity 
+              style={styles.counterTouch} 
+              onPress={() => setQty(currentQty + 1)}
+              activeOpacity={0.6}
+            >
+              <Text style={styles.stepperActionPlusIcon}>+</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </ScrollView>
+    );
+  };
+
+  return (
+    <SafeAreaProvider>
+      <LinearGradient
+        colors={['#0F0F0F', '#0D0D0D']}
+        start={{ x: 0.44, y: 0 }}
+        end={{ x: 0.54, y: 0.98 }}
+        style={styles.screenContainer}
+      >
+        <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
+        <SafeAreaView style={styles.mainContainer} edges={['top', 'left', 'right']}>
+          
+          
+          <View style={styles.backHeaderView}>
+            <TouchableOpacity style={styles.backButtonView} onPress={handleGoBack} activeOpacity={0.7}>
+              <ArrowLeft size={Tokens.scaleAsset(20)} color="#E5E5E5" />
+              <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContentContainer}>
+           
+            <View style={styles.headerView}>
+              <Text style={styles.productTitleText}>Streetwear Set – Urban Chill</Text>
+              <Text style={styles.productSubtitleText}>Outfit curated from 3 brands.</Text>
+            </View>
+
+            <View style={styles.postBoxView}>
+              <Image source={{ uri: mainProductImage }} style={styles.postImage} resizeMode="cover" />
+              
+              <View style={styles.ImageCarousel}>
+                <View style={styles.indicatorDotInactive} />
+                <LinearGradient
+                  colors={['#FEF9BD', '#FA83F2']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.indicatorDotActive}
+                />
+                <View style={styles.indicatorDotInactive} />
+                <View style={styles.indicatorDotInactive} />
+              </View>
+            </View>
+
+            
+            <View style={styles.priceView}>
+              <Text style={styles.priceText}>₹3,499 <Text style={styles.excludingExtrasLabel}>(Excluding extras)</Text></Text>
+              
+              <LinearGradient
+ 
+  colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+  start={{ x: 0, y: 0.5 }}
+  end={{ x: 1, y: 0.5 }}
+  style={styles.gradientBorderOuterView}
+>
+  <View style={styles.solidColorBackgroundMaskShield}>
+    <LinearGradient
+ 
+  colors={['#312B27', '#2A1C19', '#2A211E']}
+  start={{ x: 0, y: 0.5 }}
+  end={{ x: 0.8, y: 0.5 }}
+  style={styles.stockBadge}
+>
+    
+      <Text style={styles.stockText}>In Stock</Text>
+    
+    </LinearGradient>
+  </View>
+</LinearGradient>
+            </View>
+
+           
+            <View style={styles.controlRowView}>
+              <TouchableOpacity 
+                style={[styles.checkmarkToggleView, wholeLookChecked && styles.checkmarkToggleActiveView]} 
+                onPress={() => setWholeLookChecked(!wholeLookChecked)}
+                activeOpacity={0.8}
+              >
+                {wholeLookChecked && (
+                  <LinearGradient
+                    colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+                    start={{ x: 0.3, y: 0.5 }}
+                    end={{ x: 0.7, y: 0.5 }}
+                    style={styles.checkmarkInnerGradientView}
+                  >
+                    <Text style={styles.checkmarkIconSymbol}>✓</Text>
+                  </LinearGradient>
+                )}
+              </TouchableOpacity>
+
+              <View style={styles.comboDetailView}>
+                <Text style={styles.comboText}>Buy the whole look(including extras).</Text>
+                <Text style={styles.comboPriceText}>₹5,499 <Text style={styles.allCombinedLabel}>(all items combined)</Text></Text>
+                <Text style={styles.comboDescriptionText}>Curated look for casual weekends — includes top, denim, and sneakers.</Text>
+                <Text style={styles.brandsText}>Brands  <Text style={styles.brandsLogoText}>NIKE  H&M</Text></Text>
+              </View>
+            </View>
+
+            <View style={styles.Divider} />
+            <View style = {styles.SelectionView}>
+            <Text style={styles.SelectionText}>Size Selection</Text>
+</View>
+           
+            {renderItemVariantPicker('Top Wear', 'H&M', '100% cotton, soft-touch finish.', topSize, setTopSize, topQty, setTopQty)}
+            {renderItemVariantPicker('Bottom Wear', 'H&M', 'Slim fit, stretchable denim.', bottomSize, setBottomSize, bottomQty, setBottomQty)}
+            {renderItemVariantPicker('Footwear', 'NIKE', 'Breathable sole, regular fit.', footwearSize, setFootwearSize, footwearQty, setFootwearQty)}
+
+           
+            <TouchableOpacity style={styles.addExtrasView} activeOpacity={0.7}>
+              <Plus size={Tokens.scaleAsset(20)} color="#FDABAC" style={styles.innerAssetIconRightSpacingSpacing} />
+              <Text style={styles.addExtrasText}> Add Extras <Text style={styles.addExtrasSubtext}>(belt, cap, scarf)</Text></Text>
+            </TouchableOpacity>
+
+           
+            <View style={styles.buttonGroupBox}>
+             
+             
+                <LinearGradient
+                  colors={['#333637', '#242426',]}
+                  start={{ x: 0.01, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={styles.buttonGroupBox2}
+                >
+                
+                  <Text style={styles.buttonGroupBox1Text}>Add to CaRT</Text>
+                </LinearGradient>
+             
+              
+
+              <TouchableOpacity style={styles.buyNowButtonView} activeOpacity={0.85}>
+                <LinearGradient
+                  colors={['#FBB59E', '#F8876C', '#fd795c', '#F98F7A']}
+                  start={{ x: 0.01, y: 0.5 }}
+                  end={{ x: 0.99, y: 0.5 }}
+                  style={styles.buyNowButtonBox}
+                >
+                  <Text style={styles.buyNowText}>Buy Now</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.Divider} />
+
+            
+            <View style={styles.tabView}>
+              {['Shipping Info', 'How It Works', 'Product Info'].map((tab) => {
+                const isTabActive = activeTab === tab;
+                return (
+                  <TouchableOpacity
+  key={tab}
+  onPress={() => setActiveTab(tab)}
+  activeOpacity={0.85}
+  style={styles.buttonWrapper}
+>
+  {isTabActive ? (
+    <LinearGradient
+      
+      colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+      start={{ x: 0, y: 0.5 }}
+      end={{ x: 1, y: 0.5 }}
+      style={styles.activeBorderGradientView}
+    >
+      <View style={styles.activeSolidBackgroundMaskShield}>
+        <LinearGradient
+          colors={['#FDDBBD26', '#F77D611F', '#FBB49D1F']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.activeGredientView}
+        >
+          <Text style={styles.categoryTabText}>{tab}</Text>
+        </LinearGradient>
+      </View>
+    </LinearGradient>
+  ) : (
+    <View style={styles.activeGredientView1}>
+      <Text style={styles.categoryTabText1}>{tab}</Text>
+    </View>
+  )}
+</TouchableOpacity>
+
+                );
+              })}
+            </View>
+
+            {activeTab === 'Shipping Info' && (
+              <View style={styles.tabInfoView}>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Delivery Time</Text>
+                  <Text style={styles.tabText2}>Delivered within 3–5 business days by brand partner.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Delivery Partner</Text>
+                  <Text style={styles.tabText2}>Shipped directly by H&M / Levis / Nike.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Tracking Info</Text>
+                  <Text style={styles.tabText2}>You’ll receive tracking updates in your Order History once placed.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Delivery Charge</Text>
+                  <Text style={styles.tabText2}>Free shipping for orders above ₹1,999.</Text>
+                </View>
+              </View>
+            )}
+
+            {activeTab === 'How It Works' && (
+              <View style={styles.tabInfoView}>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Select Your Look</Text>
+                  <Text style={styles.tabText2}>Choose full outfit or specific pieces.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Checkout Securely</Text>
+                  <Text style={styles.tabText2}>Pay via UPI, Card, or Wallet.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Order Confirmed</Text>
+                  <Text style={styles.tabText2}>We sync order with brand partner.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Shipped by Brand</Text>
+                  <Text style={styles.tabText2}>Track updates inside the app.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Refund Available (12 hrs)</Text>
+                  <Text style={styles.tabText2}>Cancel or refund within the first 12 hours.</Text>
+                </View>
+              </View>
+            )}
+
+            {activeTab === 'Product Info' && (
+              <View style={styles.tabInfoView}>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Material</Text>
+                  <Text style={styles.tabText2}>100% Cotton (T-shirt), Stretch Denim (Jeans), Mesh (Shoes)</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Fit Type</Text>
+                  <Text style={styles.tabText2}>Regular Fit / Slim Fit / Relaxed</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Care Instructions</Text>
+                  <Text style={styles.tabText2}>Machine wash cold, tumble dry low.</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Color Options</Text>
+                  <Text style={styles.tabText2}>Black, Navy, Olive</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Made In</Text>
+                  <Text style={styles.tabText2}>Made in India / Imported</Text>
+                </View>
+                <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Sustainability Note</Text>
+                  <Text style={styles.tabText2}>Eco-certified fabric used.</Text>
+                </View>
+                
+              </View>
+            )}
+             <View style={styles.tabInfoView2}>
+            <View style={styles.tabInfoView1}>
+                  <Text style={styles.tabText1}>Refund & Returns</Text>
+                  <Text style={styles.tabText2}>
+                    After 12 hours, returns are managed by the brand. Initiate returns from your Order page.{'\n'}
+                    <View style = {styles.refundPolicyView}>
+                    <Text style={styles.refundPolicyText}>Read Refund Policy</Text>
+                    </View>
+                  </Text>
+                </View>
+                </View>
+
+           
+
+            <View style={styles.recommendationView}>
+              <View style = {styles.recommendationPRoductView}>
+              <Text style={styles.recommendationText}>Recommend Products</Text>
+              </View>
+              <View style={styles.recommendationCardsView}>
+                <TouchableOpacity style={styles.recommendationItem} activeOpacity={0.9}>
+                  <Image source={{ uri: recImage1 }} style={styles.recommendationImage} resizeMode="cover" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.recommendationItem} activeOpacity={0.9}>
+                  <Image source={{ uri: recImage2 }} style={styles.recommendationImage} resizeMode="cover" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.recommendationItem} activeOpacity={0.9}>
+                  <Image source={{ uri: recImage3 }} style={styles.recommendationImage} resizeMode="cover" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+          </ScrollView>
+        </SafeAreaView>
+
+       
+      </LinearGradient>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
     backgroundColor: '#000000',
   },
-  itemContainer: {
-    alignItems: 'center',
-    marginHorizontal: wp('1.5%'),
+  mainContainer: {
+    flex: 1,
+    width: '100%',
   },
-   text: {
-    fontSize: wp('4%'),
-    color: '#fff',
-    fontWeight: '900', 
-    marginLeft: wp('2%'),
+  scrollContentContainer: {
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
+    paddingTop: Tokens.gaps.medium,
+    paddingBottom: 140, 
   },
-   header: {
-    marginTop: hp('1.2%'),
-    paddingLeft: wp('5%'),
-  },
-   alignRow: {
+  backHeaderView: {
+    width: '100%',
+    height: 40,
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp('2.5%'),
+    marginVertical: Tokens.gaps.small,
   },
-  button: {
+  backButtonView: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: wp('2%'),
-  },
-  imageContainer: {
-    flex: 1,
-  },
-  circleWrapper: {
-    width: wp('24%'),
-    height: hp('18%'),
-    overflow: 'hidden',
-    borderWidth: 4,
-    backgroundColor: '#f9f9f9',
-    borderColor: '#000000',
-    borderRadius: 15,
-  },
-  Circlecard: {
-    width: COLUMN_WIDTH / 1.5,
-    height: hp('18%'),
-    marginBottom: hp('1.8%'),
-    borderRadius: 80,
-    overflow: 'hidden',
-    backgroundColor: '#F5EBE0',
-  },
-  image: {
-    width: '100%',
+    gap: Tokens.gaps.small,
     height: '100%',
   },
-
-  header1: {
-    marginTop: hp('1.2%'),
-    paddingLeft: wp('5%'),
-  },
-  headerText: {
-    fontSize: wp('5%'),
-    fontWeight: '900',
-    color: '#fff',
-    marginTop: hp('1.2%'),
-  },
-
-   headerText1: {
-    fontSize: wp('4%'),
-    fontWeight: '600',
-    color: '#fff',
-    marginTop: hp('2.5%'),
-  },
-  cardView: {
-    marginTop: hp('2.5%'),
-    paddingLeft: wp('5%'),
-    flex: 1,
-  },
-   card: {
-    width: COLUMN_WIDTH,
-    height: hp('45%'),
-    marginBottom: hp('1.8%'),
-    borderRadius: 15,
-    overflow: 'hidden',
-    backgroundColor: '#F5EBE0',
-    borderColor: '#000',
-  },
-  Image: { 
-    width: '100%',
-    height: '100%',
+  backButtonText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#E5E5E5',
     
   },
- 
-  priceView: {
-    marginTop: hp('0.6%'),
+  headerView: { 
+    width: '100%',
+    gap: Tokens.gaps.small,
+    marginBottom: Tokens.gaps.large,
   },
-  priceText: {
-    color: '#fff',
-    fontSize: wp('4%'),
-    fontWeight: '900',
+  productTitleText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: Tokens.typography.sizes.title,
+    lineHeight: Tokens.typography.lineHeights.title,
+    color: '#FFFFFF',
   },
-   iconRow: {
+  productSubtitleText: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: Tokens.typography.sizes.body,
+    lineHeight: Tokens.typography.lineHeights.body,
+    color: '#E5E5E5',
+  },
+  postBoxView: {
+    width: '100%',
+    height: 389,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: '#1E1E20',
+    position: 'relative',
+    marginBottom: Tokens.gaps.large,
+  },
+ postImage: {
+    width: '100%',
+    height: '100%',
+  },
+ ImageCarousel: {
+    position: 'absolute',
+    bottom: 12,
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp('1%'),
+    gap: Tokens.gaps.small,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 20,
   },
-  checkBox: {
-    color: '#fe9267',
-    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
+  indicatorDotInactive: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 1.25,
+    borderColor: '#CCCCCC',
   },
- text4: {
-    color: '#f1f0f0',
-    fontSize: wp('4%'),
-    fontWeight: '900',
-  },
-  checkboxView: {
-    marginTop: hp('4%'),
-  },
-  text1: {
-    color: '#f1f0f0',
-    fontSize: wp('4%'),
-    fontWeight: '900',
-    marginTop: hp('2.5%'),
-    paddingLeft: wp('7.5%'),
-  },
-  text2: {
-    color: '#b6b6b6',
-    fontSize: wp('4%'),
-    fontWeight: '600',
-    marginTop: hp('2.5%'),
-    paddingLeft: wp('7.5%'),
-  },
-  allPriceView: {
-    marginLeft: wp('2%'),
-  },
-  nikeView: {
-    width: wp('20%'),
-    height: hp('6.5%'),
-    backgroundColor: '#F5EBE0',
-    borderColor: '#000000',
-    borderWidth: 2,
-  },
-  hmView: {
-    width: wp('20%'),
-    height: hp('5.5%'),
-    backgroundColor: '#F5EBE0',
-  },
- iconRow1: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp('0.5%'),
-    marginLeft: wp('7.5%'),
-    padding: wp('5%'),
-  },
-   selectionText: {
-    color: '#ffff',
-    fontSize: wp('4.5%'),
-    fontWeight: '900',
-  },
-  selectionView: {
-    padding: wp('5%'),
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  iconRow2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp('0.5%'),
-    marginLeft: wp('6%'),
-  },
-  text3: {
-    color: '#b6b6b6',
-    fontSize: wp('4%'),
-    fontWeight: '600',
-    paddingLeft: wp('8%'),
-    marginTop: hp('0.6%'),
-  },
-  iconRow3: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp('2.5%'),
-    marginLeft: wp('3%'),
-    padding: wp('5%'),
-  },
-  sizeView: {
-    width: wp('7.5%'),
-    height: wp('7.5%'),
-    backgroundColor: '#ffffff',
-  },
-
-   sizeBoxView: {
-    flexDirection: 'row',
-    marginLeft: wp('7.5%'),
-    gap: wp('2%'),
-  },
-  boxsizeView: {
-    width: wp('11%'),
-    height: hp('5.5%'),
-    backgroundColor: '#292929',
-    alignItems: 'center',
-    justifyContent: 'center',
+  indicatorDotActive: {
+    width: 12,
+    height: 12,
     borderRadius: 6,
   },
-  text5: {
-    fontSize: wp('4%'),
-    color: '#fff',
-    fontWeight: '900',
-  },
-
-  quantityView: {},
-
-  quantityText: {
-    color: '#ffff',
-
-    fontWeight: '900',
-  },
-  button2: {
+  priceView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
-    paddingHorizontal: wp('3.5%'), 
-    alignItems: 'center',
-    marginTop: hp('2.5%'),
+    marginBottom: Tokens.gaps.xlarge,
   },
-  buttonbox1: {
-    paddingVertical: 20,
-    paddingHorizontal: 110,
-    borderRadius: 20,
-    alignItems: 'center',
+  priceText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 16,
+    lineHeight: 26,
+    color: '#FFFFFF',
+  },
+  excludingExtrasLabel: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: 16,
+    color: '#E5E5E5',
+  },
+  stockBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 6,
+     borderBottomColor:"rgba(248, 45, 0, 0.15)"
+    
+  },
+  stockText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: Tokens.typography.sizes.small,
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  gradientBorderOuterView: {
+    padding: 1,             
+    borderRadius: 7,       
+    alignSelf: 'flex-start',
+     borderTopLeftRadius: 3,     
+    borderTopRightRadius: 7,    
+    borderBottomRightRadius: 7, 
+    borderBottomLeftRadius: 13, 
+   
+    
+  },
+  solidColorBackgroundMaskShield: {
+    borderRadius: 6,
+    overflow: 'hidden',
+    
+    backgroundColor: '#242426',
+    
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6,
+    borderBottomLeftRadius: 12,
+  },
+  controlRowView: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Tokens.gaps.large,
+    width: '100%',
+    paddingVertical: 4,
+  },
+  checkmarkToggleView: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#818181',
+    backgroundColor: '#242426',
+    overflow: 'hidden',
     justifyContent: 'center',
-    backgroundColor: '#484848',
-  },
-  buttonbox: {
-    paddingVertical: 20,
-    paddingHorizontal: 130,
-    borderRadius: 20,
     alignItems: 'center',
+    marginTop: 2,
+  },
+  checkmarkToggleActiveView: {
+    borderColor: 'transparent',
+  },
+  checkmarkInnerGradientView: {
+    width: 24,
+    height: 24,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmarkIconSymbol: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  comboDetailView: {
+    flex: 1,
+    gap: Tokens.gaps.small,
+  },
+  comboText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#FFFFFF',
+  },
+  comboPriceText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#FFFFFF',
+  },
+  allCombinedLabel: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: 12,
+    color: '#E5E5E5',
+  },
+  comboDescriptionText: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: Tokens.typography.sizes.body,
+    lineHeight: Tokens.typography.lineHeights.body,
+    color: '#E5E5E5',
+  },
+  brandsText: {
+    fontFamily: Tokens.typography.families.semiBold ,
+    fontSize: 12,
+    color: '#ffffff',
+    marginTop: 4,
+  },
+  brandsLogoText: {
+    color: '#FFFFFF',
+    fontFamily: Tokens.typography.families.semiBold,
+  },
+  Divider: {
+    width: '100%',
+    height: 0,
+    borderTopWidth: 1,
+    borderColor: '#323537',
+    marginVertical: Tokens.gaps.large,
+  },
+  SelectionText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginBottom: Tokens.gaps.xlarge,
   },
 
-    text6: {
-    fontSize: wp('4%'),
-    fontWeight: '900',
-    color: '#ffff',
+  ClothingBox: {
+    width: '100%',
+    gap: Tokens.gaps.small,
+    marginBottom: Tokens.gaps.xlarge,
+  },
+  clothingHeaderView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.medium,
+  },
+  clothTitleText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    color: '#FFFFFF',
+    lineHeight: 24 
+  },
+  variantBrandLogoPlaceholderText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    color: '#B3B3B3',
+  },
+  clothDescriptionText: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: 14,
+    color: '#E5E5E5',
+    marginBottom: Tokens.gaps.small,
+  },
+  sizeHeaderLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.small,
+    marginBottom: 4,
+  },
+  sizeSectionTitleText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 13,
+    color: '#FFFFFF',
+  },
+  sizeHorizontalRow: {
+    flexDirection: 'row',
+    gap: Tokens.gaps.small,
+    width: '100%',
+    marginBottom: Tokens.gaps.large,
+  },
+  sizeBoxButton: {
+    width: SINGLE_ROW_CHIP_WIDTH,
+    height: 38,
+    borderRadius: 6,
+    backgroundColor: '#242426', 
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth:0.5,
+    borderColor:"#D3CECE45"
+  },
+  sizeBoxButton1: {
+    borderWidth: 1,
+    borderColor: '#F8876C', 
+  },
+  sizeItemText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 12,
+    color: '#B3B3B3',
+  },
+  sizeItemTextActive: {
+    color: '#FFFFFF',
+  },
+  quantityText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 13,
+    color: '#FFFFFF',
   },
 
-  discrptionView: {
-    backgroundColor: '#000000',
-    padding: wp('8%'),
+  quantityView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    
+    width: '100%',
+    gap: Tokens.gaps.large,
   },
-  hiddenInfoSection: {
-    display: 'none',
+  counterActionLayoutGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.large,
   },
-  text8: {
-    color: '#fffdfd',
-    fontSize: wp('4%'),
-    fontWeight: '900',
+  counterTouch: {
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  stepperActionLineIcon: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: Tokens.typography.families.medium,
+  },
+  stepperActionPlusIcon: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontFamily: Tokens.typography.families.medium,
+  },
+  counterBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 6,
+    backgroundColor: '#1E1E20', 
+    alignItems: 'center',
+  },
+  counterValueText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 12,
+    color: '#FFFFFF',
   },
 
-  selectedView: {
-    paddingVertical: hp('0.6%'),
-    paddingHorizontal: wp('1.2%'),
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: '#fea26d',
-    backgroundColor: '#2e2e2e',
+  addExtrasView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: 32,
+    marginVertical: Tokens.gaps.large,
   },
-  text9: {
-    color: '#fff',
-    marginTop: hp('1.8%'),
-    padding: wp('2.5%'),
-    fontWeight: '900',
-    fontSize: wp('4%'),
+  addExtrasText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 14,
+    color: '#FFFFFF',
   },
-  text10: {
-    color: '#d8d8d8',
-    marginLeft: wp('3%'),
+  addExtrasSubtext: {
+    fontFamily: Tokens.typography.families.regular,
+    color: '#ffffff',
+    fontSize: 14,
   },
-  recommendText: {
-    fontSize: wp('5%'),
-    fontWeight: '900',
-    color: '#ffff',
+
+  
+  buttonGroupBox: {
+    width: '100%',
+    gap: Tokens.gaps.large,
+    marginTop: 8,
+  },
+  buttonGroupBox2: {
+    width: '100%',
+    height: Tokens.components.buttonHeight,
+    borderRadius: Tokens.components.radiusButton,
+    //backgroundColor: '#1E1E20',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+ buttonGroupBox1Text: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+  buyNowButtonView: {
+    width: '100%',
+    height: Tokens.components.buttonHeight,
+    borderRadius: Tokens.components.radiusButton,
+    shadowColor: 'rgba(251, 147, 96, 0.64)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  buyNowButtonBox: {
+    flex: 1,
+    borderRadius: Tokens.components.radiusButton,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buyNowText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+
+   tabView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: 36,
+    marginTop: Tokens.gaps.xlarge,
+    marginBottom: Tokens.gaps.large,
+    gap: 5,
+  },
+  ButtonWrapper: {
+    flex: 1,
+    height: 36,
+  },
+  
+ 
+  activeBorderGradientView: {
+    flex: 1,                    
+    padding: 1,                 
+    borderRadius: 9,            
+    overflow: 'hidden',
+  },
+  activeSolidBackgroundMaskShield: {
+    flex: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+    
+    backgroundColor: '#242426', 
+  },
+  
+  activeGredientView: {
+    flex: 1,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  
+ activeGredientView1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryTabText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 13,
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  categoryTabText1: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: 13,
+    color: '#E5E5E5',
+    textAlign: 'center',
+  },
+
+  tabInfoView: {
+    width: '100%',
+    gap: Tokens.gaps.large,
+    paddingVertical: 4,
+  },
+  tabInfoView2: {
+    width: '100%',
+    gap: Tokens.gaps.large,
+    paddingVertical: 4,
+  },
+  tabInfoView1: {
+    width: '100%',
+    gap: 6,
+  },
+  tabText1: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 13,
+    color: '#FFFFFF',
   },
   recommandView: {
     justifyContent: 'center',

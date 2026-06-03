@@ -46,7 +46,7 @@ export default function ShareYourInvite({ navigation }) {
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
-      navigation.goBack();
+      navigation.replace('Home');
     }
   };
 
@@ -83,8 +83,8 @@ export default function ShareYourInvite({ navigation }) {
             <TouchableOpacity style={styles.backButtonTouchTarget} onPress={handleGoBack} activeOpacity={0.7}>
               <ArrowLeft size={Tokens.scaleAsset(20)} color="#E5E5E5" />
               <Text style={styles.backButtonTextLabel}>Back</Text>
-        </TouchableOpacity>
-      </View>
+            </TouchableOpacity>
+          </View>
 
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContentContainer}>
             
@@ -96,12 +96,15 @@ export default function ShareYourInvite({ navigation }) {
 
             {/* Sharing Methods List Array Stack */}
             <View style={styles.sharingMethodsOuterStackPanel}>
-
+              
               {/* Option 1: Invite via Email Button Container */}
-        <TouchableOpacity
+               <LinearGradient  colors={['#262627', '#242426', '#1B1C1D']}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 0.5, y: 0 }} style={styles.sharingMethodClickTarget} >
+              <TouchableOpacity 
                 activeOpacity={0.85} 
                 onPress={() => setEmailModalVisible(true)}
-                style={styles.sharingMethodClickTarget}
+               
               >
                 <View style={styles.sharingMethodInnerContentLayoutRow}>
                   <Mail size={Tokens.scaleAsset(20)} color="#E5E5E5" style={styles.methodIconRightSpacing} />
@@ -110,13 +113,18 @@ export default function ShareYourInvite({ navigation }) {
                     <Text style={styles.methodSubtitleDescriptionText}>Opens email input modal</Text>
                   </View>
                 </View>
-        </TouchableOpacity>
+              </TouchableOpacity>
+              </LinearGradient>
 
               {/* Option 2: Share Link Button Container */}
-        <TouchableOpacity
+
+                 <LinearGradient  colors={['#262627', '#242426', '#1B1C1D']}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 0.5, y: 0 }} style={styles.sharingMethodClickTarget} >
+              <TouchableOpacity 
                 activeOpacity={0.85} 
                 onPress={() => setLinkModalVisible(true)}
-                style={styles.sharingMethodClickTarget}
+               
               >
                 <View style={styles.sharingMethodInnerContentLayoutRow}>
                   <Link2 size={Tokens.scaleAsset(20)} color="#E5E5E5" style={styles.methodIconRightSpacing} />
@@ -125,10 +133,14 @@ export default function ShareYourInvite({ navigation }) {
                     <Text style={styles.methodSubtitleDescriptionText}>Copies referral link + opens share sheet (WhatsApp, Messages, etc.)</Text>
                   </View>
                 </View>
-        </TouchableOpacity>
+              </TouchableOpacity>
+              </LinearGradient>
 
-              {/* Option 3: Invite via WhatsApp / SMS */}
-              <TouchableOpacity activeOpacity={0.85} style={styles.sharingMethodClickTarget}
+              {/* Option 3: Invite via WhatsApp / SMS */} 
+              <LinearGradient  colors={['#262627', '#242426', '#1B1C1D']}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 0.5, y: 0 }} style={styles.sharingMethodClickTarget} >
+              <TouchableOpacity activeOpacity={0.85} 
               
                 onPress={() => setSuccessModalVisible(true)}
               
@@ -139,9 +151,9 @@ export default function ShareYourInvite({ navigation }) {
                     <Text style={styles.methodTitleHeadingText}>Invite via WhatsApp / SMS</Text>
                   </View>
                 </View>
-        </TouchableOpacity>
-
-      </View>
+              </TouchableOpacity>
+</LinearGradient>
+            </View>
 
           </ScrollView>
         </SafeAreaView>
@@ -149,12 +161,12 @@ export default function ShareYourInvite({ navigation }) {
         {/* ========================================================================
             MODAL OVERLAY SHEET 1: SEND INVITE VIA EMAIL (WITH AMBIENT GLOW)
             ======================================================================== */}
-      <Modal
-        animationType="fade"
-        transparent={true}
+        <Modal
+          animationType="fade"
+          transparent={true}
           visible={emailModalVisible}
           onRequestClose={() => setEmailModalVisible(false)}
-      >
+        >
           
           <View style={styles.modalOverlayScrimBackdropBlurContainer}>
             <Shadow
@@ -165,24 +177,20 @@ export default function ShareYourInvite({ navigation }) {
               containerStyle={styles.shadowModalFluidContainer}
               style={styles.shadowModalFluidStyle}
             >
-              <LinearGradient
-              
+             <LinearGradient 
                colors={['#262627', '#242426', '#1B1C1D']}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={[styles.modalCardWindowContainerBodyFrame, { height: 312, justifyContent: 'center' }]}
-              ></LinearGradient>
-              <View style={styles.modalCardWindowContainerBodyFrame}>
-              <TouchableOpacity
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 0.98 }} style={styles.modalCardWindowContainerBodyFrame}>
+                <TouchableOpacity 
                   style={styles.modalCloseButtonAnchorTarget}
                   onPress={() => setEmailModalVisible(false)}
                   activeOpacity={0.7}
-              >
+                >
                   <X size={Tokens.scaleAsset(20)} color="#FFFFFF" />
-              </TouchableOpacity>
+                </TouchableOpacity>
 
                 <Text style={styles.modalHeadingTitleText}>Send Invite via Email</Text>
-
+                
                 <View style={styles.modalInputFieldsFormStackWrapper}>
                   <View >
                     <LinearGradient  
@@ -190,7 +198,7 @@ export default function ShareYourInvite({ navigation }) {
                   start={{ x: 0.1, y: 0.5 }}
                   end={{ x: 0.9, y: 0.6 }}
                    style={styles.inputFieldGradientOutlineWrapperBox}>
-              <TextInput
+                    <TextInput
                       style={styles.inputFieldNativeComponentElement}
                       placeholder="Friend’s Name (optional)"
                       placeholderTextColor="#818181"
@@ -206,12 +214,12 @@ export default function ShareYourInvite({ navigation }) {
                   start={{ x: 0.1, y: 0.5 }}
                   end={{ x: 0.9, y: 0.6 }}
                    style={styles.inputFieldGradientOutlineWrapperBox}>
-              <TextInput
+                    <TextInput
                       style={styles.inputFieldNativeComponentElement}
-                placeholder="Email Address (required)"
+                      placeholder="Email Address (required)"
                       placeholderTextColor="#818181"
-                keyboardType="email-address"
-                autoCapitalize="none"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
                       value={emailAddress}
                       onChangeText={setEmailAddress}
                     />
@@ -224,11 +232,11 @@ export default function ShareYourInvite({ navigation }) {
                   start={{ x: 0.1, y: 0.5 }}
                   end={{ x: 0.9, y: 0.6 }}
                    style={[styles.inputFieldGradientOutlineWrapperBox, { height: 96, paddingVertical: 12 }]}>
-              <TextInput
+                    <TextInput
                       style={[styles.inputFieldNativeComponentElement, { textAlignVertical: 'top', height: '100%' }]}
-                placeholder="Personal Message"
+                      placeholder="Personal Message"
                       placeholderTextColor="#818181"
-                multiline={true}
+                      multiline={true}
                       value={personalMessage}
                       onChangeText={setPersonalMessage}
                     />
@@ -237,7 +245,7 @@ export default function ShareYourInvite({ navigation }) {
 
                   <Text style={styles.modalDynamicReferralContextParagraphText}>
                     Hey! I’ve been using Out.Fit.Find to get curated outfit looks that match my vibe. Use my code <Text style={styles.  referralCodeHighlightInlineText}>OFFFRIEND50</Text> and get ₹50 off your first month! 💃🔥
-              </Text>
+                  </Text>
 
                   <TouchableOpacity activeOpacity={0.85} onPress={handleSendInvite}>
                     <LinearGradient
@@ -251,7 +259,7 @@ export default function ShareYourInvite({ navigation }) {
                   </TouchableOpacity>
 
                 </View>
-              </View>
+             </LinearGradient>
             </Shadow>
           </View>
         </Modal>
@@ -274,50 +282,46 @@ export default function ShareYourInvite({ navigation }) {
               containerStyle={styles.shadowModalFluidContainer}
               style={styles.shadowModalFluidStyle}
             >
-              <LinearGradient
-              
+              <LinearGradient 
                colors={['#262627', '#242426', '#1B1C1D']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                      style={[styles.modalCardWindowContainerBodyFrame, { height: 312, justifyContent: 'center' }]}
-              >
-              <View >
-              <TouchableOpacity
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 0.98 }}
+              style={[styles.modalCardWindowContainerBodyFrame, { height: 312, justifyContent: 'center' }]}>
+                <TouchableOpacity 
                   style={styles.modalCloseButtonAnchorTarget}
                   onPress={() => setSuccessModalVisible(false)}
                   activeOpacity={0.7}
-              >
-                  <X size={Tokens.scaleAsset(20)} color="#FFFFFF" />
-              </TouchableOpacity>
+                >
+                  <X size={Tokens.scaleAsset(26)} color="#FFFFFF" />
+                </TouchableOpacity>
 
                 <View style={styles.successIconLayoutCenterGroup}>
                   <View style={styles.successCheckmarkGreenCircleVectorHolder}>
                     <Check size={Tokens.scaleAsset(80)} color="#FFFFFF" strokeWidth={2} />
-              </View>
-
+                  </View>
+                  
                   <Text style={styles.successStateCentralDescriptionText}>
                     Invite sent successfully! You’ll earn ₹50 once your friend subscribes.
-              </Text>
+                  </Text>
 
                   <TouchableOpacity 
                     activeOpacity={0.85} 
                     style={{ width: '100%' }}
                     onPress={() => setSuccessModalVisible(false)}
                   >
-              <LinearGradient
+                    <LinearGradient
                       colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
                       start={{ x: 0, y: 2 }}
                       end={{ x: 0.9, y: 1 }}
                       style={styles.modalCtaActionButtonGradientFillInnerBox}
-              >
+                    >
                       <Text style={styles.modalCtaActionButtonStringLabelLabel}>My Referrals</Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>
-              </View>
               </LinearGradient>
             </Shadow>
-            </View>
+          </View>
         </Modal>
 
         {/* ========================================================================
@@ -338,42 +342,46 @@ export default function ShareYourInvite({ navigation }) {
               containerStyle={styles.shadowModalFluidContainer}
               style={styles.shadowModalFluidStyle}
             >
-              <View style={[styles.modalCardWindowContainerBodyFrame, { height: 340, justifyContent: 'center' }]}>
-              <TouchableOpacity
+             <LinearGradient 
+               colors={['#262627', '#242426', '#1B1C1D']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 0.98 }} style={[styles.modalCardWindowContainerBodyFrame, { height: 340, justifyContent: 'center' }]}>
+                <TouchableOpacity 
                   style={styles.modalCloseButtonAnchorTarget}
                   onPress={() => setLinkModalVisible(false)}
                   activeOpacity={0.7}
-              >
+                >
                   <X size={Tokens.scaleAsset(20)} color="#FFFFFF" />
-              </TouchableOpacity>
+                </TouchableOpacity>
 
                 <View style={styles.successIconLayoutCenterGroup}>
-                  <Link2 size={Tokens.scaleAsset(64)} color="#FFFFFF" strokeWidth={1.5} />
-
+                  <Link2 size={Tokens.scaleAsset(80)} color="#FFFFFF" strokeWidth={1.5} />
+                  <View style = {styles.textCenter}>
                   <Text style={styles.shareViaLinkHeadingTitleText}>Share via Link</Text>
-                  <Text style={styles.referralLinkDisplayStringFieldText}>{REFERRAL_LINK}</Text>
+                  </View>
+                  <Text numberOfLines={1} style={styles.referralLinkDisplayStringFieldText}>{REFERRAL_LINK}</Text>
 
                   <TouchableOpacity 
                     activeOpacity={0.85} 
                     style={{ width: '100%' }}
                     onPress={handleCopyLink}
                   >
-              <LinearGradient
+                    <LinearGradient
                       colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
                       style={styles.modalCtaActionButtonGradientFillInnerBox}
-              >
+                    >
                       <Text style={styles.modalCtaActionButtonStringLabelLabel}>
                         {isCopied ? "Copied! ✓" : "Copy"}
                       </Text>
-              </LinearGradient>
+                    </LinearGradient>
                   </TouchableOpacity>
-            </View>
-              </View>
+                </View>
+                </LinearGradient>
             </Shadow>
-        </View>
-      </Modal>
+          </View>
+        </Modal>
 
         
       </LinearGradient>
@@ -393,7 +401,7 @@ const styles = StyleSheet.create({
   scrollContentContainer: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     paddingTop: Tokens.gaps.medium,
-    paddingBottom: 140, 
+    //paddingBottom: 140, 
   },
   backHeaderRow: {
     width: '100%',
@@ -577,22 +585,26 @@ const styles = StyleSheet.create({
   // Share Via Link Specifications
   shareViaLinkHeadingTitleText: {
     fontFamily: Tokens.typography.families.semiBold,
-    fontSize: 14,
+    fontSize: 15,
     color: '#FFFFFF', 
     marginTop: -4,
+    textAlign:"left"
   },
   referralLinkDisplayStringFieldText: {
-    fontFamily: Tokens.typography.families.regular,
-    fontSize: 14,
+    fontFamily: Tokens.typography.families.light,
+    fontSize: 12,
     color: '#B3B3B3',
-    backgroundColor: '#131315',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: '#323537',
+    
+    
+    
+    
+   
+   
     width: '100%',
-    textAlign: 'center',
+    
   },
+  textCenter :{
+    alignItems:"flex-start"
+  }
 
 });

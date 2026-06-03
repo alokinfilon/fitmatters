@@ -16,20 +16,19 @@ import {
   Check, 
   X, 
   Info, 
-  Mail,
-  Apple 
+ 
 } from 'lucide-react-native';
 import { Tokens } from '../theme/theme'; 
-import { EyeIcon } from 'lucide-react-native'; 
-
+import CheckMarkl from '../component/svg/checkMarklIcon'
+import GoogleIcon from  '../component/svg/GoogleIcon';
+import AppleIcon from '../component/svg/appleIcon'
 export default function SignUpScreen({ navigation }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(true);
 
   const iconSize = Tokens.scaleAsset(24);
-  const feedbackIconSize = Tokens.scaleAsset(14);
-  const socialIconSize = Tokens.scaleAsset(20);
+  const feedbackIconSize = Tokens.scaleAsset(12);
 
   return (
     <LinearGradient
@@ -119,25 +118,62 @@ export default function SignUpScreen({ navigation }) {
                     <View style={styles.indicationView}>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
-                          <Check size={feedbackIconSize} color="#2BBA52" strokeWidth={3} />
+                       <View
+  style={[
+    styles.checkmarkCircleWrapper,
+    {
+      // Scales the circle size perfectly with your dynamic icon size
+      width: feedbackIconSize * 1.6,
+      height: feedbackIconSize * 1.6,
+      borderRadius: (feedbackIconSize * 1.8) / 2,
+    }
+  ]}
+>
+  <CheckMarkl size={feedbackIconSize -2} color="#2BBA52" strokeWidth={4} />
+</View>
+
                         </View>
                         <Text style={styles.requirementItemText}>At least 8 characters</Text>
                       </View>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
-                          <Check size={feedbackIconSize} color="#2BBA52" strokeWidth={3} />
+                          <View
+  style={[
+    styles.checkmarkCircleWrapper,
+    {
+      // Scales the circle size perfectly with your dynamic icon size
+      width: feedbackIconSize * 1.6,
+      height: feedbackIconSize * 1.6,
+      borderRadius: (feedbackIconSize * 1.8) / 2,
+    }
+  ]}
+>
+  <CheckMarkl size={feedbackIconSize -2} color="#2BBA52" strokeWidth={4} />
+</View>
                         </View>
                         <Text style={styles.requirementItemText}>Capital and lowercase letters</Text>
                       </View>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
-                          <Check size={feedbackIconSize} color="#2BBA52" strokeWidth={3} />
+                         <View
+  style={[
+    styles.checkmarkCircleWrapper,
+    {
+      // Scales the circle size perfectly with your dynamic icon size
+      width: feedbackIconSize * 1.6,
+      height: feedbackIconSize * 1.6,
+      borderRadius: (feedbackIconSize * 1.8) / 2,
+    }
+  ]}
+>
+  <CheckMarkl size={feedbackIconSize-2} color="#2BBA52" strokeWidth={4} />
+</View>
                         </View>
                         <Text style={styles.requirementItemText}>A special character - # @ $ % & ! * _ ? ^ -</Text>
                       </View>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
-                          <X size={feedbackIconSize} color="#F16646" strokeWidth={3} />
+                          <X size={feedbackIconSize + 4} color="#F16646" strokeWidth={3} />
                         </View>
                         <Text style={styles.requirementItemText}>A Number</Text>
                       </View>
@@ -191,7 +227,19 @@ export default function SignUpScreen({ navigation }) {
 
                 <View style={styles.passwordMatchedRow}>
                   <Text style={styles.passwordMatchedText}>Your password matched</Text>
-                  <Check size={Tokens.scaleAsset(16)} color="#2BBA52" strokeWidth={3} />
+                 <View
+  style={[
+    styles.checkmarkCircleWrapper,
+    {
+      // Scales the circle size perfectly with your dynamic icon size
+      width: feedbackIconSize * 1.6,
+      height: feedbackIconSize * 1.6,
+      borderRadius: (feedbackIconSize * 1.8) / 2,
+    }
+  ]}
+>
+  <CheckMarkl size={feedbackIconSize-2} color="#2BBA52" strokeWidth={4} />
+</View>
                 </View>
               </View>
 
@@ -235,12 +283,15 @@ export default function SignUpScreen({ navigation }) {
                 <Text style={styles.orSignUpWithText}>— or sign up with —</Text>
 
                 <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-                  <Mail size={socialIconSize} color="#FFFFFF" style={styles.socialIconLayout} />
+                 
+                  <GoogleIcon size={24} color="#ffffff" strokeWidth={2} style={styles.socialIconLayout} />
                   <Text style={styles.socialButtonText}>Continue with Google</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-                  <Apple size={socialIconSize} color="#FFFFFF" style={styles.socialIconLayout} />
+                 
+                  <AppleIcon size={28} color="#FFFFFF" strokeWidth={2}style={styles.socialIconLayout} />
+
                   <Text style={styles.socialButtonText}>Continue with Apple</Text>
                 </TouchableOpacity>
               </View>
@@ -502,7 +553,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     fontFamily: Tokens.typography.families.semiBold,
-    fontSize: Tokens.typography.sizes.button,
+    fontSize: Tokens.typography.sizes.subButton,
     lineHeight: Tokens.typography.lineHeights.title,
     color: '#FFFFFF',
   },
@@ -530,11 +581,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   socialIconLayout: {
-    marginRight: 10,
+    marginRight: 5,
   },
   socialButtonText: {
     fontFamily: Tokens.typography.families.semiBold,
-    fontSize: Tokens.typography.sizes.button,
+    fontSize: Tokens.typography.sizes.subButton,
     lineHeight: Tokens.typography.lineHeights.title,
     color: '#FFFFFF',
   },
@@ -560,7 +611,7 @@ const styles = StyleSheet.create({
    checkmarkCircleWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1.2,
     borderColor: '#2BBA52',          
     backgroundColor: '#2BBA521A',    
   },

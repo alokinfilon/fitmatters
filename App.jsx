@@ -105,7 +105,7 @@ const ScreenContainer = ({
 
                 
                 if (activeRoute !== item.route) {
-                  navigation.navigate(item.route);
+                  navigation.replace(item.route);
                 }
               }}
             >

@@ -22,7 +22,10 @@ import {
   MoreHorizontal
 } from 'lucide-react-native';
 import { Tokens } from '../theme/theme'; // Central Tokens file configuration reference
-
+import ArrowLeftIcon from '../component/svg/arrow'
+import CheckMarkl from '../component/svg/checkMarklIcon'
+import LoadingIcon from '../component/svg/loadingIcon'
+ const feedbackIconSize = Tokens.scaleAsset(12);
 const { width } = Dimensions.get('window');
 
 const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
@@ -33,7 +36,7 @@ export default function TrackOrders({ navigation }) {
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
-      navigation.goBack();
+      navigation.replace('Home'); 
     }
   };
 
@@ -90,7 +93,7 @@ export default function TrackOrders({ navigation }) {
           {/* Back Header Target Navigation Row */}
           <View style={styles.backHeaderRow}>
             <TouchableOpacity style={styles.backButtonTouchTarget} onPress={handleGoBack} activeOpacity={0.7}>
-              <ArrowLeft size={Tokens.scaleAsset(20)} color="#E5E5E5" />
+              <ArrowLeftIcon size={Tokens.scaleAsset(24)} color="#E5E5E5" strokeWidth={1.5} />
               <Text style={styles.backButtonTextLabel}>Back</Text>
               </TouchableOpacity>
             </View>
@@ -201,12 +204,13 @@ export default function TrackOrders({ navigation }) {
                     <View style={styles.statusCircleIndicatorWrapperOuterNode}>
                       {step.status === 'completed' && (
                         <View style={styles.timelineStatusCircleCompletedFill}>
-                          <Check size={Tokens.scaleAsset(20)} color="#FFFFFF" strokeWidth={3} />
+                          <CheckMarkl size={feedbackIconSize+12} color="#ffffff" strokeWidth={3} />
             </View>
                       )}
                       {step.status === 'active' && (
                         <View style={styles.timelineStatusCircleActiveFill}>
-                          <Loader size={Tokens.scaleAsset(20)} color="#FFFFFF" strokeWidth={2.5} />
+                          <LoadingIcon size={Tokens.scaleAsset(24)} color="#ffffff" strokeWidth={3} />
+
           </View>
                       )}
                       {step.status === 'pending' && (
@@ -216,7 +220,8 @@ export default function TrackOrders({ navigation }) {
                           end={{ x: 1, y: 1 }}
                           style={styles.timelineStatusCirclePendingFill}
                         >
-                          <Loader size={Tokens.scaleAsset(20)} color="#ffffff" strokeWidth={2} />
+                          <LoadingIcon size={Tokens.scaleAsset(24)} color="#ffffff" strokeWidth={3} />
+
                         </LinearGradient>
                     )}
                   </View>
@@ -294,7 +299,7 @@ const styles = StyleSheet.create({
   scrollContentContainer: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     paddingTop: Tokens.gaps.medium,
-    paddingBottom: 140, 
+    //paddingBottom: 140, 
   },
   
   // Header Back Button Row Track Layout

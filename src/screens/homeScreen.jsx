@@ -74,10 +74,19 @@ const OutfitFeed = ({ navigation }) => {
   };
 
   const renderCircleItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.circleItemContainer}
-      activeOpacity={0.85}
-      onPress={() => openProductDisplay(item)}
+  <TouchableOpacity
+    style={styles.circleItemContainer}
+    activeOpacity={0.85}
+    onPress={() => openProductDisplay(item)}
+  >
+    {/* 1. SHADOW WRAPPER: Casts the gradient glow colors outwards from the circle */}
+    <Shadow
+      distance={6}                                // Controls how far out the glow radiates
+      startColor="rgba(253, 190, 159, 0.45)"       // Initial color of the glowing radius
+      endColor="rgba(0, 0, 0, 0)"                 // Fades cleanly into your background
+      offset={[6, 6]}
+      radius={Tokens.scaleAsset(50)}              // Matches your 50 radius circle curve
+      paintInside={false}
     >
       <LinearGradient
         colors={['#FDABAC', '#FDEABF']}
@@ -93,8 +102,9 @@ const OutfitFeed = ({ navigation }) => {
           />
         </View>
       </LinearGradient>
-    </TouchableOpacity>
-  );
+    </Shadow>
+  </TouchableOpacity>
+);
 
   const renderHeader = () => (
     <View style={styles.headerContainer}>
@@ -121,17 +131,17 @@ const OutfitFeed = ({ navigation }) => {
               >
                 <LinearGradient
                   colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                  start={{ x: 0, y: 0 }}
+                  start={{ x: 0, y: 1 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-                    colors={['#322C28', '#2B1C19', '#2B2220']}
-                    start={{ x: 0, y: 0 }} 
-                    end={{ x: 1, y: 1 }}   
-                    style={styles.chipInnerContentContainerActive}
-                    
-                  >
+  colors={['#322C28', '#2B1C19', '#2B2220']}
+  locations={[0.2, 0.5, 0.8]}
+  start={{ x: 0, y: 0 }} 
+  end={{ x: 1, y: 1 }} 
+  style={styles.chipInnerContentContainerActive}
+>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive} >👟 Everyday Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -171,11 +181,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-                    colors={['#322C28', '#2B1C19', '#2B2220']}
-                    start={{ x: 0, y: 0 }} 
-                    end={{ x: 1, y: 1 }}   
-                    style={styles.chipInnerContentContainerActive}
-                  >
+  colors={['#322C28', '#2B1C19', '#2B2220']}
+  locations={[0.2, 0.5, 0.8]}
+  start={{ x: 0, y: 0 }} 
+  end={{ x: 1, y: 1 }} 
+  style={styles.chipInnerContentContainerActive}
+>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>💼 Work Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -218,11 +229,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-                    colors={['#322C28', '#2B1C19', '#2B2220']}
-                    start={{ x: 0, y: 0 }} 
-                    end={{ x: 1, y: 1 }}   
-                    style={styles.chipInnerContentContainerActive}
-                  >
+  colors={['#322C28', '#2B1C19', '#2B2220']}
+  locations={[0.2, 0.5, 0.8]}
+  start={{ x: 0, y: 0 }} 
+  end={{ x: 1, y: 1 }} 
+  style={styles.chipInnerContentContainerActive}
+>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>❄️ Winter Vacation Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -262,11 +274,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-                    colors={['#322C28', '#2B1C19', '#2B2220']}
-                    start={{ x: 0, y: 0 }} 
-                    end={{ x: 1, y: 1 }}   
-                    style={styles.chipInnerContentContainerActive}
-                  >
+  colors={['#322C28', '#2B1C19', '#2B2220']}
+  locations={[0.2, 0.5, 0.8]}
+  start={{ x: 0, y: 0 }} 
+  end={{ x: 1, y: 1 }} 
+  style={styles.chipInnerContentContainerActive}
+>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>💃 Date Night Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -309,11 +322,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-                    colors={['#322C28', '#2B1C19', '#2B2220']}
-                    start={{ x: 0, y: 0 }} 
-                    end={{ x: 1, y: 1 }}   
-                    style={styles.chipInnerContentContainerActive}
-                  >
+  colors={['#322C28', '#2B1C19', '#2B2220']}
+  locations={[0.2, 0.5, 0.8]}
+  start={{ x: 0, y: 0 }} 
+  end={{ x: 1, y: 1 }} 
+  style={styles.chipInnerContentContainerActive}
+>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>Summer Vacation Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -352,11 +366,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-                    colors={['#322C28', '#2B1C19', '#2B2220']}
-                    start={{ x: 0, y: 0 }} 
-                    end={{ x: 1, y: 1 }}   
-                    style={styles.chipInnerContentContainerActive}
-                  >
+  colors={['#322C28', '#2B1C19', '#2B2220']}
+  locations={[0.2, 0.5, 0.8]}
+  start={{ x: 0, y: 0 }} 
+  end={{ x: 1, y: 1 }} 
+  style={styles.chipInnerContentContainerActive}
+>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>✨ Night Out Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -445,7 +460,7 @@ const styles = StyleSheet.create({
   scrollContainerPadding: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     paddingTop: Tokens.layout.paddingVertical,
-    paddingBottom: 130,
+    //paddingBottom: 130,
   },
   headerContainer: {
     width: '100%',
@@ -475,13 +490,13 @@ const styles = StyleSheet.create({
 
   gradientOuterBorder: {
     height: 40,
-    borderRadius: 14,
+    borderRadius: 10,
     padding: 1.5, 
     width: '100%',
   },
   chipInnerContentContainerActive: {
     height: 37, 
-    borderRadius: 13, 
+    borderRadius: 9, 
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -490,7 +505,7 @@ const styles = StyleSheet.create({
 
   inactiveChipContainer: {
     height: 40,
-    borderRadius: 14,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#323537',
     flexDirection: 'row',
@@ -537,10 +552,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: 'rgba(251, 147, 96, 0.64)',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    elevation: 4,
+    marginTop:6,
+    marginLeft:6,
+    
+    
   },
   circleWrapperInner: {
     width: '100%',

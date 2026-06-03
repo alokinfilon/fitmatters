@@ -55,7 +55,8 @@ export const Tokens = {
       button: 18,
       body: 14,
       small: 12,
-      subBody:13
+      subBody:13,
+      subButton:16
     },
     lineHeights: {
       title: 28,

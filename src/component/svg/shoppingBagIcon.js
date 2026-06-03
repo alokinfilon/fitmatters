@@ -1,38 +1,37 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const SmileIcon = ({ size = 24, color = "#1B1B1C", strokeWidth = 1.5, ...props }) => (
+const ShoppingBagIcon = ({ size = 24, color = "#141B34", strokeWidth = 1.5, ...props }) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}          // Controlled dynamically by size prop
     height={size}         // Controlled dynamically by size prop
-    viewBox="0 0 24 24"   // Ensures the smile and eyes scale correctly together
+    viewBox="0 0 24 24"   // Ensures handles and contours scale correctly
     fill="none"
     {...props}
   >
     <Path
-      d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+      d="M14 22H10C6.70017 22 5.05025 22 4.02513 20.9749C3 19.9497 3 18.2998 3 15V11C3 9.11438 3 8.17157 3.58579 7.58579C4.17157 7 5.11438 7 7 7H15C16.8856 7 17.8284 7 18.4142 7.58579C19 8.17157 19 9.11438 19 11V12"
       stroke={color}             // Controlled dynamically by color prop
       strokeWidth={strokeWidth}  // Controlled dynamically by strokeWidth prop
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <Path
-      d="M8 15C8.91212 16.2144 10.3643 17 12 17C13.6357 17 15.0879 16.2144 16 15"
+      d="M15 9.5C15 5.63401 13.2091 2 11 2C8.79086 2 7 5.63401 7 9.5"
       stroke={color}             // Controlled dynamically by color prop
       strokeWidth={strokeWidth}  // Controlled dynamically by strokeWidth prop
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <Path
-      d="M8.00897 9H8M16 9H15.991"
+      d="M21 18C21 18 18.7905 15 18 15C17.2094 15 15 18 15 18M18 15.5V22"
       stroke={color}             // Controlled dynamically by color prop
-      // Forces the eyes to look balanced by scaling proportionally with the stroke request
-      strokeWidth={strokeWidth === 1.5 ? 2 : strokeWidth + 0.5}
+      strokeWidth={strokeWidth}  // Controlled dynamically by strokeWidth prop
       strokeLinecap="round"
       strokeLinejoin="round"
     />
   </Svg>
 );
 
-export default SmileIcon;
+export default ShoppingBagIcon;

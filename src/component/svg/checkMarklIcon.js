@@ -1,7 +1,7 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const CheckMarkl = ({ size = 24, color = "#141B34", strokeWidth = 1.5, ...props }) => (
+const CheckMarkl = ({ size = 24, color = "#bbc5e7", strokeWidth = 1.5, ...props }) => (
   <Svg
     width={size}        // Maps dynamically to size prop
     height={size}       // Maps dynamically to size prop

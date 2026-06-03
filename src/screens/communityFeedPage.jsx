@@ -16,23 +16,17 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Shadow } from 'react-native-shadow-2';
-import { 
-  Home as HomeIcon, 
-  Search, 
-  Image as CommunityIcon, 
-  ShoppingBag, 
-  MoreHorizontal,
-  Bell,
-  Layers,
-  Plus,
-  Heart,
-  MessageSquare,
-  Share2,
-  Bookmark,
-  Smile
-} from 'lucide-react-native';
-import { Tokens } from '../theme/theme'; 
 
+import { Tokens } from '../theme/theme'; 
+import BellIcon from '../component/svg/BellIcon';
+import MyPostIcon from '../component/svg/MyPostIcon';
+import PlusIcon from '../component/svg/PlusIcon'
+import ShoppingBagIcon from '../component/svg/shoppingBagIcon';
+import HeartIcon from '../component/svg/HeartIcon';
+import ShareIcon from '../component/svg/ShareIcon';
+import CommentIcon from '../component/svg/CommentIcon';
+import SaveIcon from '../component/svg/SaveIcon';
+import SmileIcon from '../component/svg/SmileIcon'
 const MASTER_LIMIT = 100;
 
 const CommunitySpace = ({ navigation }) => {
@@ -126,7 +120,8 @@ const CommunitySpace = ({ navigation }) => {
             {item.title}
           </Text>
           <TouchableOpacity  activeOpacity={0.7} style={styles.bagActionButton}>
-            <ShoppingBag size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+           <ShoppingBagIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
+
           </TouchableOpacity>
         </View>
 
@@ -139,7 +134,8 @@ const CommunitySpace = ({ navigation }) => {
         <View style={styles.metricsActionBarGroupRow}>
           
           <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
-            <Heart size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+           <HeartIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
+
             <Text style={styles.metricLabelValueStringText}>{item.likes}</Text>
           </TouchableOpacity>
 
@@ -148,10 +144,9 @@ const CommunitySpace = ({ navigation }) => {
             activeOpacity={0.7}
             onPress={() => handleToggleComment(item.id)}
           >
-            <MessageSquare 
-              size={Tokens.scaleAsset(24)} 
-              color={activePostCommentId === item.id ? "#818181" : "#CCCCCC"} 
-            />
+           
+            <CommentIcon size={Tokens.scaleAsset(28)}  color={activePostCommentId === item.id ? "#818181" : "#CCCCCC"}  strokeWidth={1.5} />
+
             <Text style={[
               styles.metricLabelValueStringText, 
               activePostCommentId === item.id ? { color: '#818181' } : { color: '#CCCCC' }
@@ -161,12 +156,14 @@ const CommunitySpace = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
-            <Share2 size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+           <ShareIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
+
             <Text style={styles.metricLabelValueStringText}>{item.shares}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.saveActionRightAlignedAnchorButton} activeOpacity={0.7}>
-            <Bookmark size={Tokens.scaleAsset(24)} color="#CCCCCC" />
+            <SaveIcon size={Tokens.scaleAsset(26)} color="#CCCCCC" strokeWidth={1.5} />
+
           </TouchableOpacity>
 
         </View>
@@ -187,7 +184,8 @@ const CommunitySpace = ({ navigation }) => {
 
           <View style={styles.commentActionTriggersPanelRowLayout}>
             <TouchableOpacity activeOpacity={0.7} style={styles.smileyIconTouchTarget}>
-              <Smile size={Tokens.scaleAsset(22)} color="#E5E5E5" />
+              <SmileIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
+
             </TouchableOpacity>
 
             <View style={styles.commentFormActionButtonsSplitWrapperRowBox}>
@@ -239,7 +237,8 @@ const CommunitySpace = ({ navigation }) => {
               style={styles.squareHeaderActionButtonItem}
             > 
               <TouchableOpacity  activeOpacity={0.75}>
-                <Bell size={Tokens.scaleAsset(24)} color="#E5E5E5" />
+               <BellIcon size={Tokens.scaleAsset(28)} color="#ffffff" strokeWidth={2} />
+
               </TouchableOpacity>
               </LinearGradient>
 
@@ -250,7 +249,8 @@ const CommunitySpace = ({ navigation }) => {
               style={styles.squareHeaderActionButtonItem}
             > 
               <TouchableOpacity  activeOpacity={0.75}>
-                <Layers size={Tokens.scaleAsset(24)} color="#E5E5E5" />
+                <MyPostIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
+
               </TouchableOpacity>
               </LinearGradient>
 
@@ -261,7 +261,8 @@ const CommunitySpace = ({ navigation }) => {
               style={styles.squareHeaderActionButtonItem}
             > 
               <TouchableOpacity  activeOpacity={0.75}>
-                <Plus size={Tokens.scaleAsset(24)} color="#E5E5E5" />
+                <PlusIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={2} />
+
               </TouchableOpacity>
               </LinearGradient>
             </View>
@@ -377,7 +378,7 @@ const styles = StyleSheet.create({
   socialFeedScrollContentContainerSpacingPadding: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     paddingTop: Tokens.gaps.large,
-    paddingBottom: 140, 
+    //paddingBottom: 140, 
   },
 
   topNavigationHeaderModuleOuterContainer: {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,22 +13,23 @@ import MaskedView from '@react-native-masked-view/masked-view';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { Shadow } from 'react-native-shadow-2';
+import  NikeIcon from '../component/svg/nikeIcon'
+import  HMIcon from '../component/svg/h&mIcon'
 import { 
   ArrowLeft,
-  Ruler,
-  Minus,
-  Plus,
-  PlusCircle,
+
   Home as HomeIcon, 
-  Search, 
+  
   Image as CommunityIcon, 
-  ShoppingBag, 
-  MoreHorizontal,
-  RulerDimensionLine 
+ 
 } from 'lucide-react-native';
 import { Tokens } from '../theme/theme'; 
-
+import CheckMarkl from '../component/svg/checkMarklIcon'
+import ScaleInfoIcon from '../component/svg/scaleInfoIcon'
+import PlusIcon from '../component/svg/PlusIcon'
+import MinusIcon  from '../component/svg/minusIcon'
+import ArrowLeftIcon from '../component/svg/arrow'
+  const feedbackIconSize = Tokens.scaleAsset(12);
 const { width } = Dimensions.get('window');
 
 const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
@@ -56,7 +57,7 @@ export default function ProductDetails({ navigation }) {
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
-      navigation.goBack();
+      navigation.replace('Home');
     }
   };
 
@@ -65,25 +66,15 @@ export default function ProductDetails({ navigation }) {
       <View style={styles.ClothingBox}>
         <View style={styles.clothingHeaderView}>
           <Text style={styles.clothTitleText}>{title}</Text>
-          <Text style={styles.variantBrandLogoPlaceholderText}>{brandLogoText}</Text>
+          <HMIcon size={Tokens.scaleAsset(60)} color="#FFFFFF" backgroundColor="transparent" />
+
         </View>
         <Text style={styles.clothDescriptionText}>{description}</Text>
         
         <View style={styles.sizeHeaderLabelRow}>
           <Text style={styles.sizeSectionTitleText}>Size</Text>
-         <MaskedView
-  style={{ width: Tokens.scaleAsset(20), height: Tokens.scaleAsset(20) }}
-  maskElement={
-    <RulerDimensionLine size={Tokens.scaleAsset(20)} color="#000000" />
-  }
->
-  <LinearGradient
-    colors={['#FBB59E', '#FDABAC', '#FDEABF']}
-    start={{ x: 0, y: 0.5 }}
-    end={{ x: 1, y: 0.5 }}
-    style={StyleSheet.absoluteFillObject} 
-  />
-</MaskedView>
+          <ScaleInfoIcon size={Tokens.scaleAsset(22)} color="#FDABAC" strokeWidth={2} />
+         
         </View>
 
         
@@ -130,7 +121,8 @@ export default function ProductDetails({ navigation }) {
               onPress={() => setQty(Math.max(1, currentQty - 1))}
               activeOpacity={0.6}
             >
-              <Text style={styles.stepperActionLineIcon}>—</Text>
+                            <MinusIcon size={Tokens.scaleAsset(24)} color="#CCCCCC" strokeWidth={3} />
+
             </TouchableOpacity>
              <LinearGradient
                               colors={['#333637', '#242426']}
@@ -147,7 +139,8 @@ export default function ProductDetails({ navigation }) {
               onPress={() => setQty(currentQty + 1)}
               activeOpacity={0.6}
             >
-              <Text style={styles.stepperActionPlusIcon}>+</Text>
+              <PlusIcon size={Tokens.scaleAsset(24)} color="#CCCCCC" strokeWidth={3} />
+
             </TouchableOpacity>
           </View>
         </View>
@@ -169,7 +162,8 @@ export default function ProductDetails({ navigation }) {
           
           <View style={styles.backHeaderView}>
             <TouchableOpacity style={styles.backButtonView} onPress={handleGoBack} activeOpacity={0.7}>
-              <ArrowLeft size={Tokens.scaleAsset(20)} color="#E5E5E5" />
+              <ArrowLeftIcon size={Tokens.scaleAsset(24)} color="#E5E5E5" strokeWidth={1.5} />
+
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
           </View>
@@ -238,7 +232,8 @@ export default function ProductDetails({ navigation }) {
                     end={{ x: 0.7, y: 0.5 }}
                     style={styles.checkmarkInnerGradientView}
                   >
-                    <Text style={styles.checkmarkIconSymbol}>✓</Text>
+                      <CheckMarkl size={feedbackIconSize+8} color="#ffffff" strokeWidth={3} />
+
                   </LinearGradient>
                 )}
               </TouchableOpacity>
@@ -247,7 +242,13 @@ export default function ProductDetails({ navigation }) {
                 <Text style={styles.comboText}>Buy the whole look(including extras).</Text>
                 <Text style={styles.comboPriceText}>₹5,499 <Text style={styles.allCombinedLabel}>(all items combined)</Text></Text>
                 <Text style={styles.comboDescriptionText}>Curated look for casual weekends — includes top, denim, and sneakers.</Text>
-                <Text style={styles.brandsText}>Brands  <Text style={styles.brandsLogoText}>NIKE  H&M</Text></Text>
+                <View style = {styles.brandView}>
+<Text style={styles.brandsText}>Brands</Text>
+<NikeIcon size={Tokens.scaleAsset(60)} color="#FFFFFF" />
+
+<HMIcon size={Tokens.scaleAsset(60)} color="#FFFFFF" backgroundColor="transparent" />
+                </View>
+                
               </View>
             </View>
 
@@ -262,7 +263,7 @@ export default function ProductDetails({ navigation }) {
 
            
             <TouchableOpacity style={styles.addExtrasView} activeOpacity={0.7}>
-              <Plus size={Tokens.scaleAsset(20)} color="#FDABAC" style={styles.innerAssetIconRightSpacingSpacing} />
+              <PlusIcon size={Tokens.scaleAsset(24)} color="#fba66e" strokeWidth={3} />
               <Text style={styles.addExtrasText}> Add Extras <Text style={styles.addExtrasSubtext}>(belt, cap, scarf)</Text></Text>
             </TouchableOpacity>
 
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
   scrollContentContainer: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     paddingTop: Tokens.gaps.medium,
-    paddingBottom: 140, 
+    //paddingBottom: 140, 
   },
   backHeaderView: {
     width: '100%',
@@ -472,7 +473,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: Tokens.gaps.small,
+    //marginVertical: Tokens.gaps.small,
   },
   backButtonView: {
     flexDirection: 'row',
@@ -656,6 +657,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#ffffff',
     marginTop: 4,
+    
+  },
+
+  brandView :{
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: '100%',
+  height: Tokens.components.chipHeight, 
+   
+  gap: Tokens.gaps.medium, 
+  overflow: 'scroll',
   },
   brandsLogoText: {
     color: '#FFFFFF',
@@ -683,7 +695,7 @@ const styles = StyleSheet.create({
   clothingHeaderView: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Tokens.gaps.medium,
+    gap: Tokens.gaps.small,
   },
   clothTitleText: {
     fontFamily: Tokens.typography.families.semiBold,
@@ -746,6 +758,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#FFFFFF',
   },
+  counterValueText :{
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 13,
+    color: '#FFFFFF',
+  },
 
   quantityView: {
     flexDirection: 'row',
@@ -757,7 +774,8 @@ const styles = StyleSheet.create({
   counterActionLayoutGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Tokens.gaps.large,
+    justifyContent:"center",
+    gap: Tokens.gaps.medium,
   },
   counterTouch: {
     width: 24,
@@ -781,8 +799,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#1E1E20', 
     alignItems: 'center',
+    justifyContent:"center"
   },
-  counterValueText: {
+  counterValueDisplayStaticHolderStringText: {
     fontFamily: Tokens.typography.families.medium,
     fontSize: 12,
     color: '#FFFFFF',
@@ -920,43 +939,59 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#FFFFFF',
   },
-  recommandView: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: hp('2.5%'),
-    padding: wp('2.5%'),
+  tabText2: {
+    fontFamily: Tokens.typography.families.light,
+    fontSize: 13,
+    lineHeight: Tokens.typography.lineHeights.body,
+    color: '#E5E5E5',
   },
-  imageView: {
-    backgroundColor: '#ffff',
+  refundPolicyText: {
+    textDecorationLine: 'underline',
+    color: '#FDEABF',
+    fontFamily: Tokens.typography.families.medium,
+    fontSize:13,
+
+  },
+ 
+  recommendationView: {
+    width: '100%',
+    gap: Tokens.gaps.large,
+    marginTop: Tokens.gaps.section,
+  },
+  recommendationText: {
+    fontFamily: Tokens.typography.families.semiBold,
+    fontSize: 20,
+    lineHeight: 25,
+    color: '#FFFFFF',
+    justifyContent:"center",
+    alignItems:"center"
+  },
+  recommendationPRoductView:{
+ justifyContent:"center",
+    alignItems:"center",
+    marginBottom:10
+  },
+  recommendationCardsView: {
     flexDirection: 'row',
-    gap: wp('1%'),
+    justifyContent: 'space-between',
+    //width: '100%',
+  
   },
-  policyOuterContainer: {
-    paddingHorizontal: wp('6%'), 
-    marginTop: hp('2.5%'),       
-  },
-  policyHeaderTitle: {
-    fontSize: wp('4%'),         
-    color: '#ffffff',
-    fontWeight: '900',
-    marginLeft:wp('4%'),
-  },
-  policyMessageContent: {
-    marginTop: hp('1%'),
-    backgroundColor: '#000000',
-    padding: wp('4%'),           
+  recommendationItem: {
+    width: RECOMMENDATION_CARD_WIDTH,
+    height: 138,
+    borderRadius: 12,
+    backgroundColor: '#FFF3E8',
+    overflow: 'hidden',
     
-   
   },
-  policyContentBody: {
-    fontSize: wp('3.8%'),
-    color: '#ffffff',
-    lineHeight: wp('5.2%'),      
+  recommendationImage: {
+    width: '100%',
+    height: '100%',
   },
-  policyLinkText: {
-    fontWeight: '600',
-    color: '#fea26d',
-    marginTop: hp('1.2%'),
-    fontSize: wp('3.8%'),
-  },
+  SelectionView :{
+    justifyContent:"center",
+    alignItems:"center"
+  }
+  
 });

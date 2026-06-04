@@ -144,7 +144,7 @@ const CommunitySpace = ({ navigation }) => {
             activeOpacity={0.7}
             onPress={() => handleToggleComment(item.id)}
           >
-           
+            
             <CommentIcon size={Tokens.scaleAsset(28)}  color={activePostCommentId === item.id ? "#818181" : "#CCCCCC"}  strokeWidth={1.5} />
 
             <Text style={[
@@ -215,6 +215,122 @@ const CommunitySpace = ({ navigation }) => {
     </LinearGradient>
   );
 
+  const renderHeader = () => (
+    <View style={styles.headerContainerWrapper}>
+      <View style={styles.topNavigationHeaderModuleOuterContainer}>
+        <Text style={styles.screenHeaderTitleMainText}>Community</Text>
+        
+        <View style={styles.headerSquareActionButtonsGridWrapperRow}>
+           <LinearGradient
+          colors={['#333637', '#242426']}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.squareHeaderActionButtonItem}
+        > 
+          <TouchableOpacity  activeOpacity={0.75}>
+           <BellIcon size={Tokens.scaleAsset(28)} color="#ffffff" strokeWidth={2} />
+
+          </TouchableOpacity>
+          </LinearGradient>
+
+           <LinearGradient
+          colors={['#333637', '#242426']}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.squareHeaderActionButtonItem}
+        > 
+          <TouchableOpacity  activeOpacity={0.75}>
+            <MyPostIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
+
+          </TouchableOpacity>
+          </LinearGradient>
+
+           <LinearGradient
+          colors={['#333637', '#242426']}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.squareHeaderActionButtonItem}
+        > 
+          <TouchableOpacity  activeOpacity={0.75}>
+            <PlusIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={2} />
+
+          </TouchableOpacity>
+          </LinearGradient>
+        </View>
+      </View>
+
+      <View style={styles.tabsPanelOuterWrapperContainerSectionBox}>
+        <LinearGradient
+          colors={['#333637', '#242426']}
+          start={{ x: 0.01, y: 0.5 }}
+          end={{ x: 0.99, y: 0.5 }}
+          style={styles.tabsPanelInnerGradientWrapperBackgroundTrackBox}
+        >
+          <TouchableOpacity 
+            style={styles.individualTabButtonAnchorWrapper}
+            onPress={() => setActiveTab('Trending')}
+            activeOpacity={0.85}
+          >
+            {activeTab === 'Trending' ? (
+              <LinearGradient
+                colors={['rgba(251, 181, 158, 1)', 'rgba(248, 135, 108, 1)', 'rgba(241, 102, 70, 1)', 'rgba(249, 143, 122, 1)']}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.borderGradientContainer}
+              >
+                <View style={styles.solidMaskShield}>
+                  <LinearGradient
+                    colors={['rgba(253, 219, 189, 0.15)', 'rgba(247, 125, 97, 0.12)', 'rgba(251, 180, 157, 0.12)']}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 1, y: 0.5 }}
+                    style={styles.activeTabHighlightOverlayGradientBoxMask}
+                  >
+                    <Text numberOfLines={1} style={styles.tabTextLabelActive}>Trending 🔥</Text>
+                  </LinearGradient>
+                </View>
+              </LinearGradient>
+            ) : (
+              <View style={styles.inactiveTabOverlayContainerContentBox}>
+                <Text numberOfLines={1} style={styles.tabTextLabelInactive}>Trending 🔥</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.individualTabButtonAnchorWrapper}
+            onPress={() => setActiveTab('Recent')}
+            activeOpacity={0.85}
+          >
+            {activeTab === 'Recent' ? (
+              <LinearGradient
+                colors={['rgba(251, 181, 158, 1)', 'rgba(248, 135, 108, 1)', 'rgba(241, 102, 70, 1)', 'rgba(249, 143, 122, 1)']}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.borderGradientContainer}
+              >
+                <View style={styles.solidMaskShield}>
+                  <LinearGradient
+                    colors={['rgba(253, 219, 189, 0.15)', 'rgba(247, 125, 97, 0.12)', 'rgba(251, 180, 157, 0.12)']}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 1, y: 0.5 }}
+                    style={styles.activeTabHighlightOverlayGradientBoxMask}
+                  >
+                    <Text numberOfLines={1} style={styles.tabTextLabelActive}>Recent 🆕</Text>
+                  </LinearGradient>
+                </View>
+              </LinearGradient>
+            ) : (
+              <View style={styles.inactiveTabOverlayContainerContentBox}>
+                <Text numberOfLines={1} style={styles.tabTextLabelInactive}>Recent 🆕</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
+        </LinearGradient>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaProvider>
       <LinearGradient
@@ -226,118 +342,6 @@ const CommunitySpace = ({ navigation }) => {
         <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
         <SafeAreaView style={styles.mainContainer} edges={['top', 'left', 'right']}>
           
-          <View style={styles.topNavigationHeaderModuleOuterContainer}>
-            <Text style={styles.screenHeaderTitleMainText}>Community</Text>
-            
-            <View style={styles.headerSquareActionButtonsGridWrapperRow}>
-               <LinearGradient
-              colors={['#333637', '#242426']}
-              start={{ x: 1, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.squareHeaderActionButtonItem}
-            > 
-              <TouchableOpacity  activeOpacity={0.75}>
-               <BellIcon size={Tokens.scaleAsset(28)} color="#ffffff" strokeWidth={2} />
-
-              </TouchableOpacity>
-              </LinearGradient>
-
-               <LinearGradient
-              colors={['#333637', '#242426']}
-              start={{ x: 1, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.squareHeaderActionButtonItem}
-            > 
-              <TouchableOpacity  activeOpacity={0.75}>
-                <MyPostIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
-
-              </TouchableOpacity>
-              </LinearGradient>
-
-               <LinearGradient
-              colors={['#333637', '#242426']}
-              start={{ x: 1, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.squareHeaderActionButtonItem}
-            > 
-              <TouchableOpacity  activeOpacity={0.75}>
-                <PlusIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={2} />
-
-              </TouchableOpacity>
-              </LinearGradient>
-            </View>
-          </View>
-
-          <View style={styles.tabsPanelOuterWrapperContainerSectionBox}>
-            <LinearGradient
-              colors={['#333637', '#242426']}
-              start={{ x: 0.01, y: 0.5 }}
-              end={{ x: 0.99, y: 0.5 }}
-              style={styles.tabsPanelInnerGradientWrapperBackgroundTrackBox}
-            >
-              <TouchableOpacity 
-                style={styles.individualTabButtonAnchorWrapper}
-                onPress={() => setActiveTab('Trending')}
-                activeOpacity={0.85}
-              >
-                {activeTab === 'Trending' ? (
-                  <LinearGradient
-  colors={['rgba(251, 181, 158, 1)', 'rgba(248, 135, 108, 1)', 'rgba(241, 102, 70, 1)', 'rgba(249, 143, 122, 1)']}
-  start={{ x: 0, y: 0.5 }}
-  end={{ x: 1, y: 0.5 }}
-  style={styles.borderGradientContainer}
->
-  <View style={styles.solidMaskShield}>
-    <LinearGradient
-      colors={['rgba(253, 219, 189, 0.15)', 'rgba(247, 125, 97, 0.12)', 'rgba(251, 180, 157, 0.12)']}
-      start={{ x: 0, y: 1 }}
-      end={{ x: 1, y: 0.5 }}
-      style={styles.activeTabHighlightOverlayGradientBoxMask}
-    >
-      <Text numberOfLines={1} style={styles.tabTextLabelActive}>Trending 🔥</Text>
-    </LinearGradient>
-  </View>
-</LinearGradient>
-                ) : (
-                  <View style={styles.inactiveTabOverlayContainerContentBox}>
-                    <Text numberOfLines={1} style={styles.tabTextLabelInactive}>Trending 🔥</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={styles.individualTabButtonAnchorWrapper}
-                onPress={() => setActiveTab('Recent')}
-                activeOpacity={0.85}
-              >
-                {activeTab === 'Recent' ? (
-                  <LinearGradient
-  colors={['rgba(251, 181, 158, 1)', 'rgba(248, 135, 108, 1)', 'rgba(241, 102, 70, 1)', 'rgba(249, 143, 122, 1)']}
-  start={{ x: 0, y: 0.5 }}
-  end={{ x: 1, y: 0.5 }}
-  style={styles.borderGradientContainer}
->
-  <View style={styles.solidMaskShield}>
-    <LinearGradient
-      colors={['rgba(253, 219, 189, 0.15)', 'rgba(247, 125, 97, 0.12)', 'rgba(251, 180, 157, 0.12)']}
-      start={{ x: 0, y: 1 }}
-      end={{ x: 1, y: 0.5 }}
-      style={styles.activeTabHighlightOverlayGradientBoxMask}
-    >
-      <Text numberOfLines={1} style={styles.tabTextLabelActive}>Recent 🆕</Text>
-    </LinearGradient>
-  </View>
-</LinearGradient>
-                ) : (
-                  <View style={styles.inactiveTabOverlayContainerContentBox}>
-                    <Text numberOfLines={1} style={styles.tabTextLabelInactive}>Recent 🆕</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-
-            </LinearGradient>
-          </View>
-
           {loading ? (
             <View style={styles.centerSpinnerLoaderViewFrame}>
               <ActivityIndicator size="large" color="#F8876C" />
@@ -347,14 +351,13 @@ const CommunitySpace = ({ navigation }) => {
               data={posts}
               renderItem={renderPostCard}
               keyExtractor={item => item.id}
+              ListHeaderComponent={renderHeader}
               contentContainerStyle={styles.socialFeedScrollContentContainerSpacingPadding}
               showsVerticalScrollIndicator={false}
             />
           )}
 
         </SafeAreaView>
-
-       
 
       </LinearGradient>
     </SafeAreaProvider>
@@ -377,14 +380,13 @@ const styles = StyleSheet.create({
   },
   socialFeedScrollContentContainerSpacingPadding: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
-    paddingTop: Tokens.gaps.large,
-    //paddingBottom: 140, 
+    paddingBottom: 40, // Keeps spacing at the bottom clear of the tab navigation bars
   },
-
+  headerContainerWrapper: {
+    paddingTop: Tokens.gaps.large, // Shifts the upper part padding natively into the header view block
+  },
   topNavigationHeaderModuleOuterContainer: {
     width: '100%',
-    paddingHorizontal: Tokens.layout.paddingHorizontal,
-    paddingTop: Tokens.gaps.large,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -413,7 +415,6 @@ const styles = StyleSheet.create({
 
   tabsPanelOuterWrapperContainerSectionBox: {
     width: '100%',
-    paddingHorizontal: Tokens.layout.paddingHorizontal,
     marginBottom: Tokens.gaps.large,
   },
   tabsPanelInnerGradientWrapperBackgroundTrackBox: {

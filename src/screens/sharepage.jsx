@@ -14,6 +14,8 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Shadow } from 'react-native-shadow-2';
+import ArrowLeftIcon from '../component/svg/arrow'
+  const feedbackIconSize = Tokens.scaleAsset(12);
 import { 
   ArrowLeft,
   Mail,
@@ -46,7 +48,7 @@ export default function ShareYourInvite({ navigation }) {
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
-      navigation.replace('Home');
+      navigation.replace('MainTabs');
     }
   };
 
@@ -81,7 +83,7 @@ export default function ShareYourInvite({ navigation }) {
           {/* Back Layout Navigation Row */}
           <View style={styles.backHeaderRow}>
             <TouchableOpacity style={styles.backButtonTouchTarget} onPress={handleGoBack} activeOpacity={0.7}>
-              <ArrowLeft size={Tokens.scaleAsset(20)} color="#E5E5E5" />
+              <ArrowLeftIcon size={Tokens.scaleAsset(24)} color="#E5E5E5" strokeWidth={1.5} />
               <Text style={styles.backButtonTextLabel}>Back</Text>
             </TouchableOpacity>
           </View>
@@ -107,9 +109,9 @@ export default function ShareYourInvite({ navigation }) {
                
               >
                 <View style={styles.sharingMethodInnerContentLayoutRow}>
-                  <Mail size={Tokens.scaleAsset(20)} color="#E5E5E5" style={styles.methodIconRightSpacing} />
+                  
                   <View style={styles.sharingMethodTextColumnLabelsGroup}>
-                    <Text style={styles.methodTitleHeadingText}>Invite via Email</Text>
+                    <Text style={styles.methodTitleHeadingText}>📩 Invite via Email</Text>
                     <Text style={styles.methodSubtitleDescriptionText}>Opens email input modal</Text>
                   </View>
                 </View>
@@ -127,9 +129,9 @@ export default function ShareYourInvite({ navigation }) {
                
               >
                 <View style={styles.sharingMethodInnerContentLayoutRow}>
-                  <Link2 size={Tokens.scaleAsset(20)} color="#E5E5E5" style={styles.methodIconRightSpacing} />
+                  
                   <View style={styles.sharingMethodTextColumnLabelsGroup}>
-                    <Text style={styles.methodTitleHeadingText}>Share Link</Text>
+                    <Text style={styles.methodTitleHeadingText}>🔗 Share Link</Text>
                     <Text style={styles.methodSubtitleDescriptionText}>Copies referral link + opens share sheet (WhatsApp, Messages, etc.)</Text>
                   </View>
                 </View>
@@ -146,9 +148,9 @@ export default function ShareYourInvite({ navigation }) {
               
               >
                 <View style={styles.sharingMethodInnerContentLayoutRow}>
-                  <MessageCircle size={Tokens.scaleAsset(20)} color="#E5E5E5" style={styles.methodIconRightSpacing} />
+                  
                   <View style={styles.sharingMethodTextColumnLabelsGroup}>
-                    <Text style={styles.methodTitleHeadingText}>Invite via WhatsApp / SMS</Text>
+                    <Text style={styles.methodTitleHeadingText}>💬 Invite via WhatsApp / SMS</Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -244,7 +246,7 @@ export default function ShareYourInvite({ navigation }) {
                   </View>
 
                   <Text style={styles.modalDynamicReferralContextParagraphText}>
-                    Hey! I’ve been using Out.Fit.Find to get curated outfit looks that match my vibe. Use my code <Text style={styles.  referralCodeHighlightInlineText}>OFFFRIEND50</Text> and get ₹50 off your first month! 💃🔥
+                    Hey! I’ve been using Out.Fit.Find to get curated outfit looks that match my vibe. Use my code <Text style={styles. referralCodeHighlightInlineText}>OFFFRIEND50</Text> and get ₹50 off your first month! 💃🔥
                   </Text>
 
                   <TouchableOpacity activeOpacity={0.85} onPress={handleSendInvite}>

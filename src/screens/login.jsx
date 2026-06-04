@@ -251,7 +251,7 @@ export default function SignUpScreen({ navigation }) {
                 {termsAccepted ? (
                   <LinearGradient
                     colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                   start={{ x: 0.1 , y: 0.5 }}
+                    start={{ x: 0.1 , y: 0.5 }}
                     end={{ x: 0.7, y: 0.5 }}
                     style={styles.checkmarkBoxActive}
                   >
@@ -267,7 +267,7 @@ export default function SignUpScreen({ navigation }) {
 
             <View style={styles.continueButtonView}>
               <TouchableOpacity activeOpacity={0.85} style={styles.primaryButtonWrapper}
-              onPress={() => navigation.replace('Home')}
+              onPress={() => navigation.replace('MainTabs')}
               >
                 <LinearGradient
                   colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     color: '#FFFFFF',
   },
-   checkmarkCircleWrapper: {
+    checkmarkCircleWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.2,

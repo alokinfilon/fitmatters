@@ -1,23 +1,18 @@
 import React from 'react';
-import {
-  Home,
-  MoreHorizontal,
-  Search,
-  ShoppingBag,
-  UsersRound,
-  ImagePlus,
-} from 'lucide-react-native';
-
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 
+// 1. IMPORT SAFE AREA COMPONENTS
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
+// Your Design Tokens and Custom Components
+import { Tokens } from './src/theme/theme'; 
+import GradientText from './src/component/GradientText'; 
+
+// Screens
 import LoginPage from './src/screens/login';
 import OutfitFeed from './src/screens/homeScreen';
 import ProductDisplayPage from './src/screens/ProductDisplayPage';
@@ -25,293 +20,232 @@ import CommunityFeedPage from './src/screens/communityFeedPage';
 import CartPage from './src/screens/cartPage';
 import ShareInvitePage from './src/screens/sharepage';
 
+// Icons
+import HomeIcon from './src/component/svg/HomeIcon';
+import exploreIcon from './src/component/svg/ExploreIcon';
+import CommunityIcon from './src/component/svg/CommunityIcon';
+import CartIcon from './src/component/svg/cartIcon'; 
+import MoreIcon from './src/component/svg/MoreIcon';
+
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
-
-
-const bottomNavItems = [
-  {
-    label: 'Home',
-    route: 'Home',
-    Icon: Home,
-  },
-
-  {
-    label: 'Explore',
-    route: 'Explore',
-    Icon: Search,
-  },
-
-  {
-    label: 'Community Space',
-    route: 'Community',
-    Icon: ImagePlus,
-  },
-
-  {
-    label: 'Cart',
-    route: 'Cart',
-    Icon: ShoppingBag,
-  },
-
-  {
-    label: 'More',
-    route: 'More',
-    Icon: MoreHorizontal,
-  },
-];
-
-
-const PlaceholderScreen = ({ title }) => {
-
-  return (
+const PlaceholderScreen = ({ title }) => (
+  <SafeAreaView style={styles.safeAreaWrapper}>
     <View style={styles.placeholderWrapper}>
-      <Text style={styles.placeholderText}>
-        {title}
-      </Text>
+      <Text style={styles.placeholderText}>{title}</Text>
     </View>
-  );
-};
+  </SafeAreaView>
+);
 
+const ExploreScreen = () => <PlaceholderScreen title="Explore" />;
 
+// Screen wrappers to apply SafeArea boundaries uniformly
+const SafeOutfitFeed = (props) => (
+  <SafeAreaView style={styles.safeAreaWrapper} edges={['top', 'left', 'right']}>
+    <OutfitFeed {...props} />
+  </SafeAreaView>
+);
 
-const ScreenContainer = ({
-  children,
-  navigation,
-  activeRoute,
-}) => {
+const SafeCommunityFeed = (props) => (
+  <SafeAreaView style={styles.safeAreaWrapper} edges={['top', 'left', 'right']}>
+    <CommunityFeedPage {...props} />
+  </SafeAreaView>
+);
 
+const SafeCartPage = (props) => (
+  <SafeAreaView style={styles.safeAreaWrapper} edges={['top', 'left', 'right']}>
+    <CartPage {...props} />
+  </SafeAreaView>
+);
 
+const SafeShareInvitePage = (props) => (
+  <SafeAreaView style={styles.safeAreaWrapper} edges={['top', 'left', 'right']}>
+    <ShareInvitePage {...props} />
+  </SafeAreaView>
+);
+
+const SafeProductDisplayPage = (props) => (
+  <SafeAreaView style={styles.safeAreaWrapper}>
+    <ProductDisplayPage {...props} />
+  </SafeAreaView>
+);
+
+/**
+ * CUSTOM BOTTOM TAB BAR COMPONENT
+ */
+const CustomTabBar = ({ state, descriptors, navigation }) => {
   return (
-    <View style={styles.appShell}>
+    <View style={styles.bottomNavigation}>
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const label = options.tabBarLabel !== undefined ? options.tabBarLabel : route.name;
+        const isActive = state.index === index;
 
-      <View style={styles.screenArea}>
-        {children}
-      </View>
+        let IconComp;
+        if (route.name === 'HomeTab') IconComp = HomeIcon;
+        else if (route.name === 'Explore') IconComp = exploreIcon;
+        else if (route.name === 'Community') IconComp = CommunityIcon;
+        else if (route.name === 'Cart') IconComp = CartIcon;
+        else if (route.name === 'More') IconComp = MoreIcon;
 
-      <View style={styles.bottomNavigation}>
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
 
-        {bottomNavItems.map((item, index) => {
+          if (!isActive && !event.defaultPrevented) {
+            navigation.navigate({ name: route.name, mergeOriginalArgs: true });
+          }
+        };
 
-          const isActive = activeRoute === item.route;
-          const IconComp = item.Icon;
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isActive ? { selected: true } : {}}
+            activeOpacity={0.75}
+            onPress={onPress}
+            style={styles.bottomItem}
+          >
+            {/* TOP LINE INDICATOR */}
+            {isActive && (
+              <View style={styles.topLineContainer}>
+                <Svg height="2" width="60%">
+                  <Defs>
+                    <LinearGradient id="lineGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+                      <Stop offset="1.05%" stopColor="#FBB59E" />
+                      <Stop offset="32.02%" stopColor="#F8876C" />
+                      <Stop offset="56.43%" stopColor="#F16646" />
+                      <Stop offset="98.66%" stopColor="#F98F7A" />
+                    </LinearGradient>
+                  </Defs>
+                  <Rect width="100%" height="3" fill="url(#lineGrad)" />
+                </Svg>
+              </View>
+            )}
 
-          return (
-            <TouchableOpacity
-              key={index}
-              activeOpacity={0.75}
-              style={styles.bottomItem}
-              onPress={() => {
-
-                
-                if (activeRoute !== item.route) {
-                  navigation.replace(item.route);
-                }
-              }}
-            >
-
+            {IconComp && (
               <IconComp
                 size={22}
                 strokeWidth={1.8}
+                focused={isActive}
                 color={isActive ? '#ffffff' : '#b8b8b8'}
               />
+            )}
 
-              <Text
+            {isActive ? (
+              <GradientText 
+                text={label} 
+                style={[styles.bottomItemLabel, styles.activeBottomItemLabel]} 
                 numberOfLines={1}
-                style={[
-                  styles.bottomItemLabel,
-                  isActive && styles.activeBottomItemLabel,
-                ]}
-              >
-                {item.label}
+              />
+            ) : (
+              <Text numberOfLines={1} style={styles.bottomItemLabel}>
+                {label}
               </Text>
-
-            </TouchableOpacity>
-          );
-        })}
-
-      </View>
-
+            )}
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
 
-
-const withBottomNavigation = (Component, currentRoute) => {
-
-  return function WrappedScreen(props) {
-
-    return (
-      <ScreenContainer
-        navigation={props.navigation}
-        activeRoute={currentRoute}
-      >
-        <Component {...props} />
-      </ScreenContainer>
-    );
-  };
-};
-
-
-
-const ExploreScreen = () => {
-  return <PlaceholderScreen title="Explore" />;
-};
-
-
-const HomeScreenWithNav = withBottomNavigation(
-  OutfitFeed,
-  'Home'
-);
-
-const ProductDisplayWithNav = withBottomNavigation(
-  ProductDisplayPage,
-  'Home'
-);
-
-const ExploreScreenWithNav = withBottomNavigation(
-  ExploreScreen,
-  'Explore'
-);
-
-const CommunityScreenWithNav = withBottomNavigation(
-  CommunityFeedPage,
-  'Community'
-);
-
-const CartScreenWithNav = withBottomNavigation(
-  CartPage,
-  'Cart'
-);
-
-const MoreScreenWithNav = withBottomNavigation(
-  ShareInvitePage,
-  'More'
-);
-
-
-export default function App() {
-
-
+/**
+ * TABS LAYER
+ */
+function TabNavigator() {
   return (
-    <NavigationContainer>
+    <Tab.Navigator
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tab.Screen name="HomeTab" component={SafeOutfitFeed} options={{ tabBarLabel: 'Home' }} />
+      <Tab.Screen name="Explore" component={ExploreScreen} />
+      <Tab.Screen name="Community" component={SafeCommunityFeed} />
+      <Tab.Screen name="Cart" component={SafeCartPage} />
+      <Tab.Screen name="More" component={SafeShareInvitePage} options={{ tabBarLabel: 'More' }} />
+    </Tab.Navigator>
+  );
+}
+// the action replace with payload {"name":"Home"} was not hande by any navigator
 
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-
-        <Stack.Screen
-          name="Login"
-          component={LoginPage}
-        />
-
-        <Stack.Screen
-          name="Home"
-          component={HomeScreenWithNav}
-        />
-
-        <Stack.Screen
-          name="ProductDisplay"
-          component={ProductDisplayWithNav}
-        />
-
-        <Stack.Screen
-          name="Explore"
-          component={ExploreScreenWithNav}
-        />
-
-        <Stack.Screen
-          name="Community"
-          component={CommunityScreenWithNav}
-        />
-
-        <Stack.Screen
-          name="Cart"
-          component={CartScreenWithNav}
-        />
-
-        <Stack.Screen
-          name="More"
-          component={MoreScreenWithNav}
-        />
-
-      </Stack.Navigator>
-
-    </NavigationContainer>
+/**
+ * ROOT NAVIGATOR WITH PROPER GLOBAL CONTEXT
+ */
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Login" component={LoginPage} />
+          <Stack.Screen name="MainTabs" component={TabNavigator} />
+          <Stack.Screen name="ProductDisplay" component={SafeProductDisplayPage} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
-
 const styles = StyleSheet.create({
-
-  appShell: {
+  safeAreaWrapper: {
     flex: 1,
     backgroundColor: '#121212',
   },
-
-  screenArea: {
-    flex: 1,
-  },
-
   bottomNavigation: {
-
-    height: 70,
-
+    height: 78,          // Slightly increased to cleanly give breathing room for hardware indicators
     paddingTop: 8,
-    paddingBottom: 8,
-
-   
+    paddingBottom: 16,   // Bottom padding compensates natively for the device bottom inset limit
     paddingHorizontal: 5,
-
     backgroundColor: '#151515',
-
     flexDirection: 'row',
-
     alignItems: 'center',
     justifyContent: 'space-around',
-
     borderTopWidth: 1,
     borderTopColor: '#242424',
+    position: 'relative',
   },
-
   bottomItem: {
     flex: 1,
-
     alignItems: 'center',
     justifyContent: 'center',
-
     gap: 4,
+    height: '100%',
+    position: 'relative',
   },
-
-  bottomItemLabel: {
-    color: '#b8b8b8',
-
-    fontSize: 11,
-    fontWeight: '500',
+  topLineContainer: {
+    position: 'absolute',
+    top: -9,
+    left: 0,
+    right: 0,
+    height: 3,
+    alignItems: "center",
   },
-
-  activeBottomItemLabel: {
-    color: '#ffffff',
-  },
-
   placeholderWrapper: {
     flex: 1,
-
     backgroundColor: '#121212',
-
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   placeholderText: {
     color: '#ffffff',
-
     fontSize: 24,
     fontWeight: '900',
   },
-
+  bottomItemLabel: {
+    color: '#b8b8b8',
+    fontSize: 11.5,
+    fontFamily: Tokens.typography.families.light,
+    textAlign: 'center',
+  },
+  activeBottomItemLabel: {
+    fontSize: Tokens.typography.sizes.body,
+    fontFamily: Tokens.typography.families.light,
+  }
 });
-

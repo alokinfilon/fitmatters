@@ -11,16 +11,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Shadow } from 'react-native-shadow-2';
-import {
-  ArrowLeft,
-  Check,
-  Loader,
-  Home as HomeIcon, 
-  Search, 
-  Image as CommunityIcon, 
-  ShoppingBag, 
-  MoreHorizontal
-} from 'lucide-react-native';
+
 import { Tokens } from '../theme/theme'; // Central Tokens file configuration reference
 import ArrowLeftIcon from '../component/svg/arrow'
 import CheckMarkl from '../component/svg/checkMarklIcon'
@@ -36,7 +27,7 @@ export default function TrackOrders({ navigation }) {
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
-      navigation.replace('Home'); 
+      navigation.replace('MainTabs'); 
     }
   };
 
@@ -104,7 +95,7 @@ export default function TrackOrders({ navigation }) {
             <View style={styles.headerMetaBlockFrame}>
               <Text style={styles.screenTitleMainHeading}>Track Your Orders</Text>
               <Text style={styles.screenSubtitleLabelDescription}>Track deliveries, check order details, and manage returns.</Text>
-                </View>
+              </View>
 
             {/* Core Summary Card Info Terminal Area Box (Frame 526) */}
             <LinearGradient
@@ -177,7 +168,7 @@ export default function TrackOrders({ navigation }) {
               })}
             </View>
 
-            <View style={styles.lineDividerHorizontalRuleElement} />
+          <View style={styles.lineDividerHorizontalRuleElement} />
 
             {/* Selected Active Product Informational Sheet Meta Row Block */}
             <View style={styles.productMetaOverviewClusterContainer}>
@@ -238,8 +229,8 @@ export default function TrackOrders({ navigation }) {
                         <Text style={styles.timelineStepCardFootnoteContextStatusLabelText}>
                           {step.footnote}
                         </Text>
-                  )}
-                </View>
+                      )}
+                    </View>
 
           </View>
                 );

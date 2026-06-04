@@ -13,47 +13,51 @@ import MaskedView from '@react-native-masked-view/masked-view';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import  NikeIcon from '../component/svg/nikeIcon'
-import  HMIcon from '../component/svg/h&mIcon'
-import { 
+import NikeIcon from '../component/svg/nikeIcon';
+import HMIcon from '../component/svg/h&mIcon';
+import {
   ArrowLeft,
-
-  Home as HomeIcon, 
-  
-  Image as CommunityIcon, 
- 
+  Home as HomeIcon,
+  Image as CommunityIcon,
 } from 'lucide-react-native';
-import { Tokens } from '../theme/theme'; 
-import CheckMarkl from '../component/svg/checkMarklIcon'
-import ScaleInfoIcon from '../component/svg/scaleInfoIcon'
-import PlusIcon from '../component/svg/PlusIcon'
-import MinusIcon  from '../component/svg/minusIcon'
-import ArrowLeftIcon from '../component/svg/arrow'
-  const feedbackIconSize = Tokens.scaleAsset(12);
+import { Tokens } from '../theme/theme';
+import CheckMarkl from '../component/svg/checkMarklIcon';
+import ScaleInfoIcon from '../component/svg/scaleInfoIcon';
+import PlusIcon from '../component/svg/PlusIcon';
+import MinusIcon from '../component/svg/minusIcon';
+import ArrowLeftIcon from '../component/svg/arrow';
+const feedbackIconSize = Tokens.scaleAsset(12);
 const { width } = Dimensions.get('window');
 
 const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
-
-const SINGLE_ROW_CHIP_WIDTH = (width - TOTAL_PADDINGS - (Tokens.gaps.small * 5)) / 7; 
-const RECOMMENDATION_CARD_WIDTH = (width - TOTAL_PADDINGS - (Tokens.gaps.small * 2)) / 3;
+const TAB_CONTAINER_WIDTH = Dimensions.get('window').width - (Tokens.layout.paddingHorizontal * 2);
+const EXACT_TAB_WIDTH = (TAB_CONTAINER_WIDTH - (4 * 2)) / 3; // Accounts for 4px gaps perfectly
+const SINGLE_ROW_CHIP_WIDTH =
+  (width - TOTAL_PADDINGS - Tokens.gaps.small * 5) / 7;
+const RECOMMENDATION_CARD_WIDTH =
+  (width - TOTAL_PADDINGS - Tokens.gaps.small * 2) / 3;
 
 export default function ProductDetails({ navigation }) {
-  const [activeTab, setActiveTab] = useState('Shipping Info'); 
+  const [activeTab, setActiveTab] = useState('Shipping Info');
   const [wholeLookChecked, setWholeLookChecked] = useState(true);
 
   const [topSize, setTopSize] = useState('M');
   const [topQty, setTopQty] = useState(1);
-  
+
   const [bottomSize, setBottomSize] = useState('M');
   const [bottomQty, setBottomQty] = useState(1);
-  
+
   const [footwearSize, setFootwearSize] = useState('M');
   const [footwearQty, setFootwearQty] = useState(1);
 
-  const mainProductImage = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80';
-  const recImage1 = 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=200&q=80';
-  const recImage2 = 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=200&q=80';
-  const recImage3 = 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=200&q=80';
+  const mainProductImage =
+    'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80';
+  const recImage1 =
+    'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=200&q=80';
+  const recImage2 =
+    'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=200&q=80';
+  const recImage3 =
+    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=200&q=80';
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
@@ -61,86 +65,101 @@ export default function ProductDetails({ navigation }) {
     }
   };
 
-  const renderItemVariantPicker = (title, brandLogoText, description, currentSize, setSize, currentQty, setQty) => {
+  const renderItemVariantPicker = (
+    title,
+    brandLogoText,
+    description,
+    currentSize,
+    setSize,
+    currentQty,
+    setQty,
+  ) => {
     return (
       <View style={styles.ClothingBox}>
         <View style={styles.clothingHeaderView}>
           <Text style={styles.clothTitleText}>{title}</Text>
-          <HMIcon size={Tokens.scaleAsset(60)} color="#FFFFFF" backgroundColor="transparent" />
-
+          <HMIcon
+            size={Tokens.scaleAsset(60)}
+            color="#FFFFFF"
+            backgroundColor="transparent"
+          />
         </View>
         <Text style={styles.clothDescriptionText}>{description}</Text>
-        
+
         <View style={styles.sizeHeaderLabelRow}>
           <Text style={styles.sizeSectionTitleText}>Size</Text>
-          <ScaleInfoIcon size={Tokens.scaleAsset(22)} color="#FDABAC" strokeWidth={2} />
-         
+          <ScaleInfoIcon
+            size={Tokens.scaleAsset(22)}
+            color="#FDABAC"
+            strokeWidth={2}
+          />
         </View>
 
-        
         <View style={styles.sizeHorizontalRow}>
-          {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => {
+          {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => {
             const isSelected = currentSize === size;
             return (
               <LinearGradient
-                                 colors={['#333637', '#242426']}
-          start={{ x: 0.0105, y: 0.5 }}
-          end={{ x: 0.9866, y: 0.5 }}
-                                style={[
-                  styles.sizeBoxButton,  isSelected && styles.sizeBoxButton1
-                  
-                ]}
-                              >
-              <TouchableOpacity
-                key={size}
-                activeOpacity={0.85}
-                onPress={() => setSize(size)}
+                colors={['#333637', '#242426']}
+                start={{ x: 0.0105, y: 0.5 }}
+                end={{ x: 0.9866, y: 0.5 }}
                 style={[
-                  
-                
+                  styles.sizeBoxButton,
+                  isSelected && styles.sizeBoxButton1,
                 ]}
               >
-                <Text style={[
-                  styles.sizeItemText,
-                  isSelected && styles.sizeItemTextActive
-                ]}>
-                  {size}
-                </Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  key={size}
+                  activeOpacity={0.85}
+                  onPress={() => setSize(size)}
+                  style={[]}
+                >
+                  <Text
+                    style={[
+                      styles.sizeItemText,
+                      isSelected && styles.sizeItemTextActive,
+                    ]}
+                  >
+                    {size}
+                  </Text>
+                </TouchableOpacity>
               </LinearGradient>
             );
           })}
         </View>
 
-        
         <View style={styles.quantityView}>
           <Text style={styles.quantityText}>Quantity</Text>
           <View style={styles.counterActionLayoutGroup}>
-            <TouchableOpacity 
-              style={styles.counterTouch} 
+            <TouchableOpacity
+              style={styles.counterTouch}
               onPress={() => setQty(Math.max(1, currentQty - 1))}
               activeOpacity={0.6}
             >
-                            <MinusIcon size={Tokens.scaleAsset(24)} color="#CCCCCC" strokeWidth={3} />
-
+              <MinusIcon
+                size={Tokens.scaleAsset(24)}
+                color="#CCCCCC"
+                strokeWidth={3}
+              />
             </TouchableOpacity>
-             <LinearGradient
-                              colors={['#333637', '#242426']}
-                              start={{ x: 0.01, y: 0.5 }}
-                              end={{ x: 0.99, y: 0.5 }}
-                               style={styles.counterBox}
-                            >
-            
+            <LinearGradient
+              colors={['#333637', '#242426']}
+              start={{ x: 0.01, y: 0.5 }}
+              end={{ x: 0.99, y: 0.5 }}
+              style={styles.counterBox}
+            >
               <Text style={styles.counterValueText}>{currentQty}</Text>
-          
             </LinearGradient>
-            <TouchableOpacity 
-              style={styles.counterTouch} 
+            <TouchableOpacity
+              style={styles.counterTouch}
               onPress={() => setQty(currentQty + 1)}
               activeOpacity={0.6}
             >
-              <PlusIcon size={Tokens.scaleAsset(24)} color="#CCCCCC" strokeWidth={3} />
-
+              <PlusIcon
+                size={Tokens.scaleAsset(24)}
+                color="#CCCCCC"
+                strokeWidth={3}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -157,27 +176,46 @@ export default function ProductDetails({ navigation }) {
         style={styles.screenContainer}
       >
         <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
-        <SafeAreaView style={styles.mainContainer} edges={['top', 'left', 'right']}>
-          
-          
+        <SafeAreaView
+          style={styles.mainContainer}
+          edges={['top', 'left', 'right']}
+        >
           <View style={styles.backHeaderView}>
-            <TouchableOpacity style={styles.backButtonView} onPress={handleGoBack} activeOpacity={0.7}>
-              <ArrowLeftIcon size={Tokens.scaleAsset(24)} color="#E5E5E5" strokeWidth={1.5} />
+            <TouchableOpacity
+              style={styles.backButtonView}
+              onPress={handleGoBack}
+              activeOpacity={0.7}
+            >
+              <ArrowLeftIcon
+                size={Tokens.scaleAsset(24)}
+                color="#E5E5E5"
+                strokeWidth={1.5}
+              />
 
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContentContainer}>
-           
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContentContainer}
+          >
             <View style={styles.headerView}>
-              <Text style={styles.productTitleText}>Streetwear Set – Urban Chill</Text>
-              <Text style={styles.productSubtitleText}>Outfit curated from 3 brands.</Text>
+              <Text style={styles.productTitleText}>
+                Streetwear Set – Urban Chill
+              </Text>
+              <Text style={styles.productSubtitleText}>
+                Outfit curated from 3 brands.
+              </Text>
             </View>
 
             <View style={styles.postBoxView}>
-              <Image source={{ uri: mainProductImage }} style={styles.postImage} resizeMode="cover" />
-              
+              <Image
+                source={{ uri: mainProductImage }}
+                style={styles.postImage}
+                resizeMode="cover"
+              />
+
               <View style={styles.ImageCarousel}>
                 <View style={styles.indicatorDotInactive} />
                 <LinearGradient
@@ -191,37 +229,39 @@ export default function ProductDetails({ navigation }) {
               </View>
             </View>
 
-            
             <View style={styles.priceView}>
-              <Text style={styles.priceText}>₹3,499 <Text style={styles.excludingExtrasLabel}>(Excluding extras)</Text></Text>
-              
+              <Text style={styles.priceText}>
+                ₹3,499{' '}
+                <Text style={styles.excludingExtrasLabel}>
+                  (Excluding extras)
+                </Text>
+              </Text>
+
               <LinearGradient
- 
-  colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-  start={{ x: 0, y: 0.5 }}
-  end={{ x: 1, y: 0.5 }}
-  style={styles.gradientBorderOuterView}
->
-  <View style={styles.solidColorBackgroundMaskShield}>
-    <LinearGradient
- 
-  colors={['#312B27', '#2A1C19', '#2A211E']}
-  start={{ x: 0, y: 0.5 }}
-  end={{ x: 0.8, y: 0.5 }}
-  style={styles.stockBadge}
->
-    
-      <Text style={styles.stockText}>In Stock</Text>
-    
-    </LinearGradient>
-  </View>
-</LinearGradient>
+                colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.gradientBorderOuterView}
+              >
+                <View style={styles.solidColorBackgroundMaskShield}>
+                  <LinearGradient
+                    colors={['#312B27', '#2A1C19', '#2A211E']}
+                    start={{ x: 0, y: 0.5 }}
+                    end={{ x: 0.8, y: 0.5 }}
+                    style={styles.stockBadge}
+                  >
+                    <Text style={styles.stockText}>In Stock</Text>
+                  </LinearGradient>
+                </View>
+              </LinearGradient>
             </View>
 
-           
             <View style={styles.controlRowView}>
-              <TouchableOpacity 
-                style={[styles.checkmarkToggleView, wholeLookChecked && styles.checkmarkToggleActiveView]} 
+              <TouchableOpacity
+                style={[
+                  styles.checkmarkToggleView,
+                  wholeLookChecked && styles.checkmarkToggleActiveView,
+                ]}
                 onPress={() => setWholeLookChecked(!wholeLookChecked)}
                 activeOpacity={0.8}
               >
@@ -232,58 +272,102 @@ export default function ProductDetails({ navigation }) {
                     end={{ x: 0.7, y: 0.5 }}
                     style={styles.checkmarkInnerGradientView}
                   >
-                      <CheckMarkl size={feedbackIconSize+8} color="#ffffff" strokeWidth={3} />
-
+                    <CheckMarkl
+                      size={feedbackIconSize + 8}
+                      color="#ffffff"
+                      strokeWidth={3}
+                    />
                   </LinearGradient>
                 )}
               </TouchableOpacity>
 
               <View style={styles.comboDetailView}>
-                <Text style={styles.comboText}>Buy the whole look(including extras).</Text>
-                <Text style={styles.comboPriceText}>₹5,499 <Text style={styles.allCombinedLabel}>(all items combined)</Text></Text>
-                <Text style={styles.comboDescriptionText}>Curated look for casual weekends — includes top, denim, and sneakers.</Text>
-                <View style = {styles.brandView}>
-<Text style={styles.brandsText}>Brands</Text>
-<NikeIcon size={Tokens.scaleAsset(60)} color="#FFFFFF" />
+                <Text style={styles.comboText}>
+                  Buy the whole look(including extras).
+                </Text>
+                <Text style={styles.comboPriceText}>
+                  ₹5,499{' '}
+                  <Text style={styles.allCombinedLabel}>
+                    (all items combined)
+                  </Text>
+                </Text>
+                <Text style={styles.comboDescriptionText}>
+                  Curated look for casual weekends — includes top, denim, and
+                  sneakers.
+                </Text>
+                <View style={styles.brandView}>
+                  <Text style={styles.brandsText}>Brands</Text>
+                  <NikeIcon size={Tokens.scaleAsset(60)} color="#FFFFFF" />
 
-<HMIcon size={Tokens.scaleAsset(60)} color="#FFFFFF" backgroundColor="transparent" />
+                  <HMIcon
+                    size={Tokens.scaleAsset(60)}
+                    color="#FFFFFF"
+                    backgroundColor="transparent"
+                  />
                 </View>
-                
               </View>
             </View>
 
             <View style={styles.Divider} />
-            <View style = {styles.SelectionView}>
-            <Text style={styles.SelectionText}>Size Selection</Text>
-</View>
-           
-            {renderItemVariantPicker('Top Wear', 'H&M', '100% cotton, soft-touch finish.', topSize, setTopSize, topQty, setTopQty)}
-            {renderItemVariantPicker('Bottom Wear', 'H&M', 'Slim fit, stretchable denim.', bottomSize, setBottomSize, bottomQty, setBottomQty)}
-            {renderItemVariantPicker('Footwear', 'NIKE', 'Breathable sole, regular fit.', footwearSize, setFootwearSize, footwearQty, setFootwearQty)}
+            <View style={styles.SelectionView}>
+              <Text style={styles.SelectionText}>Size Selection</Text>
+            </View>
 
-           
+            {renderItemVariantPicker(
+              'Top Wear',
+              'H&M',
+              '100% cotton, soft-touch finish.',
+              topSize,
+              setTopSize,
+              topQty,
+              setTopQty,
+            )}
+            {renderItemVariantPicker(
+              'Bottom Wear',
+              'H&M',
+              'Slim fit, stretchable denim.',
+              bottomSize,
+              setBottomSize,
+              bottomQty,
+              setBottomQty,
+            )}
+            {renderItemVariantPicker(
+              'Footwear',
+              'NIKE',
+              'Breathable sole, regular fit.',
+              footwearSize,
+              setFootwearSize,
+              footwearQty,
+              setFootwearQty,
+            )}
+
             <TouchableOpacity style={styles.addExtrasView} activeOpacity={0.7}>
-              <PlusIcon size={Tokens.scaleAsset(24)} color="#fba66e" strokeWidth={3} />
-              <Text style={styles.addExtrasText}> Add Extras <Text style={styles.addExtrasSubtext}>(belt, cap, scarf)</Text></Text>
+              <PlusIcon
+                size={Tokens.scaleAsset(24)}
+                color="#fba66e"
+                strokeWidth={3}
+              />
+              <Text style={styles.addExtrasText}>
+                {' '}
+                Add Extras{' '}
+                <Text style={styles.addExtrasSubtext}>(belt, cap, scarf)</Text>
+              </Text>
             </TouchableOpacity>
 
-           
             <View style={styles.buttonGroupBox}>
-             
-             
-                <LinearGradient
-                  colors={['#333637', '#242426',]}
-                  start={{ x: 0.01, y: 0.5 }}
-                  end={{ x: 1, y: 0.5 }}
-                  style={styles.buttonGroupBox2}
-                >
-                
-                  <Text style={styles.buttonGroupBox1Text}>Add to CaRT</Text>
-                </LinearGradient>
-             
-              
+              <LinearGradient
+                colors={['#333637', '#242426']}
+                start={{ x: 0.01, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.buttonGroupBox2}
+              >
+                <Text style={styles.buttonGroupBox1Text}>Add to CaRT</Text>
+              </LinearGradient>
 
-              <TouchableOpacity style={styles.buyNowButtonView} activeOpacity={0.85}>
+              <TouchableOpacity
+                style={styles.buyNowButtonView}
+                activeOpacity={0.85}
+              >
                 <LinearGradient
                   colors={['#FBB59E', '#F8876C', '#fd795c', '#F98F7A']}
                   start={{ x: 0.01, y: 0.5 }}
@@ -295,66 +379,71 @@ export default function ProductDetails({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.Divider} />
+            <View style={styles.Divider1} />
 
-            
-            <View style={styles.tabView}>
-              {['Shipping Info', 'How It Works', 'Product Info'].map((tab) => {
-                const isTabActive = activeTab === tab;
-                return (
-                  <TouchableOpacity
-  key={tab}
-  onPress={() => setActiveTab(tab)}
-  activeOpacity={0.85}
-  style={styles.buttonWrapper}
->
-  {isTabActive ? (
-    <LinearGradient
-      
-      colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-      start={{ x: 0, y: 0.5 }}
-      end={{ x: 1, y: 0.5 }}
-      style={styles.activeBorderGradientView}
-    >
-      <View style={styles.activeSolidBackgroundMaskShield}>
-        <LinearGradient
-          colors={['#FDDBBD26', '#F77D611F', '#FBB49D1F']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.activeGredientView}
-        >
-          <Text style={styles.categoryTabText}>{tab}</Text>
-        </LinearGradient>
-      </View>
-    </LinearGradient>
-  ) : (
-    <View style={styles.activeGredientView1}>
-      <Text style={styles.categoryTabText1}>{tab}</Text>
-    </View>
-  )}
-</TouchableOpacity>
-
-                );
-              })}
+           <View style={styles.tabView}>
+  {['Shipping Info', 'How It Works', 'Product Info'].map(tab => {
+    const isTabActive = activeTab === tab;
+    return (
+      <TouchableOpacity
+        key={tab}
+        onPress={() => setActiveTab(tab)}
+        activeOpacity={0.85}
+        style={styles.buttonWrapper}
+      >
+        {isTabActive ? (
+          <LinearGradient
+            colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.activeBorderGradientView}
+          >
+            <View style={styles.activeSolidBackgroundMaskShield}>
+              <LinearGradient
+                colors={['#FDDBBD26', '#F77D611F', '#FBB49D1F']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.activeGredientView}
+              >
+                <Text style={styles.categoryTabText}>{tab}</Text>
+              </LinearGradient>
             </View>
-
+          </LinearGradient>
+        ) : (
+          <View style={styles.activeGredientView1}>
+            <Text style={styles.categoryTabText1}>{tab}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  })}
+</View>
             {activeTab === 'Shipping Info' && (
               <View style={styles.tabInfoView}>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Delivery Time</Text>
-                  <Text style={styles.tabText2}>Delivered within 3–5 business days by brand partner.</Text>
+                  <Text style={styles.tabText2}>
+                    Delivered within 3–5 business days by brand partner.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Delivery Partner</Text>
-                  <Text style={styles.tabText2}>Shipped directly by H&M / Levis / Nike.</Text>
+                  <Text style={styles.tabText2}>
+                    Shipped directly by H&M / Levis / Nike.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Tracking Info</Text>
-                  <Text style={styles.tabText2}>You’ll receive tracking updates in your Order History once placed.</Text>
+                  <Text style={styles.tabText2}>
+                    You’ll receive tracking updates in your Order History once
+                    placed.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Delivery Charge</Text>
-                  <Text style={styles.tabText2}>Free shipping for orders above ₹1,999.</Text>
+                  <Text style={styles.tabText2}>
+                    Free shipping for orders above ₹1,999.
+                  </Text>
                 </View>
               </View>
             )}
@@ -363,23 +452,33 @@ export default function ProductDetails({ navigation }) {
               <View style={styles.tabInfoView}>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Select Your Look</Text>
-                  <Text style={styles.tabText2}>Choose full outfit or specific pieces.</Text>
+                  <Text style={styles.tabText2}>
+                    Choose full outfit or specific pieces.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Checkout Securely</Text>
-                  <Text style={styles.tabText2}>Pay via UPI, Card, or Wallet.</Text>
+                  <Text style={styles.tabText2}>
+                    Pay via UPI, Card, or Wallet.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Order Confirmed</Text>
-                  <Text style={styles.tabText2}>We sync order with brand partner.</Text>
+                  <Text style={styles.tabText2}>
+                    We sync order with brand partner.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Shipped by Brand</Text>
-                  <Text style={styles.tabText2}>Track updates inside the app.</Text>
+                  <Text style={styles.tabText2}>
+                    Track updates inside the app.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Refund Available (12 hrs)</Text>
-                  <Text style={styles.tabText2}>Cancel or refund within the first 12 hours.</Text>
+                  <Text style={styles.tabText2}>
+                    Cancel or refund within the first 12 hours.
+                  </Text>
                 </View>
               </View>
             )}
@@ -388,15 +487,21 @@ export default function ProductDetails({ navigation }) {
               <View style={styles.tabInfoView}>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Material</Text>
-                  <Text style={styles.tabText2}>100% Cotton (T-shirt), Stretch Denim (Jeans), Mesh (Shoes)</Text>
+                  <Text style={styles.tabText2}>
+                    100% Cotton (T-shirt), Stretch Denim (Jeans), Mesh (Shoes)
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Fit Type</Text>
-                  <Text style={styles.tabText2}>Regular Fit / Slim Fit / Relaxed</Text>
+                  <Text style={styles.tabText2}>
+                    Regular Fit / Slim Fit / Relaxed
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Care Instructions</Text>
-                  <Text style={styles.tabText2}>Machine wash cold, tumble dry low.</Text>
+                  <Text style={styles.tabText2}>
+                    Machine wash cold, tumble dry low.
+                  </Text>
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Color Options</Text>
@@ -408,46 +513,68 @@ export default function ProductDetails({ navigation }) {
                 </View>
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Sustainability Note</Text>
-                  <Text style={styles.tabText2}>Eco-certified fabric used.</Text>
-                </View>
-                
-              </View>
-            )}
-             <View style={styles.tabInfoView2}>
-            <View style={styles.tabInfoView1}>
-                  <Text style={styles.tabText1}>Refund & Returns</Text>
                   <Text style={styles.tabText2}>
-                    After 12 hours, returns are managed by the brand. Initiate returns from your Order page.{'\n'}
-                    <View style = {styles.refundPolicyView}>
-                    <Text style={styles.refundPolicyText}>Read Refund Policy</Text>
-                    </View>
+                    Eco-certified fabric used.
                   </Text>
                 </View>
-                </View>
-
-           
-
-            <View style={styles.recommendationView}>
-              <View style = {styles.recommendationPRoductView}>
-              <Text style={styles.recommendationText}>Recommend Products</Text>
               </View>
-              <View style={styles.recommendationCardsView}>
-                <TouchableOpacity style={styles.recommendationItem} activeOpacity={0.9}>
-                  <Image source={{ uri: recImage1 }} style={styles.recommendationImage} resizeMode="cover" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.recommendationItem} activeOpacity={0.9}>
-                  <Image source={{ uri: recImage2 }} style={styles.recommendationImage} resizeMode="cover" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.recommendationItem} activeOpacity={0.9}>
-                  <Image source={{ uri: recImage3 }} style={styles.recommendationImage} resizeMode="cover" />
-                </TouchableOpacity>
+            )}
+            <View style={styles.tabInfoView2}>
+              <View style={styles.tabInfoView1}>
+                <Text style={styles.tabText1}>Refund & Returns</Text>
+                <Text style={styles.tabText2}>
+                  After 12 hours, returns are managed by the brand. Initiate
+                  returns from your Order page.{'\n'}
+                  <View style={styles.refundPolicyView}>
+                    <Text style={styles.refundPolicyText}>
+                      Read Refund Policy
+                    </Text>
+                  </View>
+                </Text>
               </View>
             </View>
 
+            <View style={styles.recommendationView}>
+              <View style={styles.recommendationPRoductView}>
+                <Text style={styles.recommendationText}>
+                  Recommend Products
+                </Text>
+              </View>
+              <View style={styles.recommendationCardsView}>
+                <TouchableOpacity
+                  style={styles.recommendationItem}
+                  activeOpacity={0.9}
+                >
+                  <Image
+                    source={{ uri: recImage1 }}
+                    style={styles.recommendationImage}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.recommendationItem}
+                  activeOpacity={0.9}
+                >
+                  <Image
+                    source={{ uri: recImage2 }}
+                    style={styles.recommendationImage}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.recommendationItem}
+                  activeOpacity={0.9}
+                >
+                  <Image
+                    source={{ uri: recImage3 }}
+                    style={styles.recommendationImage}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
           </ScrollView>
         </SafeAreaView>
-
-       
       </LinearGradient>
     </SafeAreaProvider>
   );
@@ -465,7 +592,7 @@ const styles = StyleSheet.create({
   scrollContentContainer: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     paddingTop: Tokens.gaps.medium,
-    //paddingBottom: 140, 
+    //paddingBottom: 140,
   },
   backHeaderView: {
     width: '100%',
@@ -485,9 +612,8 @@ const styles = StyleSheet.create({
     fontFamily: Tokens.typography.families.medium,
     fontSize: Tokens.typography.sizes.body,
     color: '#E5E5E5',
-    
   },
-  headerView: { 
+  headerView: {
     width: '100%',
     gap: Tokens.gaps.small,
     marginBottom: Tokens.gaps.large,
@@ -513,11 +639,11 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: Tokens.gaps.large,
   },
- postImage: {
+  postImage: {
     width: '100%',
     height: '100%',
   },
- ImageCarousel: {
+  ImageCarousel: {
     position: 'absolute',
     bottom: 12,
     alignSelf: 'center',
@@ -563,8 +689,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 6,
     borderRadius: 6,
-     borderBottomColor:"rgba(248, 45, 0, 0.15)"
-    
+    borderBottomColor: 'rgba(248, 45, 0, 0.15)',
   },
   stockText: {
     fontFamily: Tokens.typography.families.medium,
@@ -573,22 +698,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   gradientBorderOuterView: {
-    padding: 1,             
-    borderRadius: 7,       
+    padding: 1,
+    borderRadius: 7,
     alignSelf: 'flex-start',
-     borderTopLeftRadius: 3,     
-    borderTopRightRadius: 7,    
-    borderBottomRightRadius: 7, 
-    borderBottomLeftRadius: 13, 
-   
-    
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 7,
+    borderBottomRightRadius: 7,
+    borderBottomLeftRadius: 13,
   },
   solidColorBackgroundMaskShield: {
     borderRadius: 6,
     overflow: 'hidden',
-    
+
     backgroundColor: '#242426',
-    
+
     borderTopLeftRadius: 2,
     borderTopRightRadius: 6,
     borderBottomRightRadius: 6,
@@ -653,21 +776,20 @@ const styles = StyleSheet.create({
     color: '#E5E5E5',
   },
   brandsText: {
-    fontFamily: Tokens.typography.families.semiBold ,
+    fontFamily: Tokens.typography.families.semiBold,
     fontSize: 12,
     color: '#ffffff',
     marginTop: 4,
-    
   },
 
-  brandView :{
-  flexDirection: 'row',
-  alignItems: 'center',
-  width: '100%',
-  height: Tokens.components.chipHeight, 
-   
-  gap: Tokens.gaps.medium, 
-  overflow: 'scroll',
+  brandView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: Tokens.components.chipHeight,
+
+    gap: Tokens.gaps.medium,
+    overflow: 'scroll',
   },
   brandsLogoText: {
     color: '#FFFFFF',
@@ -678,6 +800,13 @@ const styles = StyleSheet.create({
     height: 0,
     borderTopWidth: 1,
     borderColor: '#323537',
+    marginVertical: Tokens.gaps.large,
+  },
+  Divider1: {
+    width: '100%',
+    height: 0,
+    borderTopWidth: 0,
+    borderColor: '#000000',
     marginVertical: Tokens.gaps.large,
   },
   SelectionText: {
@@ -701,7 +830,7 @@ const styles = StyleSheet.create({
     fontFamily: Tokens.typography.families.semiBold,
     fontSize: 14,
     color: '#FFFFFF',
-    lineHeight: 24 
+    lineHeight: 24,
   },
   variantBrandLogoPlaceholderText: {
     fontFamily: Tokens.typography.families.semiBold,
@@ -735,15 +864,15 @@ const styles = StyleSheet.create({
     width: SINGLE_ROW_CHIP_WIDTH,
     height: 38,
     borderRadius: 6,
-    backgroundColor: '#242426', 
+    backgroundColor: '#242426',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth:0.5,
-    borderColor:"#D3CECE45"
+    borderWidth: 0.5,
+    borderColor: '#D3CECE45',
   },
   sizeBoxButton1: {
     borderWidth: 1,
-    borderColor: '#F8876C', 
+    borderColor: '#F8876C',
   },
   sizeItemText: {
     fontFamily: Tokens.typography.families.medium,
@@ -758,7 +887,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#FFFFFF',
   },
-  counterValueText :{
+  counterValueText: {
     fontFamily: Tokens.typography.families.semiBold,
     fontSize: 13,
     color: '#FFFFFF',
@@ -767,14 +896,14 @@ const styles = StyleSheet.create({
   quantityView: {
     flexDirection: 'row',
     alignItems: 'center',
-    
+
     width: '100%',
     gap: Tokens.gaps.large,
   },
   counterActionLayoutGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:"center",
+    justifyContent: 'center',
     gap: Tokens.gaps.medium,
   },
   counterTouch: {
@@ -797,9 +926,9 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 6,
-    backgroundColor: '#1E1E20', 
+    backgroundColor: '#1E1E20',
     alignItems: 'center',
-    justifyContent:"center"
+    justifyContent: 'center',
   },
   counterValueDisplayStaticHolderStringText: {
     fontFamily: Tokens.typography.families.medium,
@@ -825,7 +954,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  
   buttonGroupBox: {
     width: '100%',
     gap: Tokens.gaps.large,
@@ -839,7 +967,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
- buttonGroupBox1Text: {
+  buttonGroupBox1Text: {
     fontFamily: Tokens.typography.families.semiBold,
     fontSize: 16,
     color: '#FFFFFF',
@@ -865,64 +993,61 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FFFFFF',
   },
-
-   tabView: {
+tabView: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     width: '100%',
-    height: 36,
+    height: 38,
     marginTop: Tokens.gaps.xlarge,
     marginBottom: Tokens.gaps.large,
-    gap: 5,
+    gap: 4, // Clean minimal visual divider spacing
   },
-  ButtonWrapper: {
-    flex: 1,
+  buttonWrapper: {
+    width: EXACT_TAB_WIDTH,
     height: 36,
   },
-  
- 
   activeBorderGradientView: {
-    flex: 1,                    
-    padding: 1,                 
-    borderRadius: 9,            
+    flex: 1,
+    padding: 1,
+    borderRadius: 9,
     overflow: 'hidden',
   },
   activeSolidBackgroundMaskShield: {
     flex: 1,
     borderRadius: 8,
     overflow: 'hidden',
-    
-    backgroundColor: '#242426', 
+    backgroundColor: '#242426',
   },
-  
   activeGredientView: {
     flex: 1,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 2, // Keeps text bounds centered cleanly without compressing
   },
-  
- activeGredientView1: {
+  activeGredientView1: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 2,
   },
   categoryTabText: {
     fontFamily: Tokens.typography.families.medium,
-    fontSize: 13,
+    fontSize: 13, // Scaled dynamically from 13 to prevent text overflow layout breaks
     color: '#FFFFFF',
     textAlign: 'center',
   },
   categoryTabText1: {
     fontFamily: Tokens.typography.families.medium,
-    fontSize: 13,
+    fontSize: 13, // Balanced proportionally to prevent layout jitter shifting
     color: '#E5E5E5',
     textAlign: 'center',
   },
 
   tabInfoView: {
     width: '100%',
-    gap: Tokens.gaps.large,
+    gap: Tokens.gaps.xlarge,
     paddingVertical: 4,
   },
   tabInfoView2: {
@@ -949,10 +1074,9 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     color: '#FDEABF',
     fontFamily: Tokens.typography.families.medium,
-    fontSize:13,
-
+    fontSize: 13,
   },
- 
+
   recommendationView: {
     width: '100%',
     gap: Tokens.gaps.large,
@@ -963,19 +1087,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 25,
     color: '#FFFFFF',
-    justifyContent:"center",
-    alignItems:"center"
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  recommendationPRoductView:{
- justifyContent:"center",
-    alignItems:"center",
-    marginBottom:10
+  recommendationPRoductView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   recommendationCardsView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     //width: '100%',
-  
   },
   recommendationItem: {
     width: RECOMMENDATION_CARD_WIDTH,
@@ -983,15 +1106,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: '#FFF3E8',
     overflow: 'hidden',
-    
   },
   recommendationImage: {
     width: '100%',
     height: '100%',
   },
-  SelectionView :{
-    justifyContent:"center",
-    alignItems:"center"
-  }
-  
+  SelectionView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

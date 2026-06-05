@@ -22,7 +22,7 @@ const DYNAMIC_FEED_CARD_WIDTH = (Tokens.layout.width - TOTAL_SIDE_PADDING - Toke
 
 const OutfitFeed = ({ navigation }) => {
   const [allProducts, setAllProducts] = useState([]);
-  const [activeCategories, setActiveCategories] = useState(['All']); 
+  const [activeCategories, setActiveCategories] = useState([]); 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -45,25 +45,17 @@ const OutfitFeed = ({ navigation }) => {
   };
 
   const toggleCategory = (category) => {
-    if (category === 'All') {
-      setActiveCategories(['All']); 
-      return;
-    }
-
     setActiveCategories(prev => {
-      const cleanPrev = prev.filter(c => c !== 'All'); 
-
-      if (cleanPrev.includes(category)) {
-        const updated = cleanPrev.filter(c => c !== category);
-        return updated.length === 0 ? ['All'] : updated;
+      if (prev.includes(category)) {
+        return prev.filter(c => c !== category);
       } else {
-        return [...cleanPrev, category];
+        return [...prev, category];
       }
     });
   };
 
   const displayedProducts = allProducts.filter(product => {
-    if (activeCategories.includes('All')) return true;
+    if (activeCategories.length === 0) return true;
     return activeCategories.includes(product.category);
   });
 
@@ -74,51 +66,51 @@ const OutfitFeed = ({ navigation }) => {
   };
 
   const renderCircleItem = ({ item }) => (
-  <TouchableOpacity
-    style={styles.circleItemContainer}
-    activeOpacity={0.85}
-    onPress={() => openProductDisplay(item)}
-  >
-    {/* 1. SHADOW WRAPPER: Casts the gradient glow colors outwards from the circle */}
-    <Shadow
-      distance={6}                                // Controls how far out the glow radiates
-      startColor="rgba(253, 190, 159, 0.45)"       // Initial color of the glowing radius
-      endColor="rgba(0, 0, 0, 0)"                 // Fades cleanly into your background
-      offset={[6, 6]}
-      radius={Tokens.scaleAsset(50)}              // Matches your 50 radius circle curve
-      paintInside={false}
+    <TouchableOpacity
+      style={styles.circleItemContainer}
+      activeOpacity={0.85}
+      onPress={() => openProductDisplay(item)}
     >
-      <LinearGradient
-        colors={['#FDABAC', '#FDEABF']}
-        start={{ x: 0.01, y: 0.5 }}
-        end={{ x: 0.99, y: 0.5 }}
-        style={styles.circleGradientRing}
+      <Shadow
+        distance={6}              
+        startColor="rgba(253, 190, 159, 0.45)"      
+        endColor="rgba(0, 0, 0, 0)"                 
+        offset={[6, 6]}
+        radius={Tokens.scaleAsset(50)}              
+        paintInside={false}
       >
-        <View style={styles.circleWrapperInner}>
-          <Image
-            source={{ uri: item.images?.[0] || item.thumbnail }}
-            style={styles.avatarImage}
-            resizeMode="cover"
-          />
-        </View>
-      </LinearGradient>
-    </Shadow>
-  </TouchableOpacity>
-);
+        <LinearGradient
+          colors={['#FDABAC', '#FDEABF']}
+          start={{ x: 0.01, y: 0.5 }}
+          end={{ x: 0.99, y: 0.5 }}
+          style={styles.circleGradientRing}
+        >
+          <View style={styles.circleWrapperInner}>
+            <Image
+              source={{ uri: item.images?.[0] || item.thumbnail }}
+              style={styles.avatarImage}
+              resizeMode="cover"
+            />
+          </View>
+        </LinearGradient>
+      </Shadow>
+    </TouchableOpacity>
+  );
 
   const renderHeader = () => (
     <View style={styles.headerContainer}>
-      
       <View style={styles.chipGridContainer}>
         
+        {/* ROW 1 */}
         <View style={styles.chipRow}>
           
+          
           <TouchableOpacity 
-            onPress={() => toggleCategory('All')} 
+            onPress={() => toggleCategory('mens-shoes')} 
             activeOpacity={0.85}
             style={{ width: Tokens.scaleAsset(150) }}
           >
-            {activeCategories.includes('All') ? (
+            {activeCategories.includes('mens-shoes') ? (
               <Shadow
                 distance={10}
                 startColor="rgba(248, 135, 108, 0.32)"
@@ -136,12 +128,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-  colors={['#322C28', '#2B1C19', '#2B2220']}
-  locations={[0.2, 0.5, 0.8]}
-  start={{ x: 0, y: 0 }} 
-  end={{ x: 1, y: 1 }} 
-  style={styles.chipInnerContentContainerActive}
->
+                    colors={['#322C28', '#2B1C19', '#2B2220']}
+                    locations={[0.2, 0.5, 0.8]}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 1 }} 
+                    style={styles.chipInnerContentContainerActive}
+                  >
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive} >👟 Everyday Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -181,12 +173,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-  colors={['#322C28', '#2B1C19', '#2B2220']}
-  locations={[0.2, 0.5, 0.8]}
-  start={{ x: 0, y: 0 }} 
-  end={{ x: 1, y: 1 }} 
-  style={styles.chipInnerContentContainerActive}
->
+                    colors={['#322C28', '#2B1C19', '#2B2220']}
+                    locations={[0.2, 0.5, 0.8]}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 1 }} 
+                    style={styles.chipInnerContentContainerActive}
+                  >
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>💼 Work Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -204,8 +196,8 @@ const OutfitFeed = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
+        {/* ROW 2 */}
         <View style={styles.chipRow}>
-          
           <TouchableOpacity 
             onPress={() => toggleCategory('laptops')} 
             activeOpacity={0.85}
@@ -229,12 +221,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-  colors={['#322C28', '#2B1C19', '#2B2220']}
-  locations={[0.2, 0.5, 0.8]}
-  start={{ x: 0, y: 0 }} 
-  end={{ x: 1, y: 1 }} 
-  style={styles.chipInnerContentContainerActive}
->
+                    colors={['#322C28', '#2B1C19', '#2B2220']}
+                    locations={[0.2, 0.5, 0.8]}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 1 }} 
+                    style={styles.chipInnerContentContainerActive}
+                  >
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>❄️ Winter Vacation Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -274,12 +266,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-  colors={['#322C28', '#2B1C19', '#2B2220']}
-  locations={[0.2, 0.5, 0.8]}
-  start={{ x: 0, y: 0 }} 
-  end={{ x: 1, y: 1 }} 
-  style={styles.chipInnerContentContainerActive}
->
+                    colors={['#322C28', '#2B1C19', '#2B2220']}
+                    locations={[0.2, 0.5, 0.8]}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 1 }} 
+                    style={styles.chipInnerContentContainerActive}
+                  >
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>💃 Date Night Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -297,8 +289,8 @@ const OutfitFeed = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
+        {/* ROW 3 */}
         <View style={styles.chipRow}>
-          
           <TouchableOpacity 
             onPress={() => toggleCategory('womens-dresses')} 
             activeOpacity={0.85}
@@ -322,12 +314,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-  colors={['#322C28', '#2B1C19', '#2B2220']}
-  locations={[0.2, 0.5, 0.8]}
-  start={{ x: 0, y: 0 }} 
-  end={{ x: 1, y: 1 }} 
-  style={styles.chipInnerContentContainerActive}
->
+                    colors={['#322C28', '#2B1C19', '#2B2220']}
+                    locations={[0.2, 0.5, 0.8]}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 1 }} 
+                    style={styles.chipInnerContentContainerActive}
+                  >
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>Summer Vacation Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -366,12 +358,12 @@ const OutfitFeed = ({ navigation }) => {
                   style={styles.gradientOuterBorder}
                 >
                   <LinearGradient 
-  colors={['#322C28', '#2B1C19', '#2B2220']}
-  locations={[0.2, 0.5, 0.8]}
-  start={{ x: 0, y: 0 }} 
-  end={{ x: 1, y: 1 }} 
-  style={styles.chipInnerContentContainerActive}
->
+                    colors={['#322C28', '#2B1C19', '#2B2220']}
+                    locations={[0.2, 0.5, 0.8]}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 1 }} 
+                    style={styles.chipInnerContentContainerActive}
+                  >
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.chipTextActive}>✨ Night Out Fit</Text>
                   </LinearGradient>
                 </LinearGradient>
@@ -441,13 +433,18 @@ const OutfitFeed = ({ navigation }) => {
           />
         </SafeAreaView>
 
-        
+        {loading && (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#F8876C" />
+          </View>
+        )}
 
       </LinearGradient>
     </SafeAreaProvider>
   );
 };
 
+// Styles remain unchanged
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
@@ -460,7 +457,6 @@ const styles = StyleSheet.create({
   scrollContainerPadding: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
     paddingTop: Tokens.layout.paddingVertical,
-    //paddingBottom: 130,
   },
   headerContainer: {
     width: '100%',
@@ -477,7 +473,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom:0
   },
-
   shadowContainerFluid: {
     width: '100%',
     height: 40,
@@ -487,7 +482,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 14,
   },
-
   gradientOuterBorder: {
     height: 40,
     borderRadius: 10,
@@ -500,9 +494,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    //paddingHorizontal: 12,
   },
-
   inactiveChipContainer: {
     height: 40,
     borderRadius: 10,
@@ -511,10 +503,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    //paddingHorizontal: 0,
     width: '100%',
   },
-
   chipTextActive: {
     fontFamily: Tokens.typography.families.medium,
     fontSize: Tokens.typography.sizes.body,
@@ -554,8 +544,6 @@ const styles = StyleSheet.create({
     shadowColor: 'rgba(251, 147, 96, 0.64)',
     marginTop:6,
     marginLeft:6,
-    
-    
   },
   circleWrapperInner: {
     width: '100%',
@@ -583,7 +571,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-
+  loaderContainer: {
+    backgroundColor: 'rgba(15, 15, 15, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default OutfitFeed;

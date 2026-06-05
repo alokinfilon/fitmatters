@@ -90,7 +90,7 @@ const CommunitySpace = ({ navigation }) => {
     >
      
       <View style={styles.postHeaderRow}>
-        <View style={styles.postHeaderUserGroup}>
+        <View style={styles.postHeaderGroupView}>
           <Image source={{ uri: item.userAvatar }} style={styles.userAvatarProfilePic} />
           <Text numberOfLines={1} style={styles.userNameText}>{item.username}</Text>
         </View>
@@ -380,10 +380,10 @@ const styles = StyleSheet.create({
   },
   socialFeedScrollContentContainerSpacingPadding: {
     paddingHorizontal: Tokens.layout.paddingHorizontal,
-    paddingBottom: 40, // Keeps spacing at the bottom clear of the tab navigation bars
+    paddingBottom: 40, 
   },
   headerContainerWrapper: {
-    paddingTop: Tokens.gaps.large, // Shifts the upper part padding natively into the header view block
+    paddingTop: Tokens.gaps.large, 
   },
   topNavigationHeaderModuleOuterContainer: {
     width: '100%',
@@ -487,7 +487,7 @@ borderGradientContainer: {
     width: '100%',
     marginBottom: Tokens.gaps.large,
   },
-  postHeaderUserGroup: {
+  postHeaderGroupView: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Tokens.gaps.small,

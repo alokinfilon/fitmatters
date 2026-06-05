@@ -12,7 +12,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Shadow } from 'react-native-shadow-2';
 
-import { Tokens } from '../theme/theme'; // Central Tokens file configuration reference
+import { Tokens } from '../theme/theme'; 
 import ArrowLeftIcon from '../component/svg/arrow'
 import CheckMarkl from '../component/svg/checkMarklIcon'
 import LoadingIcon from '../component/svg/loadingIcon'
@@ -23,7 +23,7 @@ const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
 const DYNAMIC_TAB_WIDTH = (width - TOTAL_PADDINGS - (Tokens.gaps.large * 2)) / 3;
 
 export default function TrackOrders({ navigation }) {
-  const [activeItemTab, setActiveItemTab] = useState('Top bottom'); // Top bottom, Footwear, Extra
+  const [activeItemTab, setActiveItemTab] = useState('Top bottom'); 
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
@@ -31,7 +31,6 @@ export default function TrackOrders({ navigation }) {
     }
   };
 
-  // Step Timeline Data Source Array for clean layout scaling
   const timelineSteps = [
     {
       id: 1,
@@ -81,7 +80,6 @@ export default function TrackOrders({ navigation }) {
         <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
         <SafeAreaView style={styles.mainContainer} edges={['top', 'left', 'right']}>
           
-          {/* Back Header Target Navigation Row */}
           <View style={styles.backHeaderRow}>
             <TouchableOpacity style={styles.backButtonTouchTarget} onPress={handleGoBack} activeOpacity={0.7}>
               <ArrowLeftIcon size={Tokens.scaleAsset(24)} color="#E5E5E5" strokeWidth={1.5} />
@@ -91,13 +89,11 @@ export default function TrackOrders({ navigation }) {
 
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContentContainer}>
             
-            {/* Main Header Labels Area Terminal */}
             <View style={styles.headerMetaBlockFrame}>
               <Text style={styles.screenTitleMainHeading}>Track Your Orders</Text>
               <Text style={styles.screenSubtitleLabelDescription}>Track deliveries, check order details, and manage returns.</Text>
               </View>
 
-            {/* Core Summary Card Info Terminal Area Box (Frame 526) */}
             <LinearGradient
               colors={['#242525', '#1A1C1D']}
               start={{ x: 0.02, y: 0.5 }}
@@ -121,7 +117,6 @@ export default function TrackOrders({ navigation }) {
           </View>
             </LinearGradient>
 
-            {/* Item Switch Category Tab Toggle Strip Layout Component Box Area (Frame 530) */}
             <View style={styles.navigationTabsStripRowWrapperContainerBox}>
               {['Top bottom', 'Footwear', 'Extra'].map((tab) => {
                 const isTabActive = activeItemTab === tab;
@@ -130,7 +125,6 @@ export default function TrackOrders({ navigation }) {
   key={tab}
   onPress={() => setActiveItemTab(tab)}
   activeOpacity={0.85}
-  // Keep the dynamic width on the touchable wrapper
   style={{ width: DYNAMIC_TAB_WIDTH }} 
 >
   {isTabActive ? (
@@ -138,7 +132,6 @@ export default function TrackOrders({ navigation }) {
       colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      // PASS THE DYNAMIC WIDTH HERE AS WELL 👇
       style={[styles.borderGradientContainer, { width: DYNAMIC_TAB_WIDTH }]}
     >
       <View style={styles.activeSolidBackgroundMaskShield}>
@@ -170,7 +163,6 @@ export default function TrackOrders({ navigation }) {
 
           <View style={styles.lineDividerHorizontalRuleElement} />
 
-            {/* Selected Active Product Informational Sheet Meta Row Block */}
             <View style={styles.productMetaOverviewClusterContainer}>
               <Text style={styles.productNameMainLabelHeading}>Product Name</Text>
               <Text style={styles.productCategorySubInfoLabelText}>Category: <Text style={styles.whiteEmphasisValueText}>Topwear (1) | Footwear (1)</Text></Text>
@@ -179,19 +171,15 @@ export default function TrackOrders({ navigation }) {
               <Text style={styles.productCategorySubInfoLabelText}>Estimated Delivery: <Text style={styles.whiteEmphasisValueText}>Oct 30 – Nov 2, 2025</Text></Text>
             </View>
 
-            {/* Vertical Multi-Stage Step Timeline Tracker Engine Section (Discount Card Map Blueprint) */}
             <View style={styles.verticalTimelineEngineOuterWrapperBlockSectionContainer}>
               
-              {/* Dynamic Absolute Background Track Bar Connector Axis Paths Layer */}
               <View style={styles.timelineAbsoluteTrackLineBackgroundBackdropPath} />
               <View style={styles.timelineAbsoluteTrackLineActiveProgressIndicatorPath} />
 
-              {/* Loop rendering every timeline node component card wrapper item */}
               {timelineSteps.map((step, idx) => {
                 return (
                   <View key={step.id} style={[styles.timelineStepRowLayoutBlockNode, idx === timelineSteps.length - 1 && { marginBottom: 0 }]}>
                     
-                    {/* Status Circle Indicator Module Assembly */}
                     <View style={styles.statusCircleIndicatorWrapperOuterNode}>
                       {step.status === 'completed' && (
                         <View style={styles.timelineStatusCircleCompletedFill}>
@@ -217,7 +205,6 @@ export default function TrackOrders({ navigation }) {
                     )}
                   </View>
 
-                    {/* Step Content Card Text Blocks */}
                     <View style={styles.timelineStepRightContentTextFieldCardWrapperBox}>
                       <Text style={[styles.timelineStepCardHeadingTitleLabelText, step.status === 'active' && { color: '#fefefe' }]}>
                         {step.title}
@@ -238,7 +225,6 @@ export default function TrackOrders({ navigation }) {
 
             </View>
 
-            {/* REFACTORED REFUND & RETURN SYSTEM: Written directly on background canvas to match image_a91021.jpg */}
             <View style={styles.refundPolicyFlatAreaBlockSectionContainer}>
               <Text style={styles.refundPolicySectionHeadingMainTitleText}>Refund & Return Policy</Text>
               
@@ -262,7 +248,6 @@ export default function TrackOrders({ navigation }) {
               
               <Text style={styles.untilShippedClockFootnoteLabelHintText}>⏰ Until Shipped</Text>
 
-              {/* Bold Dynamic Policy Warning block aligned cleanly over footer space */}
               <Text style={styles.globalNetworkPolicyStatementDisclosureParagraphText}>
                 Refunds and returns are processed directly by the brand. Timelines may vary depending on the partner’s policy.
           </Text>
@@ -293,7 +278,6 @@ const styles = StyleSheet.create({
     //paddingBottom: 140, 
   },
   
-  // Header Back Button Row Track Layout
   backHeaderRow: {
     width: '100%',
     height: 40,
@@ -314,7 +298,6 @@ const styles = StyleSheet.create({
     color: '#E5E5E5',
   },
 
-  // Titles Section Layout Cluster
   headerMetaBlockFrame: {
     width: '100%',
     gap: Tokens.gaps.small,
@@ -359,7 +342,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  // Interactive Switch Tabs Layout System Mappings (Frame 530 Panel Track)
   navigationTabsStripRowWrapperContainerBox: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -369,9 +351,9 @@ const styles = StyleSheet.create({
     marginBottom: Tokens.gaps.large,
   },
   borderGradientContainer: {
- flex: 1,                    // Fills the 36px high touchable wrapper
-    padding: 1,                 // Your crisp 1px wide border line
-    borderRadius: 9,            // Matures 1px larger than the inner 8px radius
+ flex: 1,                    
+    padding: 1,                 
+    borderRadius: 9,            
     overflow: 'hidden',  
   },
  activeSolidBackgroundMaskShield: {
@@ -415,7 +397,6 @@ const styles = StyleSheet.create({
     marginBottom: Tokens.gaps.xlarge,
   },
 
-  // Selected Active Product Specs Overview Segment Panel Cluster Bounds
   productMetaOverviewClusterContainer: {
     width: '100%',
     gap: Tokens.gaps.small,
@@ -438,7 +419,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 
-  // Vertical Timeline Progress Tracker Layout Core Mappings (Discount Card Spec Architecture)
   verticalTimelineEngineOuterWrapperBlockSectionContainer: {
     width: '100%',
     position: 'relative',
@@ -446,10 +426,9 @@ const styles = StyleSheet.create({
     marginBottom: Tokens.gaps.section,
   },
   
-  // Symmetrical Backdrop Tracking Line Paths Layer Axis Properties
   timelineAbsoluteTrackLineBackgroundBackdropPath: {
     position: 'absolute',
-    left: 20, // Centers circle dots perfectly
+    left: 20, 
     top: 24,
     bottom: 24,
     width: 6,
@@ -509,7 +488,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   
-  // Step Content Context Strings Mappings
   timelineStepRightContentTextFieldCardWrapperBox: {
     flex: 1,
     gap: 6,
@@ -574,7 +552,7 @@ const styles = StyleSheet.create({
     fontFamily: Tokens.typography.families.medium,
     fontSize: 14,
     color: '#E5E5E5',
-    alignSelf: 'flex-start', // Shifted left-aligned to align directly with the cancel button
+    alignSelf: 'flex-start', 
     marginTop: 2,
     marginBottom: Tokens.gaps.medium,
   },

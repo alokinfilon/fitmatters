@@ -122,7 +122,6 @@ export default function SignUpScreen({ navigation }) {
   style={[
     styles.checkmarkCircleWrapper,
     {
-      // Scales the circle size perfectly with your dynamic icon size
       width: feedbackIconSize * 1.6,
       height: feedbackIconSize * 1.6,
       borderRadius: (feedbackIconSize * 1.8) / 2,
@@ -141,7 +140,6 @@ export default function SignUpScreen({ navigation }) {
   style={[
     styles.checkmarkCircleWrapper,
     {
-      // Scales the circle size perfectly with your dynamic icon size
       width: feedbackIconSize * 1.6,
       height: feedbackIconSize * 1.6,
       borderRadius: (feedbackIconSize * 1.8) / 2,
@@ -159,7 +157,6 @@ export default function SignUpScreen({ navigation }) {
   style={[
     styles.checkmarkCircleWrapper,
     {
-      // Scales the circle size perfectly with your dynamic icon size
       width: feedbackIconSize * 1.6,
       height: feedbackIconSize * 1.6,
       borderRadius: (feedbackIconSize * 1.8) / 2,
@@ -231,7 +228,6 @@ export default function SignUpScreen({ navigation }) {
   style={[
     styles.checkmarkCircleWrapper,
     {
-      // Scales the circle size perfectly with your dynamic icon size
       width: feedbackIconSize * 1.6,
       height: feedbackIconSize * 1.6,
       borderRadius: (feedbackIconSize * 1.8) / 2,

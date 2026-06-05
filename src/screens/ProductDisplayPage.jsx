@@ -15,6 +15,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import NikeIcon from '../component/svg/nikeIcon';
 import HMIcon from '../component/svg/h&mIcon';
+import PlusIcon1 from '../component/svg/plusGradientIcon'
 import {
   ArrowLeft,
   Home as HomeIcon,
@@ -61,7 +62,7 @@ export default function ProductDetails({ navigation }) {
 
   const handleGoBack = () => {
     if (navigation && navigation.goBack) {
-      navigation.replace('Home');
+      navigation.replace('MainTabs');
     }
   };
 
@@ -342,9 +343,9 @@ export default function ProductDetails({ navigation }) {
             )}
 
             <TouchableOpacity style={styles.addExtrasView} activeOpacity={0.7}>
-              <PlusIcon
+              <PlusIcon1
                 size={Tokens.scaleAsset(24)}
-                color="#fba66e"
+                color="#FDABAC"
                 strokeWidth={3}
               />
               <Text style={styles.addExtrasText}>
@@ -1001,7 +1002,7 @@ tabView: {
     height: 38,
     marginTop: Tokens.gaps.xlarge,
     marginBottom: Tokens.gaps.large,
-    gap: 4, // Clean minimal visual divider spacing
+    gap: 4,
   },
   buttonWrapper: {
     width: EXACT_TAB_WIDTH,
@@ -1024,7 +1025,7 @@ tabView: {
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 2, // Keeps text bounds centered cleanly without compressing
+    paddingHorizontal: 2, 
   },
   activeGredientView1: {
     flex: 1,
@@ -1034,13 +1035,13 @@ tabView: {
   },
   categoryTabText: {
     fontFamily: Tokens.typography.families.medium,
-    fontSize: 13, // Scaled dynamically from 13 to prevent text overflow layout breaks
+    fontSize: 13, 
     color: '#FFFFFF',
     textAlign: 'center',
   },
   categoryTabText1: {
     fontFamily: Tokens.typography.families.medium,
-    fontSize: 13, // Balanced proportionally to prevent layout jitter shifting
+    fontSize: 13, 
     color: '#E5E5E5',
     textAlign: 'center',
   },
@@ -1072,7 +1073,7 @@ tabView: {
   },
   refundPolicyText: {
     textDecorationLine: 'underline',
-    color: '#FDEABF',
+    color: '#FDABAC',
     fontFamily: Tokens.typography.families.medium,
     fontSize: 13,
   },

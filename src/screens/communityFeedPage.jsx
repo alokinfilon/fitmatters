@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,  useContext  } from 'react';
+import { AuthContext } from '../../App';
 import {
   StyleSheet,
   Text,
@@ -17,6 +18,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Shadow } from 'react-native-shadow-2';
 
+
 import { Tokens } from '../theme/theme'; 
 import BellIcon from '../component/svg/BellIcon';
 import MyPostIcon from '../component/svg/MyPostIcon';
@@ -27,14 +29,18 @@ import ShareIcon from '../component/svg/ShareIcon';
 import CommentIcon from '../component/svg/CommentIcon';
 import SaveIcon from '../component/svg/SaveIcon';
 import SmileIcon from '../component/svg/SmileIcon'
+import { useAlertModal } from '../component/modal'; 
 const MASTER_LIMIT = 100;
+import authService from '../services/authService'; 
 
 const CommunitySpace = ({ navigation }) => {
+  const { showModal } = useAlertModal();
   const [posts, setPosts] = useState([]);
   const [activeTab, setActiveTab] = useState('Recent'); 
   const [loading, setLoading] = useState(false);
   const [commentText, setCommentText] = useState('');
-  
+  const { setUserIsAuthenticated } = useContext(AuthContext);
+
   const [activePostCommentId, setActivePostCommentId] = useState(null);
 
   useEffect(() => {
@@ -43,11 +49,11 @@ const CommunitySpace = ({ navigation }) => {
 
   const fetchCommunityPosts = () => {
     setLoading(true);
-    fetch(`https://dummyjson.com/products`)
+    fetch(`https://fitmatters-backend.onrender.com/products`)
       .then(response => response.json())
       .then(json => {
         if (json && json.products) {
-          const formattedPosts = json.products.slice(0, 15).map((product, index) => ({
+          const formattedPosts = json.products.slice(0, 200).map((product, index) => ({
             id: `post-${product.id}`,
             username: index % 2 === 0 ? 'Brooklyn Simmons' : 'Brooklyn Simmons',
             userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80',
@@ -80,6 +86,34 @@ const CommunitySpace = ({ navigation }) => {
       setCommentText('');
     }
   };
+  const handleLogoutPress = () => {
+  showModal({
+    title: 'Confirm Logout',
+    message: 'Are you sure you want to log out of your account?',
+    variant: 'warning',
+    confirmText: 'Log Out',
+    cancelText: 'Stay',
+    onConfirm: async () => {
+      try {
+        await authService.logout();
+        setUserIsAuthenticated(false);
+        // ✅ 2. Clear navigation history and force redirect to SignUpScreen
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignUpScreen' }],
+        });
+       
+      } catch (error) {
+        showModal({
+          title: 'Logout Failed',
+          message: error.message || 'Could not securely log out. Please try again.',
+          variant: 'error'
+        });
+      }
+    },
+    onCancel: () => console.log('Logout cancelled by user') 
+  });
+};
 
   const renderPostCard = ({ item }) => (
     <LinearGradient
@@ -251,10 +285,14 @@ const CommunitySpace = ({ navigation }) => {
           end={{ x: 1, y: 1 }}
           style={styles.squareHeaderActionButtonItem}
         > 
-          <TouchableOpacity  activeOpacity={0.75}>
-            <PlusIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={2} />
-
-          </TouchableOpacity>
+          <TouchableOpacity
+    onPress={handleLogoutPress}
+    activeOpacity={0.75}
+    accessibilityRole="button"
+    accessibilityLabel="Log out of application"
+  >
+    <PlusIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={2} />
+  </TouchableOpacity>
           </LinearGradient>
         </View>
       </View>

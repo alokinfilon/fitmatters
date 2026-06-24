@@ -26,8 +26,12 @@ export default function TrackOrders({ navigation }) {
   const [activeItemTab, setActiveItemTab] = useState('Top bottom'); 
 
   const handleGoBack = () => {
-    if (navigation && navigation.goBack) {
-      navigation.replace('MainTabs'); 
+    if (navigation) {
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.replace('HomeTab');
+      }
     }
   };
 

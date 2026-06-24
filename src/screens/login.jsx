@@ -8,27 +8,96 @@ import {
   ScrollView,
   SafeAreaView,
   StatusBar,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { 
-  Eye, 
-  EyeOff, 
-  Check, 
-  X, 
-  Info, 
- 
-} from 'lucide-react-native';
-import { Tokens } from '../theme/theme'; 
-import CheckMarkl from '../component/svg/checkMarklIcon'
-import GoogleIcon from  '../component/svg/GoogleIcon';
-import AppleIcon from '../component/svg/appleIcon'
+import { Eye, EyeOff, Check, X, Info } from 'lucide-react-native';
+import { Tokens } from '../theme/theme';
+import CheckMarkl from '../component/svg/checkMarklIcon';
+import GoogleIcon from '../component/svg/GoogleIcon';
+import AppleIcon from '../component/svg/appleIcon';
+import authService from '../services/authService'; 
+import { useAlertModal } from '../component/modal'; 
+
+import CustomButton from '../component/customButton';
+
 export default function SignUpScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { showModal } = useAlertModal();
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(true);
 
   const iconSize = Tokens.scaleAsset(24);
   const feedbackIconSize = Tokens.scaleAsset(12);
+  
+  const openLoginDisplay = () => {
+    if (navigation) {
+      navigation.replace('LoginScreen');
+    }
+  };
+ 
+  const handleSignUp = async () => {
+    // Trim inputs to avoid white-space mismatches
+    const cleanEmail = email.trim(); 
+    const cleanPassword = password.trim();
+    const cleanConfirmPassword = confirmPassword.trim();
+
+    if (!cleanEmail || !cleanPassword || !cleanConfirmPassword) {
+      showModal({
+        title: 'Validation Error',
+        message: 'Please fill in all fields.',
+        variant: 'error'
+      });
+      return;
+    }
+
+    if (cleanPassword !== cleanConfirmPassword) {
+      showModal({
+        title: 'Password Mismatch',
+        message: 'Passwords do not match.',
+        variant: 'error'
+      });
+      return;
+    }
+
+    if (!termsAccepted) {
+      showModal({
+        title: 'Consent Required',
+        message: 'You must accept the terms and privacy consent.',
+        variant: 'warning'
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Pass normalized clean data payloads
+      await authService.signup(cleanEmail, cleanPassword, cleanConfirmPassword);
+     
+      showModal({
+        title: 'Account Created',
+        message: 'Your account has been created successfully!',
+        variant: 'success',
+        confirmText: 'Continue',
+        onConfirm: openLoginDisplay 
+      });
+    } catch (error) {
+      showModal({
+        title: 'Signup Failed',
+        message: error.message || 'Something went wrong. Please try again later.',
+        variant: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <LinearGradient
@@ -39,21 +108,20 @@ export default function SignUpScreen({ navigation }) {
     >
       <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.mainContainer}>
-            
             <View style={styles.header}>
               <Text style={styles.titleText}>Create Your Account</Text>
               <Text style={styles.subtitleText}>
-                Join Out.Fit.Find to discover curated looks tailored to your style and budget.
+                Join Out.Fit.Find to discover curated looks tailored to your
+                style and budget.
               </Text>
             </View>
 
             <View style={styles.inputFieldsContainer}>
-              
               <View style={styles.inputOuterView}>
                 <LinearGradient
                   colors={['#333637', '#242426']}
@@ -62,12 +130,14 @@ export default function SignUpScreen({ navigation }) {
                   style={styles.inputGradientBackground}
                 >
                   <TextInput
-                    style={styles.inputText}
-                    placeholder="Enter your email Or Phone Number"
-                    placeholderTextColor="#E5E5E5"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
+   style={[styles.inputText, { flex: 1 }]}
+  placeholder="Enter your email Or Phone Number"
+  placeholderTextColor="#E5E5E5"
+  keyboardType="default" 
+  autoCapitalize="none"
+  value={email}
+  onChangeText={setEmail}
+/>
                 </LinearGradient>
               </View>
 
@@ -85,11 +155,14 @@ export default function SignUpScreen({ navigation }) {
                       placeholderTextColor="#E5E5E5"
                       secureTextEntry={!passwordVisible}
                       autoCapitalize="none"
+                      value={password}
+                      onChangeText={setPassword}
                     />
-                    <TouchableOpacity 
-                      onPress={() => setPasswordVisible(!passwordVisible)} 
+                    <TouchableOpacity
+                      onPress={() => setPasswordVisible(!passwordVisible)}
                       style={styles.eyeButton}
                       activeOpacity={0.7}
+                      keyboardShouldPersistTaps="handled"
                     >
                       {passwordVisible ? (
                         <EyeOff size={iconSize} color="#E5E5E5" />
@@ -102,7 +175,9 @@ export default function SignUpScreen({ navigation }) {
 
                 <View style={styles.strengthView}>
                   <View style={styles.strengthTextRow}>
-                    <Text style={styles.passwordStrengthText}>Password Strength</Text>
+                    <Text style={styles.passwordStrengthText}>
+                      Password Strength
+                    </Text>
                     <Text style={styles.strongValueText}>Strong</Text>
                   </View>
 
@@ -114,63 +189,86 @@ export default function SignUpScreen({ navigation }) {
                   </View>
 
                   <View style={styles.requirementView}>
-                    <Text style={styles.requirementText}>Password must include</Text>
+                    <Text style={styles.requirementText}>
+                      Password must include
+                    </Text>
                     <View style={styles.indicationView}>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
-                       <View
-  style={[
-    styles.checkmarkCircleWrapper,
-    {
-      width: feedbackIconSize * 1.6,
-      height: feedbackIconSize * 1.6,
-      borderRadius: (feedbackIconSize * 1.8) / 2,
-    }
-  ]}
->
-  <CheckMarkl size={feedbackIconSize -2} color="#2BBA52" strokeWidth={4} />
-</View>
-
+                          <View
+                            style={[
+                              styles.checkmarkCircleWrapper,
+                              {
+                                width: feedbackIconSize * 1.6,
+                                height: feedbackIconSize * 1.6,
+                                borderRadius: (feedbackIconSize * 1.8) / 2,
+                              },
+                            ]}
+                          >
+                            <CheckMarkl
+                              size={feedbackIconSize - 2}
+                              color="#2BBA52"
+                              strokeWidth={4}
+                            />
+                          </View>
                         </View>
-                        <Text style={styles.requirementItemText}>At least 8 characters</Text>
+                        <Text style={styles.requirementItemText}>
+                          At least 8 characters
+                        </Text>
                       </View>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
                           <View
-  style={[
-    styles.checkmarkCircleWrapper,
-    {
-      width: feedbackIconSize * 1.6,
-      height: feedbackIconSize * 1.6,
-      borderRadius: (feedbackIconSize * 1.8) / 2,
-    }
-  ]}
->
-  <CheckMarkl size={feedbackIconSize -2} color="#2BBA52" strokeWidth={4} />
-</View>
+                            style={[
+                              styles.checkmarkCircleWrapper,
+                              {
+                                width: feedbackIconSize * 1.6,
+                                height: feedbackIconSize * 1.6,
+                                borderRadius: (feedbackIconSize * 1.8) / 2,
+                              },
+                            ]}
+                          >
+                            <CheckMarkl
+                              size={feedbackIconSize - 2}
+                              color="#2BBA52"
+                              strokeWidth={4}
+                            />
+                          </View>
                         </View>
-                        <Text style={styles.requirementItemText}>Capital and lowercase letters</Text>
+                        <Text style={styles.requirementItemText}>
+                          Capital and lowercase letters
+                        </Text>
                       </View>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
-                         <View
-  style={[
-    styles.checkmarkCircleWrapper,
-    {
-      width: feedbackIconSize * 1.6,
-      height: feedbackIconSize * 1.6,
-      borderRadius: (feedbackIconSize * 1.8) / 2,
-    }
-  ]}
->
-  <CheckMarkl size={feedbackIconSize-2} color="#2BBA52" strokeWidth={4} />
-</View>
+                          <View
+                            style={[
+                              styles.checkmarkCircleWrapper,
+                              {
+                                width: feedbackIconSize * 1.6,
+                                height: feedbackIconSize * 1.6,
+                                borderRadius: (feedbackIconSize * 1.8) / 2,
+                              },
+                            ]}
+                          >
+                            <CheckMarkl
+                              size={feedbackIconSize - 2}
+                              color="#2BBA52"
+                              strokeWidth={4}
+                            />
+                          </View>
                         </View>
-                        <Text style={styles.requirementItemText}>A special character - # @ $ % & ! * _ ? ^ -</Text>
+                        <Text style={styles.requirementItemText}>
+                          A special character - # @ $ % & ! * _ ? ^ -
+                        </Text>
                       </View>
                       <View style={styles.indicationRow}>
                         <View style={styles.iconBoxCenter}>
-                          <X size={feedbackIconSize + 4} color="#F16646" strokeWidth={3} />
+                          <X
+                            size={feedbackIconSize + 4}
+                            color="#F16646"
+                            strokeWidth={3}
+                          />
                         </View>
                         <Text style={styles.requirementItemText}>A Number</Text>
                       </View>
@@ -185,9 +283,14 @@ export default function SignUpScreen({ navigation }) {
                     end={{ x: 0.98, y: 0.5 }}
                     style={styles.infoBarInnerView}
                   >
-                    <Info size={34} color="#E5E5E5" style={styles.infoIconSpacing} />
+                    <Info
+                      size={34}
+                      color="#E5E5E5"
+                      style={styles.infoIconSpacing}
+                    />
                     <Text style={styles.infoBarText}>
-                      Don’t use spaces, your name, email, or previously used passwords.
+                      Don’t use spaces, your name, email, or previously used
+                      passwords.
                     </Text>
                   </LinearGradient>
                 </View>
@@ -207,11 +310,16 @@ export default function SignUpScreen({ navigation }) {
                       placeholderTextColor="#E5E5E5"
                       secureTextEntry={!confirmPasswordVisible}
                       autoCapitalize="none"
+                      value={confirmPassword}
+                      onChangeText={setConfirmPassword}
                     />
-                    <TouchableOpacity 
-                      onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} 
+                    <TouchableOpacity
+                      onPress={() =>
+                        setConfirmPasswordVisible(!confirmPasswordVisible)
+                      }
                       style={styles.eyeButton}
                       activeOpacity={0.7}
+                      keyboardShouldPersistTaps="handled"
                     >
                       {confirmPasswordVisible ? (
                         <EyeOff size={iconSize} color="#E5E5E5" />
@@ -223,82 +331,107 @@ export default function SignUpScreen({ navigation }) {
                 </View>
 
                 <View style={styles.passwordMatchedRow}>
-                  <Text style={styles.passwordMatchedText}>Your password matched</Text>
-                 <View
-  style={[
-    styles.checkmarkCircleWrapper,
-    {
-      width: feedbackIconSize * 1.6,
-      height: feedbackIconSize * 1.6,
-      borderRadius: (feedbackIconSize * 1.8) / 2,
-    }
-  ]}
->
-  <CheckMarkl size={feedbackIconSize-2} color="#2BBA52" strokeWidth={4} />
-</View>
+                  <Text style={styles.passwordMatchedText}>
+                    Your password matched
+                  </Text>
+                  <View
+                    style={[
+                      styles.checkmarkCircleWrapper,
+                      {
+                        width: feedbackIconSize * 1.6,
+                        height: feedbackIconSize * 1.6,
+                        borderRadius: (feedbackIconSize * 1.8) / 2,
+                      },
+                    ]}
+                  >
+                    <CheckMarkl
+                      size={feedbackIconSize - 2}
+                      color="#2BBA52"
+                      strokeWidth={4}
+                    />
+                  </View>
                 </View>
               </View>
 
-              <TouchableOpacity 
-                style={styles.checkboxContainer} 
+              <TouchableOpacity
+                style={styles.checkboxContainer}
                 onPress={() => setTermsAccepted(!termsAccepted)}
                 activeOpacity={0.8}
               >
                 {termsAccepted ? (
                   <LinearGradient
                     colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                    start={{ x: 0.1 , y: 0.5 }}
+                    start={{ x: 0.1, y: 0.5 }}
                     end={{ x: 0.7, y: 0.5 }}
                     style={styles.checkmarkBoxActive}
                   >
-                    
-                    <Check size={feedbackIconSize} color="#FFFFFF" strokeWidth={3} />
+                    <Check
+                      size={feedbackIconSize}
+                      color="#FFFFFF"
+                      strokeWidth={3}
+                    />
                   </LinearGradient>
                 ) : (
                   <View style={styles.checkmarkBoxInactive} />
                 )}
-                <Text style={styles.checkboxLabel}>Terms & privacy consent checkbox</Text>
+                <Text style={styles.checkboxLabel}>
+                  Terms & privacy consent checkbox
+                </Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.continueButtonView}>
-              <TouchableOpacity activeOpacity={0.85} style={styles.primaryButtonWrapper}
-              onPress={() => navigation.replace('MainTabs')}
-              >
-                <LinearGradient
+              {loading ? (
+                <ActivityIndicator size="large" color="#F16646" />
+              ) : (
+                <CustomButton
                   colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                  start={{ x: 0.1, y: 0.5 }}
-                  end={{ x: 0.9, y: 0.6 }}
-                  style={styles.primaryButton}
-                >
-                  <Text style={styles.primaryButtonText}>Continue</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-
+                  onPress={handleSignUp}
+                  fontFamily={Tokens.typography.families.semiBold}
+                  fontSize={Tokens.typography.sizes.subButton}
+                  title={'Continue'}
+                  buttonStyle={{ borderRadius: Tokens.components.radiusButton }}
+                />
+              )}
+              
               <View style={styles.socialsView}>
                 <Text style={styles.orSignUpWithText}>— or sign up with —</Text>
 
-                <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-                 
-                  <GoogleIcon size={24} color="#ffffff" strokeWidth={2} style={styles.socialIconLayout} />
-                  <Text style={styles.socialButtonText}>Continue with Google</Text>
-                </TouchableOpacity>
+                <CustomButton
+                  title="Continue with Google"
+                  Icon={GoogleIcon}
+                  iconColor="#ffffff"
+                  colors={['#323537', '#323537']}
+                  fontFamily={Tokens.typography.families.semiBold}
+                  fontSize={Tokens.typography.sizes.subButton}
+                  buttonStyle={{ borderRadius: Tokens.components.radiusButton }}
+                  onPress={() => { /* Implement Google Sign Up here */ }}
+                />
 
-                <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-                 
-                  <AppleIcon size={28} color="#FFFFFF" strokeWidth={2}style={styles.socialIconLayout} />
-
-                  <Text style={styles.socialButtonText}>Continue with Apple</Text>
-                </TouchableOpacity>
+                <CustomButton
+                  title="Continue with Apple"
+                  Icon={AppleIcon}
+                  iconColor="#ffffff"
+                  colors={['#323537', '#323537']}
+                  fontFamily={Tokens.typography.families.semiBold}
+                  fontSize={Tokens.typography.sizes.subButton}
+                  buttonStyle={{ borderRadius: Tokens.components.radiusButton }}
+                  onPress={() => { /* Implement Apple Sign Up here */ }}
+                />
               </View>
 
               <View style={styles.footerView}>
                 <Text style={styles.footerText}>
-                  Already have an account? <Text style={styles.loginLink}>Log In</Text>
+                  Already have an account?{' '}
+                  <TouchableOpacity
+                    onPress={openLoginDisplay}
+                    style ={styles.loginText}
+                  >
+                  <Text style={styles.loginLink}>Log In</Text>
+                  </TouchableOpacity>
                 </Text>
               </View>
             </View>
-
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -345,12 +478,14 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: Tokens.gaps.xlarge,
     marginBottom: Tokens.gaps.section,
+    
   },
   inputOuterView: {
     width: '100%',
     height: Tokens.components.inputHeight,
     borderRadius: Tokens.components.radiusInput,
     overflow: 'hidden',
+    
   },
   inputGradientBackground: {
     flex: 1,
@@ -360,14 +495,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    
   },
   inputText: {
     fontFamily: Tokens.typography.families.medium,
     fontSize: Tokens.typography.sizes.body,
     color: '#E5E5E5',
-    padding: 0,
-    height: '100%',
     
+   
+    height: '100%',
   },
   passwordView: {
     width: '100%',
@@ -447,7 +583,7 @@ const styles = StyleSheet.create({
     fontSize: Tokens.typography.sizes.small,
     lineHeight: Tokens.typography.lineHeights.small,
     color: '#E5E5E5',
-  }, 
+  },
   infoBarView: {
     width: '100%',
     minHeight: Tokens.components.infoMinHeight,
@@ -525,7 +661,7 @@ const styles = StyleSheet.create({
     lineHeight: Tokens.typography.lineHeights.body,
     color: '#E5E5E5',
   },
- continueButtonView: {
+  continueButtonView: {
     width: '100%',
     gap: Tokens.gaps.large,
     alignItems: 'center',
@@ -545,7 +681,6 @@ const styles = StyleSheet.create({
     borderRadius: Tokens.components.radiusButton,
     justifyContent: 'center',
     alignItems: 'center',
-    
   },
   primaryButtonText: {
     fontFamily: Tokens.typography.families.semiBold,
@@ -587,13 +722,18 @@ const styles = StyleSheet.create({
   },
   footerView: {
     width: '100%',
-    height: 24,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Tokens.gaps.small,
+    marginTop: 12,
+    flexDirection:"row"
+  },
+
+  loginText :{
+marginTop:7
   },
   footerText: {
-    fontFamily: Tokens.typography.families.regular, 
+    fontFamily: Tokens.typography.families.regular,
     fontSize: Tokens.typography.sizes.body,
     lineHeight: Tokens.typography.lineHeights.body,
     color: '#E5E5E5',
@@ -604,11 +744,11 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     color: '#FFFFFF',
   },
-    checkmarkCircleWrapper: {
+  checkmarkCircleWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.2,
-    borderColor: '#2BBA52',          
-    backgroundColor: '#2BBA521A',    
+    borderColor: '#2BBA52',
+    backgroundColor: '#2BBA521A',
   },
 });

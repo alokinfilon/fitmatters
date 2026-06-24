@@ -39,8 +39,12 @@ export default function ShareYourInvite({ navigation }) {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleGoBack = () => {
-    if (navigation && navigation.goBack) {
-      navigation.replace('MainTabs');
+    if (navigation) {
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.replace('HomeTab');
+      }
     }
   };
 

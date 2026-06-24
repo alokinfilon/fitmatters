@@ -1,0 +1,439 @@
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+  StatusBar,
+  Alert,
+  ActivityIndicator,
+  Image,
+  FlatList
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { Tokens } from '../theme/theme';
+import ArrowLeftIcon from '../component/svg/arrow';
+const feedbackIconSize = Tokens.scaleAsset(12);
+const { width } = Dimensions.get('window');
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+const mainProductImage =
+  'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80';
+const recImage1 =
+  'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=200&q=80';
+const recImage2 =
+  'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=200&q=80';
+const recImage3 =
+  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=200&q=80';
+
+const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
+const TAB_CONTAINER_WIDTH =
+  Dimensions.get('window').width - Tokens.layout.paddingHorizontal * 2;
+const EXACT_TAB_WIDTH = (TAB_CONTAINER_WIDTH - 4 * 2) / 3;
+const SINGLE_ROW_CHIP_WIDTH =
+  (width - TOTAL_PADDINGS - Tokens.gaps.small * 5) / 7;
+const RECOMMENDATION_CARD_WIDTH =
+  (width - TOTAL_PADDINGS - Tokens.gaps.small * 2) / 3;
+
+const CartScreen = () => {
+   const [allProducts, setAllProducts] = useState([]);
+     const [loading, setLoading] = useState(false);
+   
+   useEffect(() => {
+       fetchCartData();
+       console.log(fetchCartData());
+       
+     }, []);
+   
+  const fetchCartData = () => {
+  setLoading(true);
+  const url = `https://fitmatters-backend.onrender.com/cart/getCartItem`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(json => {
+      // 1. LOG THE RAW NETWORK RESPONSE HERE
+      console.log("Raw API Response JSON:", json);
+
+      if (json && json.status && json.data && json.data.items) {
+        setAllProducts(json.data.items);
+        
+        // 2. LOG THE SPECIFIC ARRAY YOU ARE SAVING TO STATE
+        console.log("Items array saved to state:", json.data.items);
+      }
+    })
+    .catch(error => console.error("Fetch failure:", error))
+    .finally(() => setLoading(false));
+};
+
+
+
+ const renderCartItem = ({ item }) => (
+   
+   <View style={styles.mainOrderCard}>
+                <View style={styles.orderIdView}>
+                  <View style={styles.orderIdandDetailView}>
+                    <Text style={styles.orderIdText}>#10110433</Text>
+
+                    <TouchableOpacity style={styles.orderDetailButton}>
+                      <LinearGradient
+                        colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+                        start={{ x: 0, y: 1 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.gradientOuterBorder}
+                      >
+                        <LinearGradient
+                          colors={['#322C28', '#2B1C19', '#2B2220']}
+                          locations={[0.2, 0.5, 0.8]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={styles.chipInnerContentContainerActive}
+                        >
+                          <Text style={styles.orderIdText}>Order Details</Text>
+                        </LinearGradient>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.orderDateView}>
+                  <Text style={styles.orderplacedDateText}>
+                    Order placed 10 Nov 2025
+                  </Text>
+                </View>
+                <View style={styles.imageAndDetailView}>
+                  <View style={styles.recommendationCardsView}>
+                    <TouchableOpacity style={styles.recommendationItem}>
+                      <Image
+                        source={{ uri: recImage1 }}
+                        style={styles.recommendationImage}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.productDetailView}>
+                    <View style={styles.PrdouctDetailTextView}>
+                      <Text style={styles.PrdouctDetailText}>
+                        Cream Dress Modern...
+                      </Text>
+                      <Text style={styles.PrdouctDetailsubText1}>
+                        Bright Yellow Dress ...
+                      </Text>
+                      <Text style={styles.PrdouctDetailsubText}>
+                        Price: ₹6000
+                      </Text>
+                    </View>
+
+                    <View style={styles.statusDetailView}>
+                      <Text style={styles.PrdouctDetailText}>Shipped</Text>
+
+                      <Text style={styles.PrdouctDetailText}>Quantity : 1</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.lineDivider} />
+                <View>
+                  <View style={styles.updateButtonView}>
+                    <TouchableOpacity style={styles.deleteButton}>
+                      <LinearGradient
+                        colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+                        start={{ x: 0.2, y: 0 }}
+                        end={{ x: 0.9, y: 0 }}
+                        style={styles.modalButtonGradient}
+                      >
+                        <Text style={styles.PrdouctDetailText}>Delete</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.updateButton}>
+                      <LinearGradient
+                        colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+                        start={{ x: 0.2, y: 0 }}
+                        end={{ x: 0.9, y: 0 }}
+                        style={styles.modalButtonGradient}
+                      >
+                        <Text style={styles.PrdouctDetailText}>Update</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+  );
+
+
+
+
+  return (
+    <SafeAreaProvider>
+      <LinearGradient
+        colors={['#0F0F0F', '#0D0D0D']}
+        start={{ x: 0.44, y: 0 }}
+        end={{ x: 0.54, y: 0.98 }}
+        style={styles.screenContainer}
+      >
+        <StatusBar barStyle="light-content" backgroundColor="#0F0F0F" />
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+          > 
+
+          <FlatList
+        data={data}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.body}>{item.body}</Text>
+          </View>
+        )}
+      />
+            <View style={styles.mainContainer}>
+              <View style={styles.backHeaderView}>
+                <TouchableOpacity
+                  style={styles.backButtonView}
+                  //={handleGoBack}
+                  activeOpacity={0.7}
+                >
+                  <ArrowLeftIcon
+                    size={Tokens.scaleAsset(24)}
+                    color="#E5E5E5"
+                    strokeWidth={1.5}
+                  />
+
+                  <Text style={styles.backButtonText}>Order History</Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                            data={posts}
+                            renderItem={renderCartItem}
+                            keyExtractor={item => item.id}
+                             
+                    
+                          />
+             
+              
+             </View>
+          </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
+    </SafeAreaProvider>
+  );
+};
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  safeArea: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollContainer: {
+    alignItems: 'center',
+  },
+  mainContainer: {
+    width: '100%',
+    maxWidth: Tokens.layout.maxWidth,
+    paddingVertical: Tokens.layout.paddingVertical,
+    paddingHorizontal: Tokens.layout.paddingHorizontal,
+    alignItems: 'center',
+  },
+  backHeaderView: {
+    width: '100%',
+    height: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButtonView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Tokens.gaps.small,
+    height: '100%',
+  },
+  backButtonText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: Tokens.typography.sizes.button,
+    color: '#E5E5E5',
+  },
+  mainOrderCard: {
+    width: '100%',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#585757',
+    height: Tokens.layout.paddingVertical * 12,
+    backgroundColor: '#000000',
+    marginTop: Tokens.gaps.section,
+  },
+  orderIdView: {
+    justifyContent: 'space-between',
+    marginLeft: 10,
+    flexDirection: 'row',
+  },
+  orderIdText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#E5E5E5',
+  },
+  orderDetailView: {
+    flexDirection: 'row',
+    marginLeft: 10,
+  },
+
+  orderDetailButton: {
+    width: 120,
+    backgroundColor: '#060606',
+    height: 40,
+    marginLeft: 90,
+    borderRadius: 18,
+    // borderWidth: 1,
+    //borderColor: '#ffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  orderplacedDateText: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: Tokens.typography.sizes.small,
+    color: '#E5E5E5',
+  },
+  orderIdandDetailView: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  orderDateView: {
+    marginLeft: 10,
+    marginTop: -15,
+  },
+  recommendationCardsView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    //width: '100%',
+  },
+  recommendationItem: {
+    width: RECOMMENDATION_CARD_WIDTH,
+    height: 120,
+    borderRadius: 10,
+    backgroundColor: '#FFF3E8',
+    overflow: 'hidden',
+  },
+  recommendationImage: {
+    width: '100%',
+    height: '100%',
+  },
+  imageAndDetailView: {
+    flexDirection: 'row',
+    marginLeft: 10,
+    marginTop: 20,
+  },
+  productDetailView: {
+    backgroundColor: '#fff',
+    width: '65%',
+    height: '100%',
+    backgroundColor: '#000000',
+  },
+  PrdouctDetailTextView: {
+    marginLeft: 10,
+  },
+  PrdouctDetailText: {
+    fontFamily: Tokens.typography.families.medium,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#ffffff',
+    marginBottom: 5,
+  },
+  PrdouctDetailsubText1: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#E5E5E5',
+     marginBottom: 5,
+    
+  },
+  PrdouctDetailsubText: {
+    fontFamily: Tokens.typography.families.regular,
+    fontSize: Tokens.typography.sizes.body,
+    color: '#E5E5E5',
+    marginBottom: 20,
+  },
+  statusDetailView: {
+    backgroundColor: '#000000',
+    width: '100%',
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    gap: 3,
+    padding: 3,
+  },
+  statusButton: {
+    backgroundColor: '#000000',
+    width: '48%',
+    height: 35,
+    borderRadius: 6,
+    borderWidth: 0,
+    borderColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lineDivider: {
+    width: '90%',
+    height: 0,
+    borderTopWidth: 1,
+    borderColor: '#4e4e4e',
+    // marginBottom: Tokens.gaps.xlarge,
+    marginTop: 20,
+    marginLeft: 15,
+  },
+  updateButtonView: {
+    backgroundColor: '#000000',
+    width: '100%',
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    gap: 3,
+    padding: 3,
+  },
+  updateButton: {
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRadius: 10,
+    width: '42%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+   marginTop: 20,
+  },
+  deleteButton: {
+    borderWidth: 1,
+    borderColor: '#000000',
+
+    width: '42%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 45,
+    marginTop: 20,
+  },
+  modalButtonGradient: {
+    width: '100%',
+    height: 45,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gradientOuterBorder: {
+    height: 40,
+    borderRadius: 18,
+    padding: 1.5,
+    width: '100%',
+  },
+  chipInnerContentContainerActive: {
+    height: 37,
+    borderRadius: 17,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+export default CartScreen;

@@ -31,7 +31,7 @@ const OutfitFeed = ({ navigation }) => {
 
   const fetchMasterData = () => {
     setLoading(true);
-    const url = `https://dummyjson.com/products?limit=${MASTER_LIMIT}`;
+    const url = `https://fitmatters-backend.onrender.com/products`;
 
     fetch(url)
       .then(response => response.json())
@@ -62,6 +62,7 @@ const OutfitFeed = ({ navigation }) => {
   const openProductDisplay = item => {
     if (navigation) {
       navigation.push('ProductDisplay', { product: item });
+      console.log(item)
     }
   };
 
@@ -106,11 +107,13 @@ const OutfitFeed = ({ navigation }) => {
           
           
           <TouchableOpacity 
-            onPress={() => toggleCategory('mens-shoes')} 
+            onPress={() => toggleCategory('everyday-dress')} 
             activeOpacity={0.85}
             style={{ width: Tokens.scaleAsset(150) }}
+            keyboardShouldPersistTaps="handled"
+            accessible={true}
           >
-            {activeCategories.includes('mens-shoes') ? (
+            {activeCategories.includes('everyday-dress') ? (
               <Shadow
                 distance={10}
                 startColor="rgba(248, 135, 108, 0.32)"
@@ -151,11 +154,13 @@ const OutfitFeed = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            onPress={() => toggleCategory('beauty')} 
+           keyboardShouldPersistTaps="handled"
+            accessible={true}
+            onPress={() => toggleCategory('work-dress')} 
             activeOpacity={0.85}
             style={{ width: Tokens.scaleAsset(120) }}
           >
-            {activeCategories.includes('beauty') ? (
+            {activeCategories.includes('work-dress') ? (
               <Shadow
                 distance={10}
                 startColor="rgba(248, 135, 108, 0.32)"
@@ -199,11 +204,13 @@ const OutfitFeed = ({ navigation }) => {
         {/* ROW 2 */}
         <View style={styles.chipRow}>
           <TouchableOpacity 
-            onPress={() => toggleCategory('laptops')} 
+            onPress={() => toggleCategory('winter-dress')} 
+             keyboardShouldPersistTaps="handled"
+            accessible={true}
             activeOpacity={0.85}
             style={{ width: Tokens.scaleAsset(200) }}
           >
-            {activeCategories.includes('laptops') ? (
+            {activeCategories.includes('winter-dress') ? (
               <Shadow
                 distance={10}
                 startColor="rgba(248, 135, 108, 0.32)"
@@ -244,11 +251,13 @@ const OutfitFeed = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            onPress={() => toggleCategory('mens-watches')} 
+            onPress={() => toggleCategory('date-dress')} 
+             keyboardShouldPersistTaps="handled"
+            accessible={true}
             activeOpacity={0.85}
             style={{ width: Tokens.scaleAsset(160) }}
           >
-            {activeCategories.includes('mens-watches') ? (
+            {activeCategories.includes('date-dress') ? (
               <Shadow
                 distance={10}
                 startColor="rgba(248, 135, 108, 0.32)"
@@ -292,11 +301,13 @@ const OutfitFeed = ({ navigation }) => {
         {/* ROW 3 */}
         <View style={styles.chipRow}>
           <TouchableOpacity 
-            onPress={() => toggleCategory('womens-dresses')} 
+            onPress={() => toggleCategory('summer-dress')} 
+             keyboardShouldPersistTaps="handled"
+            accessible={true}
             activeOpacity={0.85}
             style={{ width: Tokens.scaleAsset(202) }}
           >
-            {activeCategories.includes('womens-dresses') ? (
+            {activeCategories.includes('summer-dress') ? (
               <Shadow
                 distance={10}
                 startColor="rgba(248, 135, 108, 0.32)"
@@ -337,11 +348,13 @@ const OutfitFeed = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            onPress={() => toggleCategory('home-decoration')} 
+            onPress={() => toggleCategory('night-out-dress')} 
+             keyboardShouldPersistTaps="handled"
+            accessible={true}
             activeOpacity={0.85}
             style={{ width: Tokens.scaleAsset(154) }}
           >
-            {activeCategories.includes('home-decoration') ? (
+            {activeCategories.includes('night-out-dress') ? (
               <Shadow
                 distance={10}
                 startColor="rgba(248, 135, 108, 0.32)"

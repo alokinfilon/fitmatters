@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext  }  from 'react';
+import React, { useState, useEffect, useContext  } from 'react';
 
 import {
   StyleSheet,
@@ -41,7 +41,6 @@ import { AuthContext } from '../../App';
 const feedbackIconSize = Tokens.scaleAsset(12);
 const { width } = Dimensions.get('window');
 const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
-  const [selectedSize, setSelectedSize] = useState(initialSizeFromCart || ''); 
 const TAB_CONTAINER_WIDTH = Dimensions.get('window').width - (Tokens.layout.paddingHorizontal * 2);
 const EXACT_TAB_WIDTH = (TAB_CONTAINER_WIDTH - (4 * 2)) / 3; 
 const SINGLE_ROW_CHIP_WIDTH = (width - TOTAL_PADDINGS - Tokens.gaps.small * 5) / 7;
@@ -53,20 +52,19 @@ export default function ProductDetails({ route, navigation }) {
   const product = route?.params?.product;
   const isUpdating = route?.params?.isUpdating || false;
   const currentQuantity = route?.params?.currentQuantity || 1;
- const [selectedSize, setSelectedSize] = useState(initialSizeFromCart || ''); 
-const initialSize = route.params?.itemSize || '';
+  const initialSize = route.params?.itemSize || '';
   const [activeTab, setActiveTab] = useState('Shipping Info');
   const [wholeLookChecked, setWholeLookChecked] = useState(true);
   const { showModal } = useAlertModal();
-  const [topSize, setTopSize] = useState('M');
+  const [topSize, setTopSize] = useState('');
   const [loading, setLoading] = useState(false);
-  const [bottomSize, setBottomSize] = useState('M');
+  const [bottomSize, setBottomSize] = useState('');
   const [bottomQty, setBottomQty] = useState(1);
-  const [footwearSize, setFootwearSize] = useState('M');
+  const [footwearSize, setFootwearSize] = useState('');
   const [footwearQty, setFootwearQty] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
   const { setUserIsAuthenticated } = useContext(AuthContext);
-const [currentSize, setCurrentSize] = useState(initialSize || 'M');
+  const [currentSize, setCurrentSize] = useState(initialSize);
   const [topQty, setTopQty] = useState(1);
 
   useEffect(() => {
@@ -108,7 +106,7 @@ const [currentSize, setCurrentSize] = useState(initialSize || 'M');
     setActiveIndex(index);
   };
 
-const handleAddToCart = async () => {
+  const handleAddToCart = async () => {
     console.log("Clicked main cart action button");
     
     if (!product) {
@@ -242,38 +240,41 @@ const handleAddToCart = async () => {
           />
         </View>
 
-       <View style={styles.sizeHorizontalRow}>
-  {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => {
-    const isSelected = currentSize === size;
-    return (
-      <LinearGradient
-        key={size}
-        colors={isSelected ? ['#FF6B6B', '#FF8E53'] : ['#333637', '#242426']}
-        start={{ x: 0.0105, y: 0.5 }}
-        end={{ x: 0.9866, y: 0.5 }}
-        style={[
-          styles.sizeBoxButton,
-          isSelected && styles.sizeBoxButton1,
-        ]}
-      >
-        <TouchableOpacity
-          activeOpacity={0.85}
-          onPress={() => setCurrentSize(size)} 
-          style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Text
-            style={[
-              styles.sizeItemText,
-              isSelected && styles.sizeItemTextActive,
-            ]}
-          >
-            {size}
-          </Text>
-        </TouchableOpacity>
-      </LinearGradient>
-    );
-  })}
-</View>
+        <View style={styles.sizeHorizontalRow}>
+          {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => {
+            const isSelected = currentSize === size;
+            return (
+              <LinearGradient
+                key={size}
+                colors={isSelected ? ['#FF6B6B', '#FF8E53'] : ['#333637', '#242426']}
+                start={{ x: 0.0105, y: 0.5 }}
+                end={{ x: 0.9866, y: 0.5 }}
+                style={[
+                  styles.sizeBoxButton,
+                  isSelected && styles.sizeBoxButton1,
+                ]}
+              >
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    setSize(size);
+                    setCurrentSize(size);
+                  }} 
+                  style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
+                >
+                  <Text
+                    style={[
+                      styles.sizeItemText,
+                      isSelected && styles.sizeItemTextActive,
+                    ]}
+                  >
+                    {size}
+                  </Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            );
+          })}
+        </View>
 
 
         <View style={styles.quantityView}>
@@ -655,7 +656,7 @@ const handleAddToCart = async () => {
                 <View style={styles.tabInfoView1}>
                   <Text style={styles.tabText1}>Refund Available (12 hrs)</Text>
                   <Text style={styles.tabText2}>
-                    Cancel or refund within the first 12 hours.
+                    Cancel or refund within the first 12 hours. 
                   </Text>
                 </View>
               </View>
@@ -702,7 +703,7 @@ const handleAddToCart = async () => {
               <View style={styles.tabInfoView1}>
                 <Text style={styles.tabText1}>Refund & Returns</Text>
                 <Text style={styles.tabText2}>
-                  After 12 hours, returns are managed by the brand. Initiate returns from your Order page.{'\n'}
+                  After 12 hours, returns are managed by the brand. Initiate returns from your Order page.{"\n"}
                   <View style={styles.refundPolicyView}>
                     <Text style={styles.refundPolicyText}>
                       Read Refund Policy
@@ -736,7 +737,6 @@ const handleAddToCart = async () => {
     </SafeAreaProvider>
   );
 }
-
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,

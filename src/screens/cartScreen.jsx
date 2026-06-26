@@ -21,10 +21,12 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const TOTAL_PADDINGS = Tokens.layout.paddingHorizontal * 2;
 const RECOMMENDATION_CARD_WIDTH = (width - TOTAL_PADDINGS - Tokens.gaps.small * 2) / 3;
 
-const CartScreen = ({ navigation }) => {
+const CartScreen = ({route, navigation }) => {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { showModal } = useAlertModal(); 
+const [currentSize, setCurrentSize] = useState(initialSize || 'M');
+const initialSize = route.params?.itemSize || '';
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -230,7 +232,7 @@ const CartScreen = ({ navigation }) => {
         </View>
         
         <View style={styles.orderDateView}>
-          <Text style={styles.orderplacedDateText}></Text>
+          <Text style={styles.orderplacedDateText}></Text>  
         </View>
 
         <View style={styles.imageAndDetailView}>
@@ -251,6 +253,9 @@ const CartScreen = ({ navigation }) => {
             </Text>
             <Text style={styles.PrdouctDetailsubText}>
               Total: ₹{item.total}
+            </Text>
+            <Text style={styles.PrdouctDetailsubText}>
+              Size: {item.size}
             </Text>
           </View>
         </View>
@@ -457,7 +462,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   PrdouctDetailText: {
-    fontFamily: Tokens.typography.families.semiBold || 'System',
+    fontFamily: Tokens.typography.families.medium ,
     fontSize: 15,
     color: '#ffffff',
     marginBottom: 4,

@@ -17,42 +17,76 @@ import { Tokens } from '../theme/theme';
 import CheckMarkl from '../component/svg/checkMarklIcon';
 import GoogleIcon from '../component/svg/GoogleIcon';
 import AppleIcon from '../component/svg/appleIcon';
-import authService from '../services/authService'; 
-import { useAlertModal } from '../component/modal'; 
+import authService from '../services/authService';
+import { useAlertModal } from '../component/modal';
 
 import CustomButton from '../component/customButton';
 
 export default function SignUpScreen({ navigation }) {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { showModal } = useAlertModal();
-
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] =
+    useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(true);
 
   const iconSize = Tokens.scaleAsset(24);
   const feedbackIconSize = Tokens.scaleAsset(12);
-  
+
   const openLoginDisplay = () => {
     if (navigation) {
       navigation.replace('LoginScreen');
     }
   };
- 
+
+  const isNumericInput = /^\+?\d*$/.test(identifier) && identifier.length > 0;
+
+  const hasMinLength = password.length >= 8;
+  const hasCaseLetters = /[a-z]/.test(password) && /[A-Z]/.test(password);
+  const hasSpecialChar = /[#@$%&!*_?^]/.test(password);
+  const hasNumber = /\d/.test(password);
+
+  const strengthScore = [
+    hasMinLength,
+    hasCaseLetters,
+    hasSpecialChar,
+    hasNumber,
+  ].filter(Boolean).length;
+
   const handleSignUp = async () => {
-    // Trim inputs to avoid white-space mismatches
-    const cleanEmail = email.trim(); 
+    const cleanIdentifier = identifier.trim();
     const cleanPassword = password.trim();
     const cleanConfirmPassword = confirmPassword.trim();
 
-    if (!cleanEmail || !cleanPassword || !cleanConfirmPassword) {
+    if (!cleanIdentifier || !cleanPassword || !cleanConfirmPassword) {
       showModal({
         title: 'Validation Error',
         message: 'Please fill in all fields.',
-        variant: 'error'
+        variant: 'error',
+      });
+      return;
+    }
+
+    if (strengthScore < 4) {
+      let missingRequirements = [];
+      if (!hasMinLength) missingRequirements.push('At least 8 characters');
+      if (!hasCaseLetters)
+        missingRequirements.push('Capital and lowercase letters');
+      if (!hasSpecialChar)
+        missingRequirements.push('A special character (#@$%&!*_?^)');
+      if (!hasNumber) missingRequirements.push('A number');
+
+      showModal({
+        title: 'Weak Password',
+        message: `Your password must satisfy all security requirements:\n\n• ${missingRequirements.join(
+          '\n• ',
+        )}`,
+        variant: 'error',
       });
       return;
     }
@@ -61,7 +95,7 @@ export default function SignUpScreen({ navigation }) {
       showModal({
         title: 'Password Mismatch',
         message: 'Passwords do not match.',
-        variant: 'error'
+        variant: 'error',
       });
       return;
     }
@@ -70,34 +104,59 @@ export default function SignUpScreen({ navigation }) {
       showModal({
         title: 'Consent Required',
         message: 'You must accept the terms and privacy consent.',
-        variant: 'warning'
+        variant: 'warning',
       });
       return;
     }
 
     setLoading(true);
     try {
-      // Pass normalized clean data payloads
-      await authService.signup(cleanEmail, cleanPassword, cleanConfirmPassword);
-     
+      await authService.signup(
+        cleanIdentifier,
+        cleanPassword,
+        cleanConfirmPassword,
+      );
+
       showModal({
         title: 'Account Created',
         message: 'Your account has been created successfully!',
         variant: 'success',
         confirmText: 'Continue',
-        onConfirm: openLoginDisplay 
+        onConfirm: openLoginDisplay,
       });
     } catch (error) {
       showModal({
         title: 'Signup Failed',
-        message: error.message || 'Something went wrong. Please try again later.',
-        variant: 'error'
+        message:
+          error.message || 'Something went wrong. Please try again later.',
+        variant: 'error',
       });
     } finally {
       setLoading(false);
     }
   };
 
+  let strengthLabel = 'Very Weak';
+  let activeBarColor = '#F16646';
+
+  if (password.length === 0) {
+    strengthLabel = 'Empty';
+    activeBarColor = '#2BBA52';
+  } else if (strengthScore === 1) {
+    strengthLabel = 'Weak';
+    activeBarColor = '#2BBA52';
+  } else if (strengthScore === 2) {
+    strengthLabel = 'Fair';
+    activeBarColor = '#2BBA52';
+  } else if (strengthScore === 3) {
+    strengthLabel = 'Good';
+    activeBarColor = '#2BBA52';
+  } else if (strengthScore === 4) {
+    strengthLabel = 'Strong';
+    activeBarColor = '#2BBA52';
+  }
+
+  const isPasswordMatched = password.length > 0 && password === confirmPassword;
 
   return (
     <LinearGradient
@@ -130,14 +189,14 @@ export default function SignUpScreen({ navigation }) {
                   style={styles.inputGradientBackground}
                 >
                   <TextInput
-   style={[styles.inputText, { flex: 1 }]}
-  placeholder="Enter your email Or Phone Number"
-  placeholderTextColor="#E5E5E5"
-  keyboardType="default" 
-  autoCapitalize="none"
-  value={email}
-  onChangeText={setEmail}
-/>
+                    style={[styles.inputText, { flex: 1 }]}
+                    placeholder="Enter your email Or Phone Number"
+                    placeholderTextColor="#E5E5E5"
+                    keyboardType="default"
+                    autoCapitalize="none"
+                    value={identifier}
+                    onChangeText={setIdentifier}
+                  />
                 </LinearGradient>
               </View>
 
@@ -157,6 +216,8 @@ export default function SignUpScreen({ navigation }) {
                       autoCapitalize="none"
                       value={password}
                       onChangeText={setPassword}
+                      onFocus={() => setIsPasswordFocused(true)}
+                      onBlur={() => setIsPasswordFocused(false)}
                     />
                     <TouchableOpacity
                       onPress={() => setPasswordVisible(!passwordVisible)}
@@ -172,110 +233,223 @@ export default function SignUpScreen({ navigation }) {
                     </TouchableOpacity>
                   </LinearGradient>
                 </View>
-
+                 {isPasswordFocused && (
                 <View style={styles.strengthView}>
                   <View style={styles.strengthTextRow}>
                     <Text style={styles.passwordStrengthText}>
                       Password Strength
                     </Text>
-                    <Text style={styles.strongValueText}>Strong</Text>
+                    <Text
+                      style={[
+                        styles.strongValueText,
+                        password.length > 0 && { color: activeBarColor },
+                      ]}
+                    >
+                      {strengthLabel}
+                    </Text>
                   </View>
 
                   <View style={styles.navigationMeterRow}>
-                    <View style={[styles.meterBar, { backgroundColor: '#2BBA52' }]} />
-                    <View style={[styles.meterBar, { backgroundColor: '#2BBA52' }]} />
-                    <View style={[styles.meterBar, { backgroundColor: '#2BBA52' }]} />
-                    <View style={[styles.meterBar, { backgroundColor: '#E5E5E5' }]} />
+                    <View
+                      style={[
+                        styles.meterBar,
+                        {
+                          backgroundColor:
+                            strengthScore >= 1 ? activeBarColor : '#E5E5E5',
+                        },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.meterBar,
+                        {
+                          backgroundColor:
+                            strengthScore >= 2 ? activeBarColor : '#E5E5E5',
+                        },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.meterBar,
+                        {
+                          backgroundColor:
+                            strengthScore >= 3 ? activeBarColor : '#E5E5E5',
+                        },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.meterBar,
+                        {
+                          backgroundColor:
+                            strengthScore >= 4 ? activeBarColor : '#E5E5E5',
+                        },
+                      ]}
+                    />
                   </View>
-
-                  <View style={styles.requirementView}>
-                    <Text style={styles.requirementText}>
-                      Password must include
-                    </Text>
-                    <View style={styles.indicationView}>
-                      <View style={styles.indicationRow}>
-                        <View style={styles.iconBoxCenter}>
-                          <View
+                 
+                    <View style={styles.requirementView}>
+                      <Text style={styles.requirementText}>
+                        Password must include
+                      </Text>
+                      <View style={styles.indicationView}>
+                        <View style={styles.indicationRow}>
+                          <View style={styles.iconBoxCenter}>
+                            {hasMinLength ? (
+                              <View
+                                style={[
+                                  styles.checkmarkCircleWrapper,
+                                  {
+                                    width: feedbackIconSize * 1.6,
+                                    height: feedbackIconSize * 1.6,
+                                    borderRadius: (feedbackIconSize * 1.8) / 2,
+                                    borderColor: '#2BBA52',
+                                    backgroundColor: '#2BBA521A',
+                                  },
+                                ]}
+                              >
+                                <CheckMarkl
+                                  size={feedbackIconSize - 2}
+                                  color="#2BBA52"
+                                  strokeWidth={4}
+                                />
+                              </View>
+                            ) : (
+                              <X
+                                size={feedbackIconSize + 4}
+                                color="#F16646"
+                                strokeWidth={3}
+                              />
+                            )}
+                          </View>
+                          <Text
                             style={[
-                              styles.checkmarkCircleWrapper,
-                              {
-                                width: feedbackIconSize * 1.6,
-                                height: feedbackIconSize * 1.6,
-                                borderRadius: (feedbackIconSize * 1.8) / 2,
-                              },
+                              styles.requirementItemText,
+                              hasMinLength && { color: '#2BBA52' },
                             ]}
                           >
-                            <CheckMarkl
-                              size={feedbackIconSize - 2}
-                              color="#2BBA52"
-                              strokeWidth={4}
-                            />
-                          </View>
+                            At least 8 characters
+                          </Text>
                         </View>
-                        <Text style={styles.requirementItemText}>
-                          At least 8 characters
-                        </Text>
-                      </View>
-                      <View style={styles.indicationRow}>
-                        <View style={styles.iconBoxCenter}>
-                          <View
+                        <View style={styles.indicationRow}>
+                          <View style={styles.iconBoxCenter}>
+                            {hasCaseLetters ? (
+                              <View
+                                style={[
+                                  styles.checkmarkCircleWrapper,
+                                  {
+                                    width: feedbackIconSize * 1.6,
+                                    height: feedbackIconSize * 1.6,
+                                    borderRadius: (feedbackIconSize * 1.8) / 2,
+                                    borderColor: '#2BBA52',
+                                    backgroundColor: '#2BBA521A',
+                                  },
+                                ]}
+                              >
+                                <CheckMarkl
+                                  size={feedbackIconSize - 2}
+                                  color="#2BBA52"
+                                  strokeWidth={4}
+                                />
+                              </View>
+                            ) : (
+                              <X
+                                size={feedbackIconSize + 4}
+                                color="#F16646"
+                                strokeWidth={3}
+                              />
+                            )}
+                          </View>
+                          <Text
                             style={[
-                              styles.checkmarkCircleWrapper,
-                              {
-                                width: feedbackIconSize * 1.6,
-                                height: feedbackIconSize * 1.6,
-                                borderRadius: (feedbackIconSize * 1.8) / 2,
-                              },
+                              styles.requirementItemText,
+                              hasCaseLetters && { color: '#2BBA52' },
                             ]}
                           >
-                            <CheckMarkl
-                              size={feedbackIconSize - 2}
-                              color="#2BBA52"
-                              strokeWidth={4}
-                            />
-                          </View>
+                            Capital and lowercase letters
+                          </Text>
                         </View>
-                        <Text style={styles.requirementItemText}>
-                          Capital and lowercase letters
-                        </Text>
-                      </View>
-                      <View style={styles.indicationRow}>
-                        <View style={styles.iconBoxCenter}>
-                          <View
+                        <View style={styles.indicationRow}>
+                          <View style={styles.iconBoxCenter}>
+                            {hasSpecialChar ? (
+                              <View
+                                style={[
+                                  styles.checkmarkCircleWrapper,
+                                  {
+                                    width: feedbackIconSize * 1.6,
+                                    height: feedbackIconSize * 1.6,
+                                    borderRadius: (feedbackIconSize * 1.8) / 2,
+                                    borderColor: '#2BBA52',
+                                    backgroundColor: '#2BBA521A',
+                                  },
+                                ]}
+                              >
+                                <CheckMarkl
+                                  size={feedbackIconSize - 2}
+                                  color="#2BBA52"
+                                  strokeWidth={4}
+                                />
+                              </View>
+                            ) : (
+                              <X
+                                size={feedbackIconSize + 4}
+                                color="#F16646"
+                                strokeWidth={3}
+                              />
+                            )}
+                          </View>
+                          <Text
                             style={[
-                              styles.checkmarkCircleWrapper,
-                              {
-                                width: feedbackIconSize * 1.6,
-                                height: feedbackIconSize * 1.6,
-                                borderRadius: (feedbackIconSize * 1.8) / 2,
-                              },
+                              styles.requirementItemText,
+                              hasSpecialChar && { color: '#2BBA52' },
                             ]}
                           >
-                            <CheckMarkl
-                              size={feedbackIconSize - 2}
-                              color="#2BBA52"
-                              strokeWidth={4}
-                            />
+                            A special character - # @ $ % & ! * _ ? ^ -
+                          </Text>
+                        </View>
+                        <View style={styles.indicationRow}>
+                          <View style={styles.iconBoxCenter}>
+                            {hasNumber ? (
+                              <View
+                                style={[
+                                  styles.checkmarkCircleWrapper,
+                                  {
+                                    width: feedbackIconSize * 1.6,
+                                    height: feedbackIconSize * 1.6,
+                                    borderRadius: (feedbackIconSize * 1.8) / 2,
+                                    borderColor: '#2BBA52',
+                                    backgroundColor: '#2BBA521A',
+                                  },
+                                ]}
+                              >
+                                <CheckMarkl
+                                  size={feedbackIconSize - 2}
+                                  color="#2BBA52"
+                                  strokeWidth={4}
+                                />
+                              </View>
+                            ) : (
+                              <X
+                                size={feedbackIconSize + 4}
+                                color="#F16646"
+                                strokeWidth={3}
+                              />
+                            )}
                           </View>
+                          <Text
+                            style={[
+                              styles.requirementItemText,
+                              hasNumber && { color: '#2BBA52' },
+                            ]}
+                          >
+                            A Number
+                          </Text>
                         </View>
-                        <Text style={styles.requirementItemText}>
-                          A special character - # @ $ % & ! * _ ? ^ -
-                        </Text>
-                      </View>
-                      <View style={styles.indicationRow}>
-                        <View style={styles.iconBoxCenter}>
-                          <X
-                            size={feedbackIconSize + 4}
-                            color="#F16646"
-                            strokeWidth={3}
-                          />
-                        </View>
-                        <Text style={styles.requirementItemText}>A Number</Text>
                       </View>
                     </View>
-                  </View>
+                 
                 </View>
-
+ )}
                 <View style={styles.infoBarView}>
                   <LinearGradient
                     colors={['#242525', '#1A1C1D']}
@@ -294,8 +468,10 @@ export default function SignUpScreen({ navigation }) {
                     </Text>
                   </LinearGradient>
                 </View>
+                
               </View>
-
+              
+   
               <View style={styles.inputView}>
                 <View style={styles.inputOuterView}>
                   <LinearGradient
@@ -312,6 +488,8 @@ export default function SignUpScreen({ navigation }) {
                       autoCapitalize="none"
                       value={confirmPassword}
                       onChangeText={setConfirmPassword}
+                      onFocus={() => setIsConfirmPasswordFocused(true)}
+                      onBlur={() => setIsConfirmPasswordFocused(false)}
                     />
                     <TouchableOpacity
                       onPress={() =>
@@ -329,10 +507,19 @@ export default function SignUpScreen({ navigation }) {
                     </TouchableOpacity>
                   </LinearGradient>
                 </View>
+                
+                  {isConfirmPasswordFocused && confirmPassword.length > 0 && (
 
                 <View style={styles.passwordMatchedRow}>
-                  <Text style={styles.passwordMatchedText}>
-                    Your password matched
+                  <Text
+                    style={[
+                      styles.passwordMatchedText,
+                      isPasswordMatched && { color: '#2BBA52' },
+                    ]}
+                  >
+                    {isPasswordMatched
+                      ? 'Your password matched'
+                      : 'Passwords do not match'}
                   </Text>
                   <View
                     style={[
@@ -341,16 +528,29 @@ export default function SignUpScreen({ navigation }) {
                         width: feedbackIconSize * 1.6,
                         height: feedbackIconSize * 1.6,
                         borderRadius: (feedbackIconSize * 1.8) / 2,
+                        borderColor: isPasswordMatched ? '#2BBA52' : '#F16646',
+                        backgroundColor: isPasswordMatched
+                          ? '#2BBA521A'
+                          : '#F166461A',
                       },
                     ]}
                   >
-                    <CheckMarkl
-                      size={feedbackIconSize - 2}
-                      color="#2BBA52"
-                      strokeWidth={4}
-                    />
+                    {isPasswordMatched ? (
+                      <CheckMarkl
+                        size={feedbackIconSize - 2}
+                        color="#2BBA52"
+                        strokeWidth={4}
+                      />
+                    ) : (
+                      <X
+                        size={feedbackIconSize - 2}
+                        color="#F16646"
+                        strokeWidth={3}
+                      />
+                    )}
                   </View>
                 </View>
+                  )}
               </View>
 
               <TouchableOpacity
@@ -393,7 +593,7 @@ export default function SignUpScreen({ navigation }) {
                   buttonStyle={{ borderRadius: Tokens.components.radiusButton }}
                 />
               )}
-              
+
               <View style={styles.socialsView}>
                 <Text style={styles.orSignUpWithText}>— or sign up with —</Text>
 
@@ -405,7 +605,9 @@ export default function SignUpScreen({ navigation }) {
                   fontFamily={Tokens.typography.families.semiBold}
                   fontSize={Tokens.typography.sizes.subButton}
                   buttonStyle={{ borderRadius: Tokens.components.radiusButton }}
-                  onPress={() => { /* Implement Google Sign Up here */ }}
+                  onPress={() => {
+                    /* Implement Google Sign Up here */
+                  }}
                 />
 
                 <CustomButton
@@ -416,7 +618,9 @@ export default function SignUpScreen({ navigation }) {
                   fontFamily={Tokens.typography.families.semiBold}
                   fontSize={Tokens.typography.sizes.subButton}
                   buttonStyle={{ borderRadius: Tokens.components.radiusButton }}
-                  onPress={() => { /* Implement Apple Sign Up here */ }}
+                  onPress={() => {
+                    /* Implement Apple Sign Up here */
+                  }}
                 />
               </View>
 
@@ -425,9 +629,9 @@ export default function SignUpScreen({ navigation }) {
                   Already have an account?{' '}
                   <TouchableOpacity
                     onPress={openLoginDisplay}
-                    style ={styles.loginText}
+                    style={styles.loginText}
                   >
-                  <Text style={styles.loginLink}>Log In</Text>
+                    <Text style={styles.loginLink}>Log In</Text>
                   </TouchableOpacity>
                 </Text>
               </View>
@@ -478,14 +682,12 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: Tokens.gaps.xlarge,
     marginBottom: Tokens.gaps.section,
-    
   },
   inputOuterView: {
     width: '100%',
     height: Tokens.components.inputHeight,
     borderRadius: Tokens.components.radiusInput,
     overflow: 'hidden',
-    
   },
   inputGradientBackground: {
     flex: 1,
@@ -495,14 +697,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    
   },
   inputText: {
     fontFamily: Tokens.typography.families.medium,
     fontSize: Tokens.typography.sizes.body,
     color: '#E5E5E5',
-    
-   
     height: '100%',
   },
   passwordView: {
@@ -726,11 +925,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 12,
-    flexDirection:"row"
+    flexDirection: 'row',
   },
-
-  loginText :{
-marginTop:7
+  loginText: {
+    marginTop: 7,
   },
   footerText: {
     fontFamily: Tokens.typography.families.regular,

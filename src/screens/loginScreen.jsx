@@ -21,6 +21,7 @@ import { useNavigation } from '@react-navigation/native';
 import authService from '../services/authService'; 
 import { useAlertModal } from '../component/modal'; 
 import { AuthContext } from '../../App'; 
+
 export default function LoginScreen() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -49,6 +50,8 @@ export default function LoginScreen() {
 
   const iconSize = Tokens.scaleAsset(24);
 
+  const isNumericInput = /^\+?\d*$/.test(emailOrPhone) && emailOrPhone.length > 0;
+
   const handleGoogleLogin = () => {
     showModal({
       title: 'Google Auth',
@@ -66,65 +69,62 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
-  const userInput = emailOrPhone.trim(); 
-  const cleanPassword = password.trim();
+    const userInput = emailOrPhone.trim(); 
+    const cleanPassword = password.trim();
 
-  if (!userInput || !cleanPassword) {
-    showModal({
-      title: 'Validation Error',
-      message: 'Please fill in all fields.',
-      variant: 'error'
-    });
-    return;
-  }
-  
-  setLoading(true);
-  try {
-    const isEmail = userInput.includes('@');
+    if (!userInput || !cleanPassword) {
+      showModal({
+        title: 'Validation Error',
+        message: 'Please fill in all fields.',
+        variant: 'error'
+      });
+      return;
+    }
     
-    const payload = {
-      email: isEmail ? userInput : undefined,
-      password: cleanPassword,
-    }; 
+    setLoading(true);
+    try {
+      const payload = {
+        identifier: userInput,
+        password: cleanPassword,
+      }; 
 
-    Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+      console.log("Sending payload to authService:", payload);
 
-    console.log("Sending payload to authService:", payload);
+      const data = await authService.login(payload);
+      
+      console.log("Login Successful! Authenticated User ID:", data.userId);
+      setLoading(false);
 
-    const data = await authService.login(payload);
-    
-    console.log("Login Successful! Authenticated User ID:", data.userId);
-    setLoading(false);
+      showModal({
+        title: 'Success',
+        message: 'Logged in successfully!',
+        variant: 'success',
+        confirmText: 'OK',
+        onConfirm: () => {
+          setUserIsAuthenticated(true); 
+        }
+      });
+      
+    } catch (error) {
+      setLoading(false);
 
-    showModal({
-      title: 'Success',
-      message: 'Logged in successfully!',
-      variant: 'success',
-      confirmText: 'OK',
-      onConfirm: () => {
-        // ✅ State-Driven Login: Trigger the root App.js layout to switch to MainTab instantly
-        setUserIsAuthenticated(true); 
-      }
-    });
-    
-  } catch (error) {
-    setLoading(false);
+      const isNetworkIssue = 
+        error.message?.toLowerCase().includes('network') || 
+        error.message?.toLowerCase().includes('timeout') ||
+        error.message?.toLowerCase().includes('failed to fetch');
 
-    const isNetworkIssue = 
-      error.message?.toLowerCase().includes('network') || 
-      error.message?.toLowerCase().includes('timeout') ||
-      error.message?.toLowerCase().includes('failed to fetch');
+      showModal({
+        title: isNetworkIssue ? 'Connection Error' : 'Login Failed',
+        message: isNetworkIssue 
+          ? 'Please check your internet connection and try again.' 
+          : (error.message || 'Invalid credentials.'), 
+        variant: 'error',
+        confirmText: isNetworkIssue ? 'Try Again' : 'OK'
+      });
+    }
+  };
 
-    showModal({
-      title: isNetworkIssue ? 'Connection Error' : 'Login Failed',
-      message: isNetworkIssue 
-        ? 'Please check your internet connection and try again.' 
-        : (error.message || 'Invalid email or password.'),
-      variant: 'error',
-      confirmText: isNetworkIssue ? 'Try Again' : 'OK'
-    });
-  }
-};
+
 
   return (
     <LinearGradient
@@ -158,11 +158,12 @@ export default function LoginScreen() {
                   <TextInput
                      style={[styles.inputText, { flex: 1 }]}
                     placeholder="Enter your email Or Phone Number"
-                    placeholderTextColor="#E5E5E5"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    value={emailOrPhone}
-                    onChangeText={setEmailOrPhone}
+                      placeholderTextColor="#E5E5E5"
+                      keyboardType="default"                  
+                          autoCapitalize="none"
+                                          value={emailOrPhone}
+                        onChangeText={setEmailOrPhone}
+  
                   />
                 </LinearGradient>
               </View>
@@ -408,7 +409,6 @@ const styles = StyleSheet.create({
   },
    socialsView1: {
     width: '100%',
-    //gap: Tokens.gaps.small,
     alignItems: 'center',
   },
   orSignUpWithText: {

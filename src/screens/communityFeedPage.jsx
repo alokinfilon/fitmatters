@@ -72,12 +72,6 @@ const CommunitySpace = ({ navigation }) => {
       .finally(() => setLoading(false));
   };
 
-  // const openProductDisplay = item => {
-  //   if (navigation && navigation.push) {
-  //     navigation.push('ProductDisplay', { product: item });
-  //   }
-  // };
-
   const handleToggleComment = (postId) => {
     if (activePostCommentId === postId) {
       setActivePostCommentId(null); 
@@ -97,7 +91,6 @@ const CommunitySpace = ({ navigation }) => {
       try {
         await authService.logout();
         setUserIsAuthenticated(false);
-        // ✅ 2. Clear navigation history and force redirect to SignUpScreen
         navigation.reset({
           index: 0,
           routes: [{ name: 'SignUpScreen' }],

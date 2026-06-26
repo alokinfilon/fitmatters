@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createContext } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,6 +7,7 @@ import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 import { ModalProvider } from './src/component/modal';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import BootSplash from 'react-native-bootsplash'; // 🌟 1. Import BootSplash API
 
 import { Tokens } from './src/theme/theme'; 
 import GradientText from './src/component/GradientText'; 
@@ -25,11 +26,11 @@ import exploreIcon from './src/component/svg/ExploreIcon';
 import CommunityIcon from './src/component/svg/CommunityIcon';
 import CartIcon from './src/component/svg/cartIcon'; 
 import MoreIcon from './src/component/svg/MoreIcon';
-import  ShoppingCartIcon  from './src/component/svg/ShoppingCartIcon';
+import ShoppingCartIcon from './src/component/svg/ShoppingCartIcon';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// ✅ 1. Export the AuthContext so your other screens can import it
 export const AuthContext = createContext();
 
 const PlaceholderScreen = ({ title }) => (
@@ -185,27 +186,22 @@ export default function App() {
         console.error("Storage lookup initialization failed:", error);
       } finally {
         setAppIsLoading(false);
+        await BootSplash.hide({ fade: true });
       }
     };
     initializeAuthStatus();
   }, []);
 
   if (appIsLoading) {
-    return (
-      <View style={styles.centerLoadingScreen}>
-        <ActivityIndicator size="large" color="#F16646" />
-      </View>
-    );
+    return null; 
   }
 
   return (
     <SafeAreaProvider>
-      {/* ✅ 2. Provide live state values to all nested children layers */}
       <AuthContext.Provider value={{ userIsAuthenticated, setUserIsAuthenticated }}>
         <ModalProvider>
           <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-              {/* ✅ 3. Conditional stack rendering removes hacky navigation redirect code completely */}
               {userIsAuthenticated ? (
                 <>
                   <Stack.Screen name="MainTab" component={TabNavigator} />
@@ -225,14 +221,7 @@ export default function App() {
   );
 }
 
-
 const styles = StyleSheet.create({
-  centerLoadingScreen: {
-    flex: 1,
-    backgroundColor: '#121212',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   safeAreaWrapper: {
     flex: 1,
     backgroundColor: '#121212',

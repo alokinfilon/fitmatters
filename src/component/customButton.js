@@ -20,7 +20,6 @@ const CustomButton = ({
   iconPosition = 'left',
 }) => {
   const finalIconColor = iconColor || '#ffffff';
-  // Automatically scales your icon size based on font size configuration
   const finalIconSize = 28;
 
   return (

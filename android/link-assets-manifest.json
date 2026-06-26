@@ -2,6 +2,18 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "assets/fonts/lexend_light.ttf",
+      "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    },
+    {
+      "path": "assets/fonts/lexend_regular.ttf",
+      "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    },
+    {
+      "path": "assets/fonts/lexend_semibold.ttf",
+      "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    },
+    {
       "path": "assets/fonts/Lexend-Black.ttf",
       "sha1": "99bd69de20e74410418467b26a8429b992fa5a3f"
     },

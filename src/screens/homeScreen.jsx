@@ -15,7 +15,6 @@ import { Shadow } from 'react-native-shadow-2';
 
 import { Tokens } from '../theme/theme'; 
 
-const MASTER_LIMIT = 198;
 
 const TOTAL_SIDE_PADDING = Tokens.layout.paddingHorizontal * 2;
 const DYNAMIC_FEED_CARD_WIDTH = (Tokens.layout.width - TOTAL_SIDE_PADDING - Tokens.gaps.small) / 2;
@@ -201,7 +200,6 @@ const OutfitFeed = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* ROW 2 */}
         <View style={styles.chipRow}>
           <TouchableOpacity 
             onPress={() => toggleCategory('winter-dress')} 
@@ -457,7 +455,6 @@ const OutfitFeed = ({ navigation }) => {
   );
 };
 
-// Styles remain unchanged
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,

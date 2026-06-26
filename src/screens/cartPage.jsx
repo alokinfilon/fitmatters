@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
   },
   refundPolicySectionHeadingMainTitleText: {
     fontFamily: Tokens.typography.families.semiBold,
-    fontSize: 14, // Enlarged and set directly over flat text flow
+    fontSize: 14, 
     color: '#FFFFFF',
   },
   refundPolicyContextParagraphDescriptionText: {
@@ -569,5 +569,5 @@ const styles = StyleSheet.create({
     marginTop: Tokens.gaps.large,
   },
 
- 
+
 });

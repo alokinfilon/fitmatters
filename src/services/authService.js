@@ -41,19 +41,17 @@ const BASE_URL = 'https://fitmatters-backend.onrender.com';
 
 const authService = {
   
-  // Signup
-  async signup(email, password, confirmPassword) {
+  async signup(identifier, password, confirmPassword) {
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, confirmPassword })
+      body: JSON.stringify({ identifier, password, confirmPassword }) 
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || 'Signup failed');
     return data;
   },
 
-  // Login
   async login(payload) {
     const response = await fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
@@ -79,7 +77,7 @@ const authService = {
     return data; 
   },
 
-  // Logout
+  
   async logout() {
     await safeStorage.removeItem('accessToken');
     await safeStorage.removeItem('refreshToken');
@@ -87,13 +85,11 @@ const authService = {
     console.log("User session cleared completely.");
   },
 
-  // Is Authenticated
   async isAuthenticated() {
     const token = await safeStorage.getItem('accessToken');
     return token !== null && token !== undefined && token !== ''; 
   },
 
-  // Parse JWT expiration lifecycle using Buffer
   isTokenExpired(token) {
     try {
       if (!token) return true;

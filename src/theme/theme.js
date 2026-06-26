@@ -1,4 +1,3 @@
-// src/theme/theme.js
 import { Dimensions, PixelRatio } from 'react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -17,7 +16,6 @@ export const Tokens = {
   
   scaleAsset: (size) => Math.round(PixelRatio.roundToNearestPixel(size * scaleFactor)),
 
-  // Figma Spatial Geometry Engine Config
   gaps: {
     small: 8,
     medium: 12,
@@ -29,7 +27,6 @@ export const Tokens = {
     Lsection: 50,
   },
 
-  // Interactive Target Elements (Enforcing touch accessibility)
   components: {
     inputHeight: 52,
     buttonHeight: 52,
@@ -41,7 +38,6 @@ export const Tokens = {
     radiusBar: 4,
   },
 
-  // Typography Engine Specs
   typography: {
     families: {
       light: 'Lexend-Light',

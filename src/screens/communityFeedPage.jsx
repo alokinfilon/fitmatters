@@ -1,4 +1,4 @@
-import React, { useState, useEffect,  useContext  } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../../App';
 import {
   StyleSheet,
@@ -10,28 +10,27 @@ import {
   ActivityIndicator,
   StatusBar,
   TextInput,
-   KeyboardAvoidingView, 
-    Keyboard, 
-      TouchableWithoutFeedback, 
+  Dimensions,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { Shadow } from 'react-native-shadow-2';
-
 
 import { Tokens } from '../theme/theme'; 
 import BellIcon from '../component/svg/BellIcon';
 import MyPostIcon from '../component/svg/MyPostIcon';
-import PlusIcon from '../component/svg/PlusIcon'
+import PlusIcon from '../component/svg/PlusIcon';
 import ShoppingBagIcon from '../component/svg/shoppingBagIcon';
 import HeartIcon from '../component/svg/HeartIcon';
 import ShareIcon from '../component/svg/ShareIcon';
 import CommentIcon from '../component/svg/CommentIcon';
 import SaveIcon from '../component/svg/SaveIcon';
-import SmileIcon from '../component/svg/SmileIcon'
+import SmileIcon from '../component/svg/SmileIcon';
 import { useAlertModal } from '../component/modal'; 
-const MASTER_LIMIT = 100;
 import authService from '../services/authService'; 
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Calculate exact width of the carousel items inside your padded card container
+const CAROUSEL_WIDTH = SCREEN_WIDTH - (Tokens.layout.paddingHorizontal * 2) - 32; // 32 accounts for 16px padding on both sides of postCardOuterFrame
 
 const CommunitySpace = ({ navigation }) => {
   const { showModal } = useAlertModal();
@@ -42,6 +41,9 @@ const CommunitySpace = ({ navigation }) => {
   const { setUserIsAuthenticated } = useContext(AuthContext);
 
   const [activePostCommentId, setActivePostCommentId] = useState(null);
+  
+  // Track active index map for each post individually: { [postId]: activeImageIndex }
+  const [activeImageIndices, setActiveImageIndices] = useState({});
 
   useEffect(() => {
     fetchCommunityPosts();
@@ -53,18 +55,37 @@ const CommunitySpace = ({ navigation }) => {
       .then(response => response.json())
       .then(json => {
         if (json && json.products) {
-          const formattedPosts = json.products.slice(0, 200).map((product, index) => ({
-            id: `post-${product.id}`,
-            username: index % 2 === 0 ? 'Brooklyn Simmons' : 'Brooklyn Simmons',
-            userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80',
-            timeAgo: `${index + 2} days ago`,
-            postImage: product.images?.[0] || product.thumbnail,
-            title: product.title === "Essence Mascara Lash Princess" ? "Crisp whites, clean cuts, and coffee in hand ☕" : product.description,
-            tags: ['#CollegeCasual', '#OOTD', '#CasualChic'],
-            likes: 213 + index,
-            commentsCount: 12 + index,
-            shares: 21 + index,
-          }));
+          const formattedPosts = json.products.slice(0, 200).map((product, index) => {
+            // Enforce that every post has exactly 3 images
+            let initialImages = product.images || [];
+            if (initialImages.length === 0 && product.thumbnail) {
+              initialImages = [product.thumbnail];
+            }
+            
+            // Build uniform array containing exactly 3 items using loop repeats if necessary
+            const exactThreeImages = [];
+            for (let i = 0; i < 3; i++) {
+              if (initialImages[i]) {
+                exactThreeImages.push(initialImages[i]);
+              } else {
+                // Fallback to first available or thumbnail image if less than 3 exist
+                exactThreeImages.push(initialImages[0] || product.thumbnail);
+              }
+            }
+
+            return {
+              id: `post-${product.id}`,
+              username: index % 2 === 0 ? 'Brooklyn Simmons' : 'Brooklyn Simmons',
+              userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80',
+              timeAgo: `${index + 2} days ago`,
+              postImages: exactThreeImages, // Array containing exactly 3 structural items
+              title: product.title === "Essence Mascara Lash Princess" ? "Crisp whites, clean cuts, and coffee in hand ☕" : product.title,
+              tags: ['#CollegeCasual', '#OOTD', '#CasualChic'],
+              likes: 213 + index,
+              commentsCount: 12 + index,
+              shares: 21 + index,
+            };
+          });
           setPosts(formattedPosts);
         }
       })
@@ -80,167 +101,200 @@ const CommunitySpace = ({ navigation }) => {
       setCommentText('');
     }
   };
+
   const handleLogoutPress = () => {
-  showModal({
-    title: 'Confirm Logout',
-    message: 'Are you sure you want to log out of your account?',
-    variant: 'warning',
-    confirmText: 'Log Out',
-    cancelText: 'Stay',
-    onConfirm: async () => {
-      try {
-        await authService.logout();
-        setUserIsAuthenticated(false);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'SignUpScreen' }],
-        });
-       
-      } catch (error) {
-        showModal({
-          title: 'Logout Failed',
-          message: error.message || 'Could not securely log out. Please try again.',
-          variant: 'error'
-        });
-      }
-    },
-    onCancel: () => console.log('Logout cancelled by user') 
-  });
-};
+    showModal({
+      title: 'Confirm Logout',
+      message: 'Are you sure you want to log out of your account?',
+      variant: 'warning',
+      confirmText: 'Log Out',
+      cancelText: 'Stay',
+      onConfirm: async () => {
+        try {
+          await authService.logout();
+          setUserIsAuthenticated(false);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'SignUpScreen' }],
+          });
+        } catch (error) {
+          showModal({
+            title: 'Logout Failed',
+            message: error.message || 'Could not securely log out. Please try again.',
+            variant: 'error'
+          });
+        }
+      },
+      onCancel: () => console.log('Logout cancelled by user') 
+    });
+  };
 
-  const renderPostCard = ({ item }) => (
-    <LinearGradient
-      colors={['#242525', '#1A1C1D']}
-      start={{ x: 0.02, y: 0.5 }}
-      end={{ x: 0.98, y: 0.5 }}
-      style={styles.postCardOuterFrame}
-    >
-     
-      <View style={styles.postHeaderRow}>
-        <View style={styles.postHeaderGroupView}>
-          <Image source={{ uri: item.userAvatar }} style={styles.userAvatarProfilePic} />
-          <Text numberOfLines={1} style={styles.userNameText}>{item.username}</Text>
+  // Handles moving dots by monitoring scroll content offsets dynamically
+  const handleCarouselScroll = (postId, event) => {
+    const slideSize = event.nativeEvent.layoutMeasurement.width;
+    const offset = event.nativeEvent.contentOffset.x;
+    const activeIndex = Math.round(offset / slideSize);
+    
+    if (activeImageIndices[postId] !== activeIndex) {
+      setActiveImageIndices(prev => ({
+        ...prev,
+        [postId]: activeIndex,
+      }));
+    }
+  };
+
+  const renderPostCard = ({ item: postItem }) => {
+    const currentActiveIndex = activeImageIndices[postItem.id] || 0;
+
+    return (
+      <LinearGradient
+        colors={['#242525', '#1A1C1D']}
+        start={{ x: 0.02, y: 0.5 }}
+        end={{ x: 0.98, y: 0.5 }}
+        style={styles.postCardOuterFrame}
+      >
+        {/* Header Row */}
+        <View style={styles.postHeaderRow}>
+          <View style={styles.postHeaderGroupView}>
+            <Image source={{ uri: postItem.userAvatar }} style={styles.userAvatarProfilePic} />
+            <Text numberOfLines={1} style={styles.userNameText}>{postItem.username}</Text>
+          </View>
+          <Text style={styles.timeStampText}>{postItem.timeAgo}</Text>
         </View>
-        <Text style={styles.timeStampText}>{item.timeAgo}</Text>
-      </View>
 
-     
-      <View style={styles.imageDisplayContainer}>
-        <Image source={{ uri: item.postImage }} style={styles.mainPostMediaImage} resizeMode="cover" />
-        
-        <View style={styles.mediaCarouselIndicatorTrack}>
-          <View style={styles.indicatorDotInactive} />
-          <LinearGradient
-            colors={['#FEF9BD', '#FA83F2']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.indicatorDotActive}
+        {/* Media Window Carousel Frame Container */}
+        <View style={styles.imageDisplayContainer}>
+          <FlatList
+            data={postItem.postImages}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CAROUSEL_WIDTH}
+            decelerationRate="fast"
+            keyExtractor={(imgUrl, idx) => `${postItem.id}-img-${idx}`}
+            onScroll={(e) => handleCarouselScroll(postItem.id, e)}
+            scrollEventThrottle={16}
+            renderItem={({ item: imageUrl }) => (
+              <Image 
+                source={{ uri: imageUrl }} 
+                style={styles.mainPostMediaImage} 
+                resizeMode="cover" 
+              />
+            )}
           />
-          <View style={styles.indicatorDotInactive} />
-          <View style={styles.indicatorDotInactive} />
-        </View>
-      </View>
-
-      <View style={styles.postContentContainerDescriptionBlock}>
-        <View style={styles.descriptionHeaderTitleWrapperRow}>
-          <Text style={styles.mainDescriptionTitleText} numberOfLines={2}>
-            {item.title}
-          </Text>
-          <TouchableOpacity  activeOpacity={0.7} style={styles.bagActionButton}>
-           <ShoppingBagIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
-
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.tagListContainerRow}>
-          {item.tags.map((tag, i) => (
-            <Text key={i} numberOfLines={1} style={styles.hashTagTextItem}>{tag}</Text>
-          ))}
-        </View>
-
-        <View style={styles.metricsActionBarGroupRow}>
           
-          <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
-           <HeartIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
-
-            <Text style={styles.metricLabelValueStringText}>{item.likes}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.individualMetricTabItem} 
-            activeOpacity={0.7}
-            onPress={() => handleToggleComment(item.id)}
-          >
-            
-            <CommentIcon size={Tokens.scaleAsset(28)}  color={activePostCommentId === item.id ? "#818181" : "#CCCCCC"}  strokeWidth={1.5} />
-
-            <Text style={[
-              styles.metricLabelValueStringText, 
-              activePostCommentId === item.id ? { color: '#818181' } : { color: '#CCCCC' }
-            ]}>
-              {item.commentsCount}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
-           <ShareIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
-
-            <Text style={styles.metricLabelValueStringText}>{item.shares}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.saveActionRightAlignedAnchorButton} activeOpacity={0.7}>
-            <SaveIcon size={Tokens.scaleAsset(26)} color="#CCCCCC" strokeWidth={1.5} />
-
-          </TouchableOpacity>
-
+          {/* Dynamic Track Bar Overlay Indicators */}
+          <View style={styles.mediaCarouselIndicatorTrack}>
+            {postItem.postImages.map((_, dotIndex) => {
+              if (dotIndex === currentActiveIndex) {
+                return (
+                  <LinearGradient
+                    key={dotIndex}
+                    colors={['#FEF9BD', '#FA83F2']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.indicatorDotActive}
+                  />
+                );
+              }
+              return <View key={dotIndex} style={styles.indicatorDotInactive} />;
+            })}
+          </View>
         </View>
-      </View>
 
-      {activePostCommentId === item.id && (
-        <View style={styles.commentInputFormTerminalAreaBoxContainer}>
-          <View style={styles.commentTextInputContainerRowWrapperBoxField}>
-            <TextInput
-              style={styles.commentTextInputNativeComponentField}
-              placeholder="Your Comment"
-              placeholderTextColor="#B3B3B3"
-              value={commentText}
-              onChangeText={setCommentText}
-              autoFocus={true}
-            />
+        {/* Descriptions and Actions */}
+        <View style={styles.postContentContainerDescriptionBlock}>
+          <View style={styles.descriptionHeaderTitleWrapperRow}>
+            <Text style={styles.mainDescriptionTitleText} numberOfLines={2}>
+              {postItem.title}
+            </Text>
+            <TouchableOpacity activeOpacity={0.7} style={styles.bagActionButton}>
+              <ShoppingBagIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.commentActionTriggersPanelRowLayout}>
-            <TouchableOpacity activeOpacity={0.7} style={styles.smileyIconTouchTarget}>
-              <SmileIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
+          <View style={styles.tagListContainerRow}>
+            {postItem.tags.map((tag, i) => (
+              <Text key={i} numberOfLines={1} style={styles.hashTagTextItem}>{tag}</Text>
+            ))}
+          </View>
 
+          <View style={styles.metricsActionBarGroupRow}>
+            <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
+              <HeartIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
+              <Text style={styles.metricLabelValueStringText}>{postItem.likes}</Text>
             </TouchableOpacity>
 
-            <View style={styles.commentFormActionButtonsSplitWrapperRowBox}>
-              <TouchableOpacity 
-                style={styles.cancelCommentButton} 
-                activeOpacity={0.7}
-                onPress={() => setActivePostCommentId(null)}
-              >
-                <Text style={styles.cancelButtonTextStringLabel}>Cancel</Text>
-              </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.individualMetricTabItem} 
+              activeOpacity={0.7}
+              onPress={() => handleToggleComment(postItem.id)}
+            >
+              <CommentIcon size={Tokens.scaleAsset(28)} color={activePostCommentId === postItem.id ? "#818181" : "#CCCCCC"} strokeWidth={1.5} />
+              <Text style={[
+                styles.metricLabelValueStringText, 
+                activePostCommentId === postItem.id ? { color: '#818181' } : { color: '#CCCCCC' }
+              ]}>
+                {postItem.commentsCount}
+              </Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity activeOpacity={0.85} onPress={() => setActivePostCommentId(null)}>
-                <LinearGradient
-                  colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.postSubmitCommentButtonGradientContainerBox}
-                >
-                  <Text style={styles.postSubmitCommentButtonTextLabel}>Post</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={styles.individualMetricTabItem} activeOpacity={0.7}>
+              <ShareIcon size={Tokens.scaleAsset(28)} color="#CCCCCC" strokeWidth={1.5} />
+              <Text style={styles.metricLabelValueStringText}>{postItem.shares}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.saveActionRightAlignedAnchorButton} activeOpacity={0.7}>
+              <SaveIcon size={Tokens.scaleAsset(26)} color="#CCCCCC" strokeWidth={1.5} />
+            </TouchableOpacity>
           </View>
         </View>
-      )}
 
-    </LinearGradient>
-  );
+        {/* Comment Drawer Form Block */}
+        {activePostCommentId === postItem.id && (
+          <View style={styles.commentInputFormTerminalAreaBoxContainer}>
+            <View style={styles.commentTextInputContainerRowWrapperBoxField}>
+              <TextInput
+                style={styles.commentTextInputNativeComponentField}
+                placeholder="Your Comment"
+                placeholderTextColor="#B3B3B3"
+                value={commentText}
+                onChangeText={setCommentText}
+                autoFocus={true}
+              />
+            </View>
+
+            <View style={styles.commentActionTriggersPanelRowLayout}>
+              <TouchableOpacity activeOpacity={0.7} style={styles.smileyIconTouchTarget}>
+                <SmileIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
+              </TouchableOpacity>
+
+              <View style={styles.commentFormActionButtonsSplitWrapperRowBox}>
+                <TouchableOpacity 
+                  style={styles.cancelCommentButton} 
+                  activeOpacity={0.7}
+                  onPress={() => setActivePostCommentId(null)}
+                >
+                  <Text style={styles.cancelButtonTextStringLabel}>Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity activeOpacity={0.85} onPress={() => setActivePostCommentId(null)}>
+                  <LinearGradient
+                    colors={['#FBB59E', '#F8876C', '#F16646', '#F98F7A']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.postSubmitCommentButtonGradientContainerBox}
+                  >
+                    <Text style={styles.postSubmitCommentButtonTextLabel}>Post</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+      </LinearGradient>
+    );
+  };
 
   const renderHeader = () => (
     <View style={styles.headerContainerWrapper}>
@@ -248,44 +302,42 @@ const CommunitySpace = ({ navigation }) => {
         <Text style={styles.screenHeaderTitleMainText}>Community</Text>
         
         <View style={styles.headerSquareActionButtonsGridWrapperRow}>
-           <LinearGradient
-          colors={['#333637', '#242426']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.squareHeaderActionButtonItem}
-        > 
-          <TouchableOpacity  activeOpacity={0.75}>
-           <BellIcon size={Tokens.scaleAsset(28)} color="#ffffff" strokeWidth={2} />
-
-          </TouchableOpacity>
+          <LinearGradient
+            colors={['#333637', '#242426']}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.squareHeaderActionButtonItem}
+          > 
+            <TouchableOpacity activeOpacity={0.75}>
+              <BellIcon size={Tokens.scaleAsset(28)} color="#ffffff" strokeWidth={2} />
+            </TouchableOpacity>
           </LinearGradient>
 
-           <LinearGradient
-          colors={['#333637', '#242426']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.squareHeaderActionButtonItem}
-        > 
-          <TouchableOpacity  activeOpacity={0.75}>
-            <MyPostIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
-
-          </TouchableOpacity>
+          <LinearGradient
+            colors={['#333637', '#242426']}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.squareHeaderActionButtonItem}
+          > 
+            <TouchableOpacity activeOpacity={0.75}>
+              <MyPostIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={1.5} />
+            </TouchableOpacity>
           </LinearGradient>
 
-           <LinearGradient
-          colors={['#333637', '#242426']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.squareHeaderActionButtonItem}
-        > 
-          <TouchableOpacity
-    onPress={handleLogoutPress}
-    activeOpacity={0.75}
-    accessibilityRole="button"
-    accessibilityLabel="Log out of application"
-  >
-    <PlusIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={2} />
-  </TouchableOpacity>
+          <LinearGradient
+            colors={['#333637', '#242426']}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.squareHeaderActionButtonItem}
+          > 
+            <TouchableOpacity
+              onPress={handleLogoutPress}
+              activeOpacity={0.75}
+              accessibilityRole="button"
+              accessibilityLabel="Log out of application"
+            >
+              <PlusIcon size={Tokens.scaleAsset(28)} color="#E5E5E5" strokeWidth={2} />
+            </TouchableOpacity>
           </LinearGradient>
         </View>
       </View>
@@ -356,7 +408,6 @@ const CommunitySpace = ({ navigation }) => {
               </View>
             )}
           </TouchableOpacity>
-
         </LinearGradient>
       </View>
     </View>
@@ -387,9 +438,7 @@ const CommunitySpace = ({ navigation }) => {
               showsVerticalScrollIndicator={false}
             />
           )}
-
         </SafeAreaView>
-
       </LinearGradient>
     </SafeAreaProvider>
   );
@@ -439,11 +488,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#323537',
-    //backgroundColor: '#242426',
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   tabsPanelOuterWrapperContainerSectionBox: {
     width: '100%',
     marginBottom: Tokens.gaps.large,
@@ -459,13 +506,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Tokens.gaps.large,
   },
-    individualTabButtonAnchorWrapper: {
+  individualTabButtonAnchorWrapper: {
     flex: 1,
     height: 40,
   },
-borderGradientContainer: {
+  borderGradientContainer: {
     flex: 1,
-    padding: 1,             
+    padding: 1,            
     borderRadius: 9,         
     overflow: 'hidden',
   },
@@ -481,10 +528,6 @@ borderGradientContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
-  },
-  tabTextLabelActive: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   inactiveTabOverlayContainerContentBox: {
     flex: 1,
@@ -502,7 +545,6 @@ borderGradientContainer: {
     fontSize: 14,
     color: '#B3B3B3',
   },
-
   postCardOuterFrame: {
     width: '100%',
     borderRadius: 20,
@@ -545,13 +587,13 @@ borderGradientContainer: {
     width: '100%',
     height: 389,
     borderRadius: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1A1C1D',
     overflow: 'hidden',
     position: 'relative',
     marginBottom: Tokens.gaps.large,
   },
   mainPostMediaImage: {
-    width: '100%',
+    width: CAROUSEL_WIDTH,
     height: '100%',
   },
   mediaCarouselIndicatorTrack: {
@@ -561,25 +603,24 @@ borderGradientContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Tokens.gaps.small,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    paddingVertical: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
   },
   indicatorDotInactive: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 1.25,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 1,
     borderColor: '#CCCCCC',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   indicatorDotActive: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
-
-  
   postContentContainerDescriptionBlock: {
     width: '100%',
     gap: Tokens.gaps.large,
@@ -604,7 +645,7 @@ borderGradientContainer: {
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop:5
+    marginTop: 5
   },
   tagListContainerRow: {
     flexDirection: 'row',
@@ -622,7 +663,7 @@ borderGradientContainer: {
     alignItems: 'center',
     width: '100%',
     paddingTop: 4,
-    justifyContent:"space-evenly"
+    justifyContent: "space-evenly"
   },
   individualMetricTabItem: {
     flexDirection: 'row',
@@ -636,13 +677,11 @@ borderGradientContainer: {
     color: '#CCCCCC',
   },
   saveActionRightAlignedAnchorButton: {
-   
     width: 24,
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   commentInputFormTerminalAreaBoxContainer: {
     width: '100%',
     gap: Tokens.gaps.large,
@@ -709,15 +748,6 @@ borderGradientContainer: {
     fontSize: 14,
     color: '#FFFFFF',
   },
-
-  lineDivider: {
-    width: '100%',
-    height: 0,
-    borderTopWidth: 1,
-    borderColor: '#323537',
-    marginVertical: Tokens.gaps.large,
-  },
-
 });
 
 export default CommunitySpace;
